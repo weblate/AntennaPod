@@ -110,8 +110,6 @@ public class LocalFeedUpdater {
             feed.setImageUrl(getDefaultIconUrl(context));
         }
 
-        feed.getPreferences().setAutoDownload(false);
-        feed.getPreferences().setAutoDeleteAction(FeedPreferences.AutoDeleteAction.NO);
         feed.setDescription(context.getString(R.string.local_feed_description));
         feed.setAuthor(context.getString(R.string.local_folder));
 
@@ -119,7 +117,13 @@ public class LocalFeedUpdater {
         // only delete items if the folder contains at least one element to avoid accidentally
         // deleting played state or position in case the folder is temporarily unavailable.
         boolean removeUnlistedItems = (newItems.size() >= 1);
-        DBTasks.updateFeed(context, feed, removeUnlistedItems);
+        Feed savedFeed = DBTasks.updateFeed(context, feed, removeUnlistedItems);
+
+        if (savedFeed.getPreferences().getAutoDownload()) {
+            savedFeed.getPreferences().setAutoDownload(false);
+            savedFeed.getPreferences().setAutoDeleteAction(FeedPreferences.AutoDeleteAction.NO);
+            savedFeed.getPreferences().save(context);
+        }
     }
 
     /**
