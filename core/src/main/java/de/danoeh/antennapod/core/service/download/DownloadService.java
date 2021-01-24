@@ -162,14 +162,17 @@ public class DownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand: " + flags);
         if (intent != null && intent.getParcelableArrayListExtra(EXTRA_REQUESTS) != null) {
             Notification notification = notificationManager.updateNotifications(
                     requester.getNumberOfDownloads(), downloads);
             startForeground(R.id.notification_downloading, notification);
             syncExecutor.execute(() -> onDownloadQueued(intent));
+            Log.d(TAG, "Received new download requests");
         } else if (numberOfDownloads.get() == 0) {
             stopForeground(true);
             stopSelf();
+            Log.d(TAG, "Nothing to do");
         } else {
             Log.d(TAG, "onStartCommand: Unknown intent");
         }
@@ -566,6 +569,7 @@ public class DownloadService extends Service {
             Notification notification = notificationManager.updateNotifications(
                     requester.getNumberOfDownloads(), downloads);
             startForeground(R.id.notification_downloading, notification);
+            Log.d(TAG, "queryDownloads: Started foreground");
         }
     }
 
