@@ -17,6 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,7 +77,7 @@ public class DownloadRequester implements DownloadStateProvider {
      * be used from outside classes if the DownloadRequest was created by the DownloadService to
      * ensure that the data is valid. Use downloadFeed(), downloadImage() or downloadMedia() instead.
      *
-     * @param context Context object for starting the DownloadService
+     * @param context  Context object for starting the DownloadService
      * @param requests The list of DownloadRequest objects. If another DownloadRequest
      *                 with the same source URL is already stored, this one will be skipped.
      * @return True if any of the download request was accepted, false otherwise.
@@ -186,14 +187,29 @@ public class DownloadRequester implements DownloadStateProvider {
     /**
      * Downloads a feed
      *
-     * @param context The application's environment.
-     * @param feed Feed to download
+     * @param context      The application's environment.
+     * @param feed        Feeds to download
      * @param loadAllPages Set to true to download all pages
      */
     public synchronized void downloadFeed(Context context, Feed feed, boolean loadAllPages,
-                                          boolean force, boolean initiatedByUser)
-            throws DownloadRequestException {
-        if (feedFileValid(feed)) {
+                                           boolean force, boolean initiatedByUser) throws DownloadRequestException {
+        downloadFeeds(context, Collections.singletonList(feed), loadAllPages, force, initiatedByUser);
+    }
+
+    /**
+     * Downloads a list of feeds
+     *
+     * @param context The application's environment.
+     * @param feeds Feeds to download
+     * @param loadAllPages Set to true to download all pages
+     */
+    public synchronized void downloadFeeds(Context context, List<Feed> feeds, boolean loadAllPages,
+                                          boolean force, boolean initiatedByUser) throws DownloadRequestException {
+        List<DownloadRequest> requests = new ArrayList<>();
+        for (Feed feed : feeds) {
+            if (!feedFileValid(feed)) {
+                continue;
+            }
             String username = (feed.getPreferences() != null) ? feed.getPreferences().getUsername() : null;
             String password = (feed.getPreferences() != null) ? feed.getPreferences().getPassword() : null;
             String lastModified = feed.isPaged() || force ? null : feed.getLastUpdate();
@@ -206,8 +222,11 @@ public class DownloadRequester implements DownloadStateProvider {
                     true, username, password, lastModified, true, args, initiatedByUser
             );
             if (request != null) {
-                download(context, request);
+                requests.add(request);
             }
+        }
+        if (!requests.isEmpty()) {
+            download(context, requests.toArray(new DownloadRequest[0]));
         }
     }
 
