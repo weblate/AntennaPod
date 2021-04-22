@@ -2,6 +2,9 @@ package de.danoeh.antennapod.core.util;
 
 import androidx.annotation.NonNull;
 
+import de.danoeh.antennapod.core.feed.FeedMedia;
+import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
+import de.danoeh.antennapod.core.service.playback.PlaybackService;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -65,5 +68,14 @@ public class FeedItemUtil {
             return item.getFeed().getLink();
         }
         return null;
+    }
+
+    /**
+     * Reads playback preferences to determine whether this FeedMedia object is
+     * currently being played and the current player status is playing.
+     */
+    public static boolean isCurrentlyPlaying(FeedMedia item) {
+        return item.isPlaying() && PlaybackService.isRunning
+                && ((PlaybackPreferences.getCurrentPlayerStatus() == PlaybackPreferences.PLAYER_STATUS_PLAYING));
     }
 }
