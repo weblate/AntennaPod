@@ -537,8 +537,6 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                         Paint p = new Paint();
                         p.setColor(getResources().getColor(R.color.highlight_light));
-                        Paint pText = new Paint();
-                        pText.setColor(getResources().getColor(R.color.background_light));
                         if (dX > 0) {
                             c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
                                     (float) itemView.getBottom(), p);
