@@ -57,7 +57,6 @@ import io.reactivex.schedulers.Schedulers;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import de.danoeh.antennapod.ui.common.ThemeUtils;
 
 import java.util.List;
 import java.util.Locale;
