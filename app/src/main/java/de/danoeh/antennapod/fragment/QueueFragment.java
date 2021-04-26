@@ -545,7 +545,9 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                                     (float) itemView.getRight(), (float) itemView.getBottom(), p);
                         }
 
-                        super.onChildDraw(c, recyclerView, viewHolder, displacementX, displacementY, actionState, isCurrentlyActive);
+                        super.onChildDraw(c, recyclerView, viewHolder,
+                                displacementX, displacementY,
+                                actionState, isCurrentlyActive);
                     }
                 }
 
