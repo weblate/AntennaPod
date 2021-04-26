@@ -561,7 +561,7 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                 @Override
                 public float getSwipeThreshold(RecyclerView.ViewHolder viewHolder) {
-                    return 0.6f;
+                    return 0.8f;
                 }
 
 
