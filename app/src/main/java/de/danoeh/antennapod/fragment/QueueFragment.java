@@ -550,17 +550,17 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 }
 
                 @Override
-                public float getSwipeEscapeVelocity (float defaultValue) {
+                public float getSwipeEscapeVelocity(float defaultValue) {
                     return defaultValue * 1.3f;
                 }
 
                 @Override
-                public float getSwipeVelocityThreshold (float defaultValue) {
+                public float getSwipeVelocityThreshold(float defaultValue) {
                     return defaultValue * 0.2f;
                 }
 
                 @Override
-                public float getSwipeThreshold (RecyclerView.ViewHolder viewHolder) {
+                public float getSwipeThreshold(RecyclerView.ViewHolder viewHolder) {
                     return 0.6f;
                 }
 
