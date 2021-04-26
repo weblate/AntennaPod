@@ -3,6 +3,8 @@ package de.danoeh.antennapod.fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,6 +57,7 @@ import io.reactivex.schedulers.Schedulers;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import de.danoeh.antennapod.ui.common.ThemeUtils;
 
 import java.util.List;
 import java.util.Locale;
@@ -521,6 +524,51 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                     Log.d(TAG, "Write to database move(" + from + ", " + to + ")");
                     DBWriter.moveQueueItem(from, to, true);
                 }
+
+                @Override
+                public void onChildDraw(Canvas c,
+                                        RecyclerView recyclerView,
+                                        RecyclerView.ViewHolder viewHolder,
+                                        float dX,
+                                        float dY,
+                                        int actionState,
+                                        boolean isCurrentlyActive) {
+                    if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                        View itemView = viewHolder.itemView;
+
+                        Paint p = new Paint();
+                        p.setColor(getResources().getColor(R.color.highlight_light));
+                        Paint pText = new Paint();
+                        pText.setColor(getResources().getColor(R.color.background_light));
+                        if (dX > 0) {
+                            c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
+                                    (float) itemView.getBottom(), p);
+                        } else {
+                            c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(),
+                                    (float) itemView.getRight(), (float) itemView.getBottom(), p);
+                        }
+
+                        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                    }
+                }
+
+                @Override
+                public float getSwipeEscapeVelocity (float defaultValue) {
+                    return defaultValue * 1.3f;
+                }
+
+                @Override
+                public float getSwipeVelocityThreshold (float defaultValue) {
+                    return defaultValue * 0.2f;
+                }
+
+                @Override
+                public float getSwipeThreshold (RecyclerView.ViewHolder viewHolder) {
+                    return 0.6f;
+                }
+
+
+
             }
         );
         itemTouchHelper.attachToRecyclerView(recyclerView);
