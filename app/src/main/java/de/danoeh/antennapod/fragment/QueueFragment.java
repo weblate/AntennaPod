@@ -528,8 +528,8 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 public void onChildDraw(Canvas c,
                                         RecyclerView recyclerView,
                                         RecyclerView.ViewHolder viewHolder,
-                                        float dX,
-                                        float dY,
+                                        float displacementX,
+                                        float displacementY,
                                         int actionState,
                                         boolean isCurrentlyActive) {
                     if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
@@ -537,15 +537,15 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                         Paint p = new Paint();
                         p.setColor(getResources().getColor(R.color.highlight_light));
-                        if (dX > 0) {
-                            c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
+                        if (displacementX > 0) {
+                            c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), displacementX,
                                     (float) itemView.getBottom(), p);
                         } else {
-                            c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(),
+                            c.drawRect((float) itemView.getRight() + displacementX, (float) itemView.getTop(),
                                     (float) itemView.getRight(), (float) itemView.getBottom(), p);
                         }
 
-                        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                        super.onChildDraw(c, recyclerView, viewHolder, displacementX, displacementY, actionState, isCurrentlyActive);
                     }
                 }
 
