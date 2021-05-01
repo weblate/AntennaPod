@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -537,12 +538,22 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                         Paint p = new Paint();
                         p.setColor(getResources().getColor(R.color.accent_dark));
+                        Paint pText = new Paint();
+                        pText.setColor(getResources().getColor(R.color.white));
+                        pText.setTextSize(40.0f);
+                        String s = (String) getResources().getText(R.string.remove_from_queue_swipe);
                         if (displacementX > 0) {
                             c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), displacementX,
                                     (float) itemView.getBottom(), p);
+                            c.drawText(s, (float) itemView.getLeft() + 10,
+                                    (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop()) / 2 + 20.0f, pText);
                         } else {
                             c.drawRect((float) itemView.getRight() + displacementX, (float) itemView.getTop(),
                                     (float) itemView.getRight(), (float) itemView.getBottom(), p);
+                            Rect r = new Rect();
+                            pText.getTextBounds(s, 0, s.length(), r);
+                            c.drawText(s, (float) itemView.getRight() + Math.max(displacementX, -r.width() - 20) + 10,
+                                    (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop()) / 2 + 20.0f, pText);
                         }
 
                         super.onChildDraw(c, recyclerView, viewHolder,
@@ -553,17 +564,17 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                 @Override
                 public float getSwipeEscapeVelocity(float defaultValue) {
-                    return defaultValue * 1.3f;
+                    return defaultValue * 2.0f;
                 }
 
                 @Override
                 public float getSwipeVelocityThreshold(float defaultValue) {
-                    return defaultValue * 0.2f;
+                    return defaultValue * 0.4f;
                 }
 
                 @Override
                 public float getSwipeThreshold(RecyclerView.ViewHolder viewHolder) {
-                    return 0.8f;
+                    return 0.6f;
                 }
 
 
