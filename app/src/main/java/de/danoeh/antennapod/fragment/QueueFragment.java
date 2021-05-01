@@ -546,8 +546,8 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                             c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), displacementX,
                                     (float) itemView.getBottom(), p);
                             c.drawText(s, (float) itemView.getLeft() + 10,
-                                    (float) itemView.getTop() +
-                                            ((float) itemView.getBottom() - (float) itemView.getTop()) / 2 + 20.0f,
+                                    (float) itemView.getTop()
+                                            + ((float) itemView.getBottom() - (float) itemView.getTop()) / 2 + 20.0f,
                                     paintText);
                         } else {
                             c.drawRect((float) itemView.getRight() + displacementX, (float) itemView.getTop(),
@@ -555,8 +555,8 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                             Rect r = new Rect();
                             paintText.getTextBounds(s, 0, s.length(), r);
                             c.drawText(s, (float) itemView.getRight() + Math.max(displacementX, -r.width() - 20) + 10,
-                                    (float) itemView.getTop() +
-                                            ((float) itemView.getBottom() - (float) itemView.getTop()) / 2 + 20.0f,
+                                    (float) itemView.getTop()
+                                            + ((float) itemView.getBottom() - (float) itemView.getTop()) / 2 + 20.0f,
                                     paintText);
                         }
 
