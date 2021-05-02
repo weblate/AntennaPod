@@ -550,10 +550,12 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                             if (displacementX >= d.getIntrinsicWidth() + padding) {
                                 d.setBounds(itemView.getLeft() + padding,
                                         itemView.getTop()
-                                                + ((itemView.getBottom() - itemView.getTop()) / 2) - d.getIntrinsicHeight() / 2,
+                                                + ((itemView.getBottom() - itemView.getTop()) / 2)
+                                                - d.getIntrinsicHeight() / 2,
                                         d.getIntrinsicWidth() + padding,
                                         itemView.getTop()
-                                                + ((itemView.getBottom() - itemView.getTop()) / 2) + d.getIntrinsicHeight() / 2);
+                                                + ((itemView.getBottom() - itemView.getTop()) / 2)
+                                                + d.getIntrinsicHeight() / 2);
                                 d.draw(c);
                             }
                         } else {
@@ -563,10 +565,12 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                             if (displacementX <= - (d.getIntrinsicWidth() + padding)) {
                                 d.setBounds(itemView.getRight() - (d.getIntrinsicWidth() + padding),
                                          itemView.getTop()
-                                                + ((itemView.getBottom() - itemView.getTop()) / 2) - d.getIntrinsicHeight() / 2,
+                                                + ((itemView.getBottom() - itemView.getTop()) / 2)
+                                                 - d.getIntrinsicHeight() / 2,
                                          itemView.getRight() - padding,
                                          itemView.getTop()
-                                                + ((itemView.getBottom() - itemView.getTop()) / 2) + d.getIntrinsicHeight() / 2);
+                                                + ((itemView.getBottom() - itemView.getTop()) / 2)
+                                                 + d.getIntrinsicHeight() / 2);
                                 d.draw(c);
                             }
                         }
