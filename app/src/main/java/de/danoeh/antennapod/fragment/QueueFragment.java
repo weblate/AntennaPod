@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -538,26 +540,35 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                         Paint p = new Paint();
                         p.setColor(getResources().getColor(R.color.accent_dark));
-                        Paint paintText = new Paint();
-                        paintText.setColor(getResources().getColor(R.color.white));
-                        paintText.setTextSize(40.0f);
                         String s = (String) getResources().getText(R.string.remove_from_queue_swipe);
+                        Drawable d = ContextCompat.getDrawable(getActivity(), R.drawable.ic_playlist_remove_black);
+                        int padding = 8;
+
                         if (displacementX > 0) {
                             c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), displacementX,
                                     (float) itemView.getBottom(), p);
-                            c.drawText(s, (float) itemView.getLeft() + 10,
-                                    (float) itemView.getTop()
-                                            + ((float) itemView.getBottom() - (float) itemView.getTop()) / 2 + 20.0f,
-                                    paintText);
+                            if (displacementX >= d.getIntrinsicWidth() + padding) {
+                                d.setBounds(itemView.getLeft() + padding,
+                                        itemView.getTop()
+                                                + ((itemView.getBottom() - itemView.getTop()) / 2) - d.getIntrinsicHeight() / 2,
+                                        d.getIntrinsicWidth() + padding,
+                                        itemView.getTop()
+                                                + ((itemView.getBottom() - itemView.getTop()) / 2) + d.getIntrinsicHeight() / 2);
+                                d.draw(c);
+                            }
                         } else {
                             c.drawRect((float) itemView.getRight() + displacementX, (float) itemView.getTop(),
                                     (float) itemView.getRight(), (float) itemView.getBottom(), p);
                             Rect r = new Rect();
-                            paintText.getTextBounds(s, 0, s.length(), r);
-                            c.drawText(s, (float) itemView.getRight() + Math.max(displacementX, -r.width() - 20) + 10,
-                                    (float) itemView.getTop()
-                                            + ((float) itemView.getBottom() - (float) itemView.getTop()) / 2 + 20.0f,
-                                    paintText);
+                            if (displacementX <= - (d.getIntrinsicWidth() + padding)) {
+                                d.setBounds(itemView.getRight() - (d.getIntrinsicWidth() + padding),
+                                         itemView.getTop()
+                                                + ((itemView.getBottom() - itemView.getTop()) / 2) - d.getIntrinsicHeight() / 2,
+                                         itemView.getRight() - padding,
+                                         itemView.getTop()
+                                                + ((itemView.getBottom() - itemView.getTop()) / 2) + d.getIntrinsicHeight() / 2);
+                                d.draw(c);
+                            }
                         }
 
                         super.onChildDraw(c, recyclerView, viewHolder,
