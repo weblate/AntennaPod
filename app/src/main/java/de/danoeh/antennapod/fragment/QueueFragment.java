@@ -540,7 +540,6 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                         Paint p = new Paint();
                         p.setColor(getResources().getColor(R.color.accent_dark));
-                        String s = (String) getResources().getText(R.string.remove_from_queue_swipe);
                         Drawable d = ContextCompat.getDrawable(getActivity(), R.drawable.ic_playlist_remove_black);
                         int padding = 8;
 
@@ -561,7 +560,6 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                         } else {
                             c.drawRect((float) itemView.getRight() + displacementX, (float) itemView.getTop(),
                                     (float) itemView.getRight(), (float) itemView.getBottom(), p);
-                            Rect r = new Rect();
                             if (displacementX <= - (d.getIntrinsicWidth() + padding)) {
                                 d.setBounds(itemView.getRight() - (d.getIntrinsicWidth() + padding),
                                          itemView.getTop()
