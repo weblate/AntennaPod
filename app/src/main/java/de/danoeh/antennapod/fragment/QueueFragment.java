@@ -463,6 +463,8 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 // Position tracking whilst dragging
                 int dragFrom = -1;
                 int dragTo = -1;
+                boolean swipeOutEnabled = true;
+                int actionShouldBeTriggered = 0;
 
                 @Override
                 public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
@@ -495,13 +497,22 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                     final int position = viewHolder.getAdapterPosition();
                     Log.d(TAG, "remove(" + position + ")");
                     final FeedItem item = queue.get(position);
-                    DBWriter.removeQueueItem(getActivity(), true, item);
 
-                    ((MainActivity) getActivity()).showSnackbarAbovePlayer(
-                            getResources().getQuantityString(R.plurals.removed_from_queue_batch_label, 1, 1),
-                            Snackbar.LENGTH_LONG)
-                            .setAction(getString(R.string.undo), v ->
-                                    DBWriter.addQueueItemAt(getActivity(), item.getId(), position, false));
+                    if (direction == ItemTouchHelper.RIGHT) {
+                        DBWriter.removeQueueItem(getActivity(), true, item);
+
+                        ((MainActivity) getActivity()).showSnackbarAbovePlayer(
+                                getResources().getQuantityString(R.plurals.removed_from_queue_batch_label, 1, 1),
+                                Snackbar.LENGTH_LONG)
+                                .setAction(getString(R.string.undo), v ->
+                                        DBWriter.addQueueItemAt(getActivity(), item.getId(), position, false));
+                    } else {
+                        if (item.isTagged(FeedItem.TAG_FAVORITE)) {
+                            DBWriter.removeFavoriteItem(item);
+                        } else {
+                            DBWriter.addFavoriteItem(item);
+                        }
+                    }
                 }
 
                 @Override
@@ -523,6 +534,11 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                     }
 
                     dragFrom = dragTo = -1;
+
+                    if (actionShouldBeTriggered != 0) {
+                        onSwiped(viewHolder, actionShouldBeTriggered);
+                        actionShouldBeTriggered = 0;
+                    }
                 }
 
                 private void reallyMoved(int from, int to) {
@@ -543,11 +559,13 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                         View itemView = viewHolder.itemView;
 
                         Paint p = new Paint();
-                        p.setColor(getResources().getColor(R.color.accent_dark));
-                        Drawable d = ContextCompat.getDrawable(getActivity(), R.drawable.ic_playlist_remove_black);
-                        int padding = 8;
+                        int padding = (int) (16 * getResources().getDisplayMetrics().density);
 
                         if (displacementX > 0) {
+                            swipeOutEnabled = true;
+
+                            p.setColor(0xffef9a9a);
+                            Drawable d = ContextCompat.getDrawable(getActivity(), R.drawable.ic_playlist_remove_black);
                             c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), displacementX,
                                     (float) itemView.getBottom(), p);
                             if (displacementX >= d.getIntrinsicWidth() + padding) {
@@ -562,8 +580,25 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                                 d.draw(c);
                             }
                         } else {
+                            swipeOutEnabled = false;
+
+                            // Slow down child - it is just an action and does not remove the whole item
+                            int maxMovement = recyclerView.getWidth() / 3;
+
+                            displacementX = Math.min(maxMovement, -displacementX); // Only move to the middle
+                            float displacementPercentage = displacementX / maxMovement;
+                            if (isCurrentlyActive) {
+                                // User touches item
+                                actionShouldBeTriggered = displacementPercentage > 0.6 ? ItemTouchHelper.LEFT : 0;
+                            }
+                            // Move slower when getting near the middle
+                            displacementX = -maxMovement * (float) Math.sin((Math.PI / 2) * displacementPercentage);
+
+                            p.setColor(0xfffff59d);
+                            Drawable d = ContextCompat.getDrawable(getActivity(), R.drawable.ic_star_border);
                             c.drawRect((float) itemView.getRight() + displacementX, (float) itemView.getTop(),
                                     (float) itemView.getRight(), (float) itemView.getBottom(), p);
+
                             if (displacementX <= - (d.getIntrinsicWidth() + padding)) {
                                 d.setBounds(itemView.getRight() - (d.getIntrinsicWidth() + padding),
                                          itemView.getTop()
@@ -573,6 +608,7 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                                          itemView.getTop()
                                                 + ((itemView.getBottom() - itemView.getTop()) / 2)
                                                  + d.getIntrinsicHeight() / 2);
+                                d.setAlpha((actionShouldBeTriggered == 0) ? 50 : 255);
                                 d.draw(c);
                             }
                         }
@@ -585,17 +621,17 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                 @Override
                 public float getSwipeEscapeVelocity(float defaultValue) {
-                    return defaultValue * 2.0f;
+                    return swipeOutEnabled ? defaultValue * 1.8f : defaultValue * 10000;
                 }
 
                 @Override
                 public float getSwipeVelocityThreshold(float defaultValue) {
-                    return defaultValue * 0.4f;
+                    return swipeOutEnabled ? defaultValue * 0.6f : 0;
                 }
 
                 @Override
                 public float getSwipeThreshold(RecyclerView.ViewHolder viewHolder) {
-                    return 0.6f;
+                    return swipeOutEnabled ? 0.6f : 1.0f;
                 }
 
 
