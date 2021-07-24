@@ -574,7 +574,6 @@ public final class DBReader {
      */
     @Nullable
     private static FeedItem getFeedItemByUrl(final String podcastUrl, final String episodeUrl, PodDBAdapter adapter) {
-        Log.d(TAG, "Loading feeditem with podcast url " + podcastUrl + " and episode url " + episodeUrl);
         try (Cursor cursor = adapter.getFeedItemCursor(podcastUrl, episodeUrl)) {
             if (!cursor.moveToNext()) {
                 return null;
@@ -632,8 +631,6 @@ public final class DBReader {
      *          Does NOT load additional attributes like feed or queue state.
      */
     public static FeedItem getFeedItemByUrl(final String podcastUrl, final String episodeUrl) {
-        Log.d(TAG, "getFeedItem() called with: " + "podcastUrl = [" + podcastUrl + "], episodeUrl = [" + episodeUrl + "]");
-
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
         try {

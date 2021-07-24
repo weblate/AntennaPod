@@ -443,7 +443,6 @@ public class SyncService extends Worker {
         // make sure more recent local actions are not overwritten by older remote actions
         Map<Pair<String, String>, EpisodeAction> mostRecentPlayAction = new ArrayMap<>();
         for (EpisodeAction action : remoteActions) {
-            Log.d(TAG, "Processing action: " + action.toString());
             switch (action.getAction()) {
                 case NEW:
                     FeedItem newItem = DBReader.getFeedItemByUrl(action.getPodcast(), action.getEpisode());
@@ -482,11 +481,14 @@ public class SyncService extends Worker {
         LongList queueToBeRemoved = new LongList();
         List<FeedItem> updatedItems = new ArrayList<>();
         for (EpisodeAction action : mostRecentPlayAction.values()) {
+            Log.d(TAG, "Most recent play action: " + action);
             FeedItem playItem = DBReader.getFeedItemByUrl(action.getPodcast(), action.getEpisode());
-            Log.d(TAG, "Most recent play action: " + action.toString());
-            if (playItem != null) {
-                FeedMedia media = playItem.getMedia();
-                media.setPosition(action.getPosition() * 1000);
+            if (playItem == null) {
+                Log.d(TAG, "Item not found in the database");
+            } else if (playItem.getMedia() == null) {
+                Log.d(TAG, "Item has no media");
+            } else {
+                playItem.getMedia().setPosition(action.getPosition() * 1000);
                 if (FeedItemUtil.hasAlmostEnded(playItem.getMedia())) {
                     Log.d(TAG, "Marking as played");
                     playItem.setPlayed(true);

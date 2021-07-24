@@ -586,7 +586,7 @@ public class PodDBAdapter {
         try {
             db.beginTransactionNonExclusive();
             for (FeedItem item : items) {
-                setFeedItem(item, true);
+                setFeedItem(item, false);
             }
             db.setTransactionSuccessful();
         } catch (SQLException e) {
@@ -1125,7 +1125,6 @@ public class PodDBAdapter {
                 + " ON " + TABLE_NAME_FEED_ITEMS + "." + KEY_FEED + "=" + TABLE_NAME_FEEDS + "." + KEY_ID
                 + " WHERE " + TABLE_NAME_FEED_MEDIA + "." + KEY_DOWNLOAD_URL + "=" + escapedEpisodeUrl
                 + " AND " + TABLE_NAME_FEEDS + "." + KEY_DOWNLOAD_URL + "=" + escapedPodcastUrl;
-        Log.d(TAG, "SQL: " + query);
         return db.rawQuery(query, null);
     }
 
