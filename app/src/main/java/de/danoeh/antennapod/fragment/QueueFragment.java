@@ -38,16 +38,15 @@ import de.danoeh.antennapod.core.event.playback.PlaybackPositionEvent;
 import de.danoeh.antennapod.core.event.PlayerStatusEvent;
 import de.danoeh.antennapod.core.event.QueueEvent;
 import de.danoeh.antennapod.core.event.UnreadItemsUpdateEvent;
-import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
+import de.danoeh.antennapod.core.service.download.DownloadService;
+import de.danoeh.antennapod.core.storage.DownloadRequester;
 import de.danoeh.antennapod.fragment.actions.EpisodeMultiSelectActionHandler;
 import de.danoeh.antennapod.fragment.swipeactions.SwipeActions;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.core.feed.util.PlaybackSpeedUtils;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
-import de.danoeh.antennapod.core.service.download.DownloadService;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
-import de.danoeh.antennapod.core.storage.DownloadRequester;
 import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.model.feed.FeedItemFilter;
@@ -82,11 +81,10 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private EmptyViewHandler emptyView;
     private ProgressBar progLoading;
     private Toolbar toolbar;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private boolean displayUpArrow;
 
     private List<FeedItem> queue;
-
-    private boolean isUpdatingFeeds = false;
 
     private static final String PREFS = "QueueFragment";
     private static final String PREF_SHOW_LOCK_WARNING = "show_lock_warning";
@@ -190,9 +188,7 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     public void onEventMainThread(DownloadEvent event) {
         Log.d(TAG, "onEventMainThread() called with DownloadEvent");
         DownloaderUpdate update = event.update;
-        if (event.hasChangedFeedUpdateStatus(isUpdatingFeeds)) {
-            refreshToolbarState();
-        }
+        swipeRefreshLayout.setRefreshing(event.isDownloading());
         if (recyclerAdapter != null && update.mediaIds.length > 0) {
             for (long mediaId : update.mediaIds) {
                 int pos = FeedItemUtil.indexOfItemWithMediaId(queue, mediaId);
@@ -220,18 +216,12 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPlayerStatusChanged(PlayerStatusEvent event) {
         loadItems(false);
-        if (isUpdatingFeeds != updateRefreshMenuItemChecker.isRefreshing()) {
-            refreshToolbarState();
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUnreadItemsChanged(UnreadItemsUpdateEvent event) {
         // Sent when playback position is reset
         loadItems(false);
-        if (isUpdatingFeeds != updateRefreshMenuItemChecker.isRefreshing()) {
-            refreshToolbarState();
-        }
     }
 
     @Override
@@ -243,16 +233,13 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         recyclerAdapter = null;
     }
 
-    private final MenuItemUtils.UpdateRefreshMenuItemChecker updateRefreshMenuItemChecker =
-            () -> DownloadService.isRunning && DownloadRequester.getInstance().isDownloadingFeeds();
-
     private void refreshToolbarState() {
         toolbar.getMenu().findItem(R.id.queue_lock).setChecked(UserPreferences.isQueueLocked());
         boolean keepSorted = UserPreferences.isQueueKeepSorted();
         toolbar.getMenu().findItem(R.id.queue_sort_random).setVisible(!keepSorted);
         toolbar.getMenu().findItem(R.id.queue_keep_sorted).setChecked(keepSorted);
-        isUpdatingFeeds = MenuItemUtils.updateRefreshMenuItem(toolbar.getMenu(),
-                R.id.refresh_item, updateRefreshMenuItemChecker);
+        swipeRefreshLayout.setRefreshing(DownloadService.isRunning
+                && DownloadRequester.getInstance().isDownloadingFeeds());
     }
 
     @Override
@@ -432,7 +419,6 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         }
         ((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
         toolbar.inflateMenu(R.menu.queue);
-        refreshToolbarState();
 
         infoBar = root.findViewById(R.id.info_bar);
         recyclerView = root.findViewById(R.id.recyclerView);
@@ -443,7 +429,7 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         recyclerView.setRecycledViewPool(((MainActivity) getActivity()).getRecycledViewPool());
         registerForContextMenu(recyclerView);
 
-        SwipeRefreshLayout swipeRefreshLayout = root.findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout = root.findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setDistanceToTriggerSync(getResources().getInteger(R.integer.swipe_refresh_distance));
         swipeRefreshLayout.setOnRefreshListener(() -> {
             AutoUpdateManager.runImmediate(requireContext());
@@ -491,6 +477,7 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             recyclerAdapter.endSelectMode();
             return true;
         });
+        refreshToolbarState();
         return root;
     }
 

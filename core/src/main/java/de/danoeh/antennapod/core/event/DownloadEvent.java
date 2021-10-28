@@ -24,9 +24,11 @@ public class DownloadEvent {
     @NonNull
     @Override
     public String toString() {
-        return "DownloadEvent{" +
-                "update=" + update +
-                '}';
+        return "DownloadEvent{update=" + update + '}';
+    }
+
+    public boolean isDownloading() {
+        return update.feedIds.length > 0;
     }
 
     public boolean hasChangedFeedUpdateStatus(boolean oldStatus) {
