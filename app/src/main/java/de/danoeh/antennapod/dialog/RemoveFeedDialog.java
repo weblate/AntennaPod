@@ -42,11 +42,10 @@ public class RemoveFeedDialog {
                 progressDialog.setCancelable(false);
                 progressDialog.show();
 
-                Completable.fromCallable(() -> {
+                Completable.fromAction(() -> {
                     for (Feed feed : feeds) {
                         DBWriter.deleteFeed(context, feed.getId()).get();
                     }
-                    return null;
                 })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
