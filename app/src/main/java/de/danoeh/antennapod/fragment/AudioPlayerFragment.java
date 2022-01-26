@@ -376,12 +376,12 @@ public class AudioPlayerFragment extends Fragment implements
             Log.w(TAG, "Could not react to position observer update because of invalid time");
             return;
         }
-        txtvPosition.setText(Converter.getDurationStringLong(currentPosition));
+        //txtvPosition.setText(Converter.getDurationStringLong(currentPosition));
         showTimeLeft = UserPreferences.shouldShowRemainingTime();
         if (showTimeLeft) {
-            txtvLength.setText(((remainingTime > 0) ? "-" : "") + Converter.getDurationStringLong(remainingTime));
+            //txtvLength.setText(((remainingTime > 0) ? "-" : "") + Converter.getDurationStringLong(remainingTime));
         } else {
-            txtvLength.setText(Converter.getDurationStringLong(duration));
+            //txtvLength.setText(Converter.getDurationStringLong(duration));
         }
 
         if (!sbPosition.isPressed()) {
@@ -438,7 +438,7 @@ public class AudioPlayerFragment extends Fragment implements
                 txtvSeek.setText(Converter.getDurationStringLong(position));
             }
         } else if (duration != controller.getDuration()) {
-            updateUi(controller.getMedia());
+            //updateUi(controller.getMedia());
         }
     }
 

@@ -395,7 +395,7 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
             for (int i = 0; i < adapter.getItemCount(); i++) {
                 EpisodeItemViewHolder holder = (EpisodeItemViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
                 if (holder != null && holder.isCurrentlyPlayingItem()) {
-                    holder.notifyPlaybackPositionUpdated(event);
+                    //holder.notifyPlaybackPositionUpdated(event);
                     break;
                 }
             }

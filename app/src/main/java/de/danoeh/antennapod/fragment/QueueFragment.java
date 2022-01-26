@@ -210,7 +210,7 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 EpisodeItemViewHolder holder = (EpisodeItemViewHolder)
                         recyclerView.findViewHolderForAdapterPosition(i);
                 if (holder != null && holder.isCurrentlyPlayingItem()) {
-                    holder.notifyPlaybackPositionUpdated(event);
+                    //holder.notifyPlaybackPositionUpdated(event);
                     break;
                 }
             }
