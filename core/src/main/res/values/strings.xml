@@ -293,6 +293,7 @@
     <string name="confirm_mobile_streaming_button_once">Once</string>
     <string name="confirm_mobile_download_dialog_only_add_to_queue">Enqueue</string>
     <string name="confirm_mobile_download_dialog_enable_temporarily">Allow temporarily</string>
+    <string name="warning_volume_off">Please turn the volume up</string>
 
     <!-- Mediaplayer messages -->
     <string name="playback_error_server_died">Server died</string>

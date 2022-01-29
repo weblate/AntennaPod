@@ -555,6 +555,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
                                             PlaybackPreferences.getCurrentlyPlayingFeedMediaId())) {
                                         PlaybackPreferences.clearCurrentlyPlayingTemporaryPlaybackSpeed();
                                     }
+                                    warnIfVolumeOff();
                                     mediaPlayer.playMediaObject(playableLoaded, stream, startWhenPrepared,
                                             prepareImmediately);
                                     addPlayableToQueue(playableLoaded);
@@ -755,6 +756,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
                                 stateManager.stopService();
                                 return;
                             }
+                            warnIfVolumeOff();
                             mediaPlayer.playMediaObject(playable, PlaybackPreferences.getCurrentEpisodeIsStream(),
                                     true, true);
                             stateManager.validStartCommandWasReceived();
@@ -975,6 +977,14 @@ public class PlaybackService extends MediaBrowserServiceCompat {
             mediaPlayer.setVolume(multiplicator, multiplicator);
         } else if (event.isCancelled()) {
             mediaPlayer.setVolume(1.0f, 1.0f);
+        }
+    }
+
+    private void warnIfVolumeOff() {
+        AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int level = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        if (level == 0) {
+            EventBus.getDefault().post(new MessageEvent(getString(R.string.warning_volume_off)));
         }
     }
 
