@@ -3,6 +3,7 @@ package de.danoeh.antennapod.core.export.favorites;
 import android.content.Context;
 import android.util.Log;
 
+import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -72,7 +73,8 @@ public class FavoritesWriter implements ExportWriter {
         List<FeedItem> favoritesList = new ArrayList<>();
         List<FeedItem> favoritesPage;
         do {
-            favoritesPage = DBReader.getFavoriteItemsList(page * PAGE_LIMIT, PAGE_LIMIT);
+            favoritesPage = DBReader.getEpisodes(page * PAGE_LIMIT, PAGE_LIMIT,
+                    new FeedItemFilter(FeedItemFilter.IS_FAVORITE));
             favoritesList.addAll(favoritesPage);
             ++page;
         } while (!favoritesPage.isEmpty() && favoritesPage.size() == PAGE_LIMIT);

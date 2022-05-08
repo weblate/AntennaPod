@@ -25,6 +25,7 @@ public class FeedItemFilterQuery {
         String keyDownloaded = PodDBAdapter.TABLE_NAME_FEED_MEDIA + "." + PodDBAdapter.KEY_DOWNLOADED;
         String keyMediaId = PodDBAdapter.TABLE_NAME_FEED_MEDIA + "." + PodDBAdapter.KEY_ID;
         String keyItemId = PodDBAdapter.TABLE_NAME_FEED_ITEMS + "." + PodDBAdapter.KEY_ID;
+        String keyKeepUpdated = PodDBAdapter.TABLE_NAME_FEEDS + "." + PodDBAdapter.KEY_KEEP_UPDATED;
         String keyFeedItem = PodDBAdapter.KEY_FEEDITEM;
         String tableQueue = PodDBAdapter.TABLE_NAME_QUEUE;
         String tableFavorites = PodDBAdapter.TABLE_NAME_FAVORITES;
@@ -35,7 +36,7 @@ public class FeedItemFilterQuery {
         } else if (filter.showUnplayed) {
             statements.add(" NOT " + keyRead + " = 1 "); // Match "New" items (read = -1) as well
         } else if (filter.showNew) {
-            statements.add(keyRead + " = -1 ");
+            statements.add(keyRead + " = -1 AND " + keyKeepUpdated + " > 0");
         }
         if (filter.showPaused) {
             statements.add(" (" + keyPosition + " NOT NULL AND " + keyPosition + " > 0 " + ") ");

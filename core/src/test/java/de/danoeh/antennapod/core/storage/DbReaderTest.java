@@ -10,6 +10,7 @@ import java.util.Random;
 import androidx.test.platform.app.InstrumentationRegistry;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
+import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.util.LongList;
@@ -186,7 +187,8 @@ public class DbReaderTest {
     public void testGetQueue() {
         final int numItems = 10;
         List<FeedItem> queue = saveQueue(numItems);
-        List<FeedItem> savedQueue = DBReader.getQueue();
+        List<FeedItem> savedQueue = DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                new FeedItemFilter(FeedItemFilter.QUEUED));
         assertNotNull(savedQueue);
         assertEquals(savedQueue.size(), queue.size());
         for (int i = 0; i < queue.size(); i++) {
@@ -228,7 +230,8 @@ public class DbReaderTest {
     public void testGetDownloadedItems() {
         final int numItems = 10;
         List<FeedItem> downloaded = saveDownloadedItems(numItems);
-        List<FeedItem> downloadedSaved = DBReader.getDownloadedItems();
+        List<FeedItem> downloadedSaved = DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                new FeedItemFilter(FeedItemFilter.DOWNLOADED));
         assertNotNull(downloadedSaved);
         assertEquals(downloaded.size(), downloadedSaved.size());
         for (FeedItem item : downloadedSaved) {
@@ -272,7 +275,8 @@ public class DbReaderTest {
         for (int i = 0; i < newItems.size(); i++) {
             unreadIds[i] = newItems.get(i).getId();
         }
-        List<FeedItem> newItemsSaved = DBReader.getNewItemsList(0, Integer.MAX_VALUE);
+        List<FeedItem> newItemsSaved = DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                new FeedItemFilter(FeedItemFilter.NEW));
         assertNotNull(newItemsSaved);
         assertEquals(newItemsSaved.size(), newItems.size());
         for (FeedItem feedItem : newItemsSaved) {

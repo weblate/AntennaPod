@@ -48,6 +48,7 @@ import de.danoeh.antennapod.event.playback.BufferUpdateEvent;
 import de.danoeh.antennapod.event.playback.PlaybackServiceEvent;
 import de.danoeh.antennapod.event.PlayerErrorEvent;
 import de.danoeh.antennapod.event.playback.SleepTimerUpdatedEvent;
+import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import de.danoeh.antennapod.playback.base.PlaybackServiceMediaPlayer;
 import de.danoeh.antennapod.playback.base.PlayerStatus;
 import de.danoeh.antennapod.playback.cast.CastPsmp;
@@ -362,7 +363,9 @@ public class PlaybackService extends MediaBrowserServiceCompat {
     private void loadQueueForMediaSession() {
         Single.<List<MediaSessionCompat.QueueItem>>create(emitter -> {
             List<MediaSessionCompat.QueueItem> queueItems = new ArrayList<>();
-            for (FeedItem feedItem : DBReader.getQueue()) {
+            List<FeedItem> queue = DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                    new FeedItemFilter(FeedItemFilter.QUEUED));
+            for (FeedItem feedItem : queue) {
                 if (feedItem.getMedia() != null) {
                     MediaDescriptionCompat mediaDescription = feedItem.getMedia().getMediaItem().getDescription();
                     queueItems.add(new MediaSessionCompat.QueueItem(mediaDescription, feedItem.getId()));
@@ -430,14 +433,13 @@ public class PlaybackService extends MediaBrowserServiceCompat {
                     });
     }
 
-    private List<MediaBrowserCompat.MediaItem> loadChildrenSynchronous(@NonNull String parentId)
-            throws InterruptedException {
+    private List<MediaBrowserCompat.MediaItem> loadChildrenSynchronous(@NonNull String parentId) {
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
         if (parentId.equals(getResources().getString(R.string.app_name))) {
             mediaItems.add(createBrowsableMediaItem(R.string.queue_label, R.drawable.ic_playlist_black,
-                    DBReader.getQueue().size()));
+                    DBReader.getTotalEpisodeCount(new FeedItemFilter(FeedItemFilter.QUEUED))));
             mediaItems.add(createBrowsableMediaItem(R.string.downloads_label, R.drawable.ic_download_black,
-                    DBReader.getDownloadedItems().size()));
+                    DBReader.getTotalEpisodeCount(new FeedItemFilter(FeedItemFilter.DOWNLOADED))));
             List<Feed> feeds = DBReader.getFeedList();
             for (Feed feed : feeds) {
                 mediaItems.add(createBrowsableMediaItemForFeed(feed));
@@ -447,9 +449,9 @@ public class PlaybackService extends MediaBrowserServiceCompat {
 
         List<FeedItem> feedItems;
         if (parentId.equals(getResources().getString(R.string.queue_label))) {
-            feedItems = DBReader.getQueue();
+            feedItems = DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED));
         } else if (parentId.equals(getResources().getString(R.string.downloads_label))) {
-            feedItems = DBReader.getDownloadedItems();
+            feedItems = DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.DOWNLOADED));
         } else if (parentId.startsWith("FeedId:")) {
             long feedId = Long.parseLong(parentId.split(":")[1]);
             feedItems = DBReader.getFeedItemList(DBReader.getFeed(feedId));

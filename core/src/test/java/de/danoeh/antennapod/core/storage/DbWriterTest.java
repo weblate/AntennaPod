@@ -10,6 +10,7 @@ import androidx.core.util.Consumer;
 import androidx.preference.PreferenceManager;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import de.danoeh.antennapod.storage.database.PodDBAdapter;
 import org.awaitility.Awaitility;
 import org.junit.After;
@@ -185,7 +186,7 @@ public class DbWriterTest {
         adapter.close();
         assertTrue(media.getId() != 0);
         assertTrue(item.getId() != 0);
-        queue = DBReader.getQueue();
+        queue = DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED));
         assertTrue(queue.size() != 0);
 
         DBWriter.deleteFeedMediaOfItem(context, media.getId());
@@ -195,7 +196,8 @@ public class DbWriterTest {
         assertFalse(dest.exists());
         assertFalse(media.isDownloaded());
         assertNull(media.getFile_url());
-        Awaitility.await().timeout(2, TimeUnit.SECONDS).until(() -> DBReader.getQueue().isEmpty());
+        Awaitility.await().timeout(2, TimeUnit.SECONDS).until(() ->
+                DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED)).isEmpty());
     }
 
     @Test
@@ -377,9 +379,7 @@ public class DbWriterTest {
             assertEquals(0, c.getCount());
             c.close();
         }
-        c = adapter.getQueueCursor();
-        assertEquals(0, c.getCount());
-        c.close();
+        assertEquals(0, DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED)).size());
         adapter.close();
     }
 
@@ -807,7 +807,7 @@ public class DbWriterTest {
     }
 
     private static void assertQueueByItemIds(String message, long... itemIdsExpected) {
-        List<FeedItem> queue = DBReader.getQueue();
+        List<FeedItem> queue = DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED));
         List<Long> itemIdsActualList = toItemIds(queue);
         List<Long> itemIdsExpectedList = new ArrayList<>(itemIdsExpected.length);
         for (long id : itemIdsExpected) {

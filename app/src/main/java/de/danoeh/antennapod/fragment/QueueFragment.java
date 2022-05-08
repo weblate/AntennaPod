@@ -582,7 +582,8 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             emptyView.hide();
             progLoading.setVisibility(View.VISIBLE);
         }
-        disposable = Observable.fromCallable(DBReader::getQueue)
+        disposable = Observable.fromCallable(() -> DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                        new FeedItemFilter(FeedItemFilter.QUEUED)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(items -> {

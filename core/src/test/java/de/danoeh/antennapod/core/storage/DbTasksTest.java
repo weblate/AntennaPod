@@ -5,6 +5,7 @@ import android.content.Context;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import de.danoeh.antennapod.storage.database.PodDBAdapter;
 import org.junit.After;
 import org.junit.Before;
@@ -271,7 +272,7 @@ public class DbTasksTest {
         // Expectations:
         List<FeedItem> expectedEnqueued = Arrays.asList(fis1.get(1), fis2.get(2), fis2.get(1));
         List<FeedItem> expectedQueue = new ArrayList<>();
-        expectedQueue.addAll(DBReader.getQueue());
+        expectedQueue.addAll(DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED)));
         expectedQueue.addAll(expectedEnqueued);
 
         // Run actual test and assert results
@@ -279,7 +280,8 @@ public class DbTasksTest {
                 DBTasks.enqueueFeedItemsToDownload(context, Arrays.asList(itemsToDownload));
 
         assertEqualsByIds("Only items not in the queue are enqueued", expectedEnqueued, actualEnqueued);
-        assertEqualsByIds("Queue has new items appended", expectedQueue, DBReader.getQueue());
+        assertEqualsByIds("Queue has new items appended", expectedQueue,
+                DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED)));
     }
 
     @Test
@@ -295,14 +297,16 @@ public class DbTasksTest {
 
         // Expectations:
         List<FeedItem> expectedEnqueued = Collections.emptyList();
-        List<FeedItem> expectedQueue = DBReader.getQueue();
+        List<FeedItem> expectedQueue = DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                new FeedItemFilter(FeedItemFilter.QUEUED));
 
         // Run actual test and assert results
         List<? extends FeedItem> actualEnqueued =
                 DBTasks.enqueueFeedItemsToDownload(context, Arrays.asList(itemsToDownload));
 
         assertEqualsByIds("No item is enqueued", expectedEnqueued, actualEnqueued);
-        assertEqualsByIds("Queue is unchanged", expectedQueue, DBReader.getQueue());
+        assertEqualsByIds("Queue is unchanged", expectedQueue, DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                new FeedItemFilter(FeedItemFilter.QUEUED)));
     }
 
     private void assertEqualsByIds(String msg, List<? extends FeedItem> expected, List<? extends FeedItem> actual) {

@@ -93,13 +93,14 @@ public class FavoriteEpisodesFragment extends EpisodesListFragment {
     @NonNull
     @Override
     protected List<FeedItem> loadData() {
-        return DBReader.getFavoriteItemsList(0, page * EPISODES_PER_PAGE);
+        return DBReader.getEpisodes(0, page * EPISODES_PER_PAGE, new FeedItemFilter(FeedItemFilter.IS_FAVORITE));
     }
 
     @NonNull
     @Override
     protected List<FeedItem> loadMoreData(int page) {
-        return DBReader.getFavoriteItemsList((page - 1) * EPISODES_PER_PAGE, EPISODES_PER_PAGE);
+        return DBReader.getEpisodes((page - 1) * EPISODES_PER_PAGE, EPISODES_PER_PAGE,
+                new FeedItemFilter(FeedItemFilter.IS_FAVORITE));
     }
 
     @Override

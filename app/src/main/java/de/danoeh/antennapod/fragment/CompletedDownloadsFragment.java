@@ -34,6 +34,7 @@ import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
 import de.danoeh.antennapod.fragment.actions.EpisodeMultiSelectActionHandler;
 import de.danoeh.antennapod.menuhandler.FeedItemMenuHandler;
 import de.danoeh.antennapod.model.feed.FeedItem;
+import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import de.danoeh.antennapod.view.EmptyViewHandler;
 import de.danoeh.antennapod.view.EpisodeItemListRecyclerView;
 import de.danoeh.antennapod.view.viewholder.EpisodeItemViewHolder;
@@ -286,7 +287,8 @@ public class CompletedDownloadsFragment extends Fragment
         }
         emptyView.hide();
         disposable = Observable.fromCallable(() -> {
-            List<FeedItem> downloadedItems = DBReader.getDownloadedItems();
+            List<FeedItem> downloadedItems = DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                    new FeedItemFilter(FeedItemFilter.DOWNLOADED));
             List<Long> mediaIds = new ArrayList<>();
             if (runningDownloads == null) {
                 return downloadedItems;

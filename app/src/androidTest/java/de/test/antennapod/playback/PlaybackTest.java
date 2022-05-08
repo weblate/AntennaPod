@@ -134,7 +134,7 @@ public class PlaybackTest {
         uiTestUtils.addLocalFeedData(true);
         activityTestRule.launchActivity(new Intent());
 
-        List<FeedItem> queue = DBReader.getQueue();
+        List<FeedItem> queue = DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED));
         final FeedItem first = queue.get(0);
         final FeedItem second = queue.get(1);
 
@@ -175,7 +175,8 @@ public class PlaybackTest {
         setupPlaybackController();
 
         final int fiIdx = 0;
-        final FeedItem feedItem = DBReader.getQueue().get(fiIdx);
+        final FeedItem feedItem = DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED))
+                .get(fiIdx);
 
         playFromQueue(fiIdx);
 
@@ -189,7 +190,8 @@ public class PlaybackTest {
                 .until(() -> PlayerStatus.PAUSED == controller.getStatus());
 
         assertThat("Ensure even with smart mark as play, after pause, the item remains in the queue.",
-                DBReader.getQueue(), hasItems(feedItem));
+                DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED)),
+                hasItems(feedItem));
         assertThat("Ensure even with smart mark as play, after pause, the item played status remains false.",
                 DBReader.getFeedItem(feedItem.getId()).isPlayed(), is(false));
     }
@@ -207,11 +209,11 @@ public class PlaybackTest {
         uiTestUtils.addLocalFeedData(true);
         activityTestRule.launchActivity(new Intent());
         DBWriter.clearQueue().get();
-        List<FeedItem> queue = DBReader.getQueue();
+        List<FeedItem> queue = DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED));
         assertEquals(0, queue.size());
         startLocalPlayback();
         Awaitility.await().atMost(1, TimeUnit.SECONDS).until(
-                () -> 1 == DBReader.getQueue().size());
+                () -> 1 == DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED)).size());
     }
 
     @Test
@@ -254,7 +256,7 @@ public class PlaybackTest {
         onView(isRoot()).perform(waitForView(withText(R.string.all_episodes_short_label), 1000));
         onView(withText(R.string.all_episodes_short_label)).perform(click());
 
-        final List<FeedItem> episodes = DBReader.getRecentlyPublishedEpisodes(0, 10, FeedItemFilter.unfiltered());
+        final List<FeedItem> episodes = DBReader.getEpisodes(0, 10, FeedItemFilter.unfiltered());
         Matcher<View> allEpisodesMatcher = allOf(withId(android.R.id.list), isDisplayed(), hasMinimumChildCount(2));
         onView(isRoot()).perform(waitForView(allEpisodesMatcher, 1000));
         onView(allEpisodesMatcher).perform(actionOnItemAtPosition(0, clickChildViewWithId(R.id.secondaryActionButton)));
@@ -269,7 +271,8 @@ public class PlaybackTest {
      * @param itemIdx The 0-based index of the episode to be played in the queue.
      */
     protected void playFromQueue(int itemIdx) {
-        final List<FeedItem> queue = DBReader.getQueue();
+        final List<FeedItem> queue = DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                new FeedItemFilter(FeedItemFilter.QUEUED));
 
         Matcher<View> queueMatcher = allOf(withId(R.id.recyclerView), isDisplayed(), hasMinimumChildCount(2));
         onView(isRoot()).perform(waitForView(queueMatcher, 1000));
@@ -289,7 +292,7 @@ public class PlaybackTest {
         uiTestUtils.addLocalFeedData(true);
         DBWriter.clearQueue().get();
         activityTestRule.launchActivity(new Intent());
-        final List<FeedItem> episodes = DBReader.getRecentlyPublishedEpisodes(0, 10, FeedItemFilter.unfiltered());
+        final List<FeedItem> episodes = DBReader.getEpisodes(0, 10, FeedItemFilter.unfiltered());
 
         startLocalPlayback();
         FeedMedia media = episodes.get(0).getMedia();

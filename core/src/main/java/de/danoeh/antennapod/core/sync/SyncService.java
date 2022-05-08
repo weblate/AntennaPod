@@ -23,6 +23,7 @@ import androidx.work.WorkerParameters;
 import de.danoeh.antennapod.core.service.download.DownloadRequest;
 import de.danoeh.antennapod.core.service.download.DownloadService;
 import de.danoeh.antennapod.core.service.download.DownloadRequestCreator;
+import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
@@ -212,7 +213,8 @@ public class SyncService extends Worker {
         List<EpisodeAction> queuedEpisodeActions = synchronizationQueueStorage.getQueuedEpisodeActions();
         if (lastSync == 0) {
             EventBus.getDefault().postSticky(new SyncServiceEvent(R.string.sync_status_upload_played));
-            List<FeedItem> readItems = DBReader.getPlayedItems();
+            List<FeedItem> readItems = DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                    new FeedItemFilter(FeedItemFilter.PLAYED));
             Log.d(TAG, "First sync. Upload state for all " + readItems.size() + " played episodes");
             for (FeedItem item : readItems) {
                 FeedMedia media = item.getMedia();

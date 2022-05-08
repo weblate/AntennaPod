@@ -11,6 +11,7 @@ import de.danoeh.antennapod.core.service.download.DownloadRequest;
 import de.danoeh.antennapod.core.service.download.DownloadRequestCreator;
 import de.danoeh.antennapod.core.service.download.DownloadService;
 import de.danoeh.antennapod.model.feed.FeedItem;
+import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import de.danoeh.antennapod.model.feed.FeedPreferences;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
@@ -51,8 +52,10 @@ public class AutomaticDownloadAlgorithm {
                 Log.d(TAG, "Performing auto-dl of undownloaded episodes");
 
                 List<FeedItem> candidates;
-                final List<FeedItem> queue = DBReader.getQueue();
-                final List<FeedItem> newItems = DBReader.getNewItemsList(0, Integer.MAX_VALUE);
+                final List<FeedItem> queue = DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                        new FeedItemFilter(FeedItemFilter.QUEUED));
+                final List<FeedItem> newItems = DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                        new FeedItemFilter(FeedItemFilter.NEW));
                 candidates = new ArrayList<>(queue.size() + newItems.size());
                 candidates.addAll(queue);
                 for (FeedItem newItem : newItems) {
@@ -75,7 +78,7 @@ public class AutomaticDownloadAlgorithm {
                 }
 
                 int autoDownloadableEpisodes = candidates.size();
-                int downloadedEpisodes = DBReader.getNumberOfDownloadedEpisodes();
+                int downloadedEpisodes = DBReader.getTotalEpisodeCount(new FeedItemFilter(FeedItemFilter.DOWNLOADED));
                 int deletedEpisodes = EpisodeCleanupAlgorithmFactory.build()
                         .makeRoomForEpisodes(context, autoDownloadableEpisodes);
                 boolean cacheIsUnlimited =

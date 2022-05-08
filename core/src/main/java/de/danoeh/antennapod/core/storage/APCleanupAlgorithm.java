@@ -14,6 +14,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import de.danoeh.antennapod.model.feed.FeedItem;
+import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 
 /**
@@ -88,7 +89,8 @@ public class APCleanupAlgorithm extends EpisodeCleanupAlgorithm {
     @NonNull
     private List<FeedItem> getCandidates() {
         List<FeedItem> candidates = new ArrayList<>();
-        List<FeedItem> downloadedItems = DBReader.getDownloadedItems();
+        List<FeedItem> downloadedItems = DBReader.getEpisodes(0, Integer.MAX_VALUE,
+                new FeedItemFilter(FeedItemFilter.DOWNLOADED));
 
         Date mostRecentDateForDeletion = calcMostRecentDateForDeletion(new Date());
         for (FeedItem item : downloadedItems) {

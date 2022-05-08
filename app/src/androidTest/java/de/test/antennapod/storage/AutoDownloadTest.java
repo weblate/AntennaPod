@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import de.danoeh.antennapod.model.feed.FeedItem;
+import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
@@ -71,7 +72,7 @@ public class AutoDownloadTest {
         // Setup: feeds and queue
         // downloads 3 of them, leave some in new state (auto-downloadable)
         stubFeedsServer.addLocalFeedData(false);
-        List<FeedItem> queue = DBReader.getQueue();
+        List<FeedItem> queue = DBReader.getEpisodes(0, Integer.MAX_VALUE, new FeedItemFilter(FeedItemFilter.QUEUED));
         assertTrue(queue.size() > 1);
         FeedItem item0 = queue.get(0);
         FeedItem item1 = queue.get(1);
