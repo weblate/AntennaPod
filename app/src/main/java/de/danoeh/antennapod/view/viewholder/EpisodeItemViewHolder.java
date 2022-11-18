@@ -2,7 +2,6 @@ package de.danoeh.antennapod.view.viewholder;
 
 import android.os.Build;
 import android.text.Layout;
-import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,27 +10,18 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.joanzapata.iconify.Iconify;
-
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.CoverLoader;
-import de.danoeh.antennapod.adapter.actionbutton.ItemActionButton;
-import de.danoeh.antennapod.core.service.download.DownloadService;
-import de.danoeh.antennapod.core.util.PlaybackStatus;
-import de.danoeh.antennapod.core.util.download.MediaSizeLoader;
-import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
-import de.danoeh.antennapod.core.util.DateFormatter;
-import de.danoeh.antennapod.model.feed.FeedItem;
-import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.model.playback.MediaType;
 import de.danoeh.antennapod.core.feed.util.ImageResourceUtils;
 import de.danoeh.antennapod.core.util.Converter;
-import de.danoeh.antennapod.core.util.NetworkUtils;
+import de.danoeh.antennapod.core.util.DateFormatter;
+import de.danoeh.antennapod.core.util.PlaybackStatus;
+import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
+import de.danoeh.antennapod.model.feed.FeedItem;
+import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.playback.Playable;
 
 /**
@@ -104,10 +94,6 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
         isFavorite.setVisibility(item.isTagged(FeedItem.TAG_FAVORITE) ? View.VISIBLE : View.GONE);
         isInQueue.setVisibility(item.isTagged(FeedItem.TAG_QUEUE) ? View.VISIBLE : View.GONE);
         container.setAlpha(item.isPlayed() ? 0.5f : 1.0f);
-
-        ItemActionButton actionButton = ItemActionButton.forItem(item);
-        actionButton.configure(secondaryActionButton, secondaryActionIcon, activity);
-        secondaryActionButton.setFocusable(false);
 
         if (item.getMedia() != null) {
             bind(item.getMedia());
