@@ -23,7 +23,6 @@ import androidx.preference.PreferenceFragmentCompat;
 import com.google.android.material.snackbar.Snackbar;
 import de.danoeh.antennapod.PodcastApp;
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.activity.OpmlImportActivity;
 import de.danoeh.antennapod.activity.PreferenceActivity;
 import de.danoeh.antennapod.asynctask.DocumentFileExportWorker;
 import de.danoeh.antennapod.asynctask.ExportWorker;
@@ -257,12 +256,7 @@ public class ImportExportPreferencesFragment extends PreferenceFragmentCompat {
     }
 
     private void chooseOpmlImportPathResult(final Uri uri) {
-        if (uri == null) {
-            return;
-        }
-        final Intent intent = new Intent(getContext(), OpmlImportActivity.class);
-        intent.setData(uri);
-        startActivity(intent);
+
     }
 
     private void openExportPathPicker(Export exportType, ActivityResultLauncher<Intent> result, ExportWriter writer) {
