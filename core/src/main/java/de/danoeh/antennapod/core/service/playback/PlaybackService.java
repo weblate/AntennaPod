@@ -91,8 +91,6 @@ import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.feed.FeedPreferences;
 import de.danoeh.antennapod.model.playback.MediaType;
 import de.danoeh.antennapod.model.playback.Playable;
-import de.danoeh.antennapod.ui.appstartintent.MainActivityStarter;
-import de.danoeh.antennapod.ui.appstartintent.VideoPlayerActivityStarter;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -173,19 +171,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
      * running, the type of the last played media will be looked up.
      */
     public static Intent getPlayerActivityIntent(Context context) {
-        boolean showVideoPlayer;
-
-        if (isRunning) {
-            showVideoPlayer = currentMediaType == MediaType.VIDEO && !isCasting;
-        } else {
-            showVideoPlayer = PlaybackPreferences.getCurrentEpisodeIsVideo();
-        }
-
-        if (showVideoPlayer) {
-            return new VideoPlayerActivityStarter(context).getIntent();
-        } else {
-            return new MainActivityStarter(context).withOpenPlayer().getIntent();
-        }
+        return new Intent();
     }
 
     /**
@@ -193,11 +179,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
      * depends on the FeedMedia that is provided as an argument.
      */
     public static Intent getPlayerActivityIntent(Context context, Playable media) {
-        if (media.getMediaType() == MediaType.VIDEO && !isCasting) {
-            return new VideoPlayerActivityStarter(context).getIntent();
-        } else {
-            return new MainActivityStarter(context).withOpenPlayer().getIntent();
-        }
+        return new Intent();
     }
 
     @Override
@@ -530,52 +512,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
     }
 
     private void displayStreamingNotAllowedNotification(Intent originalIntent) {
-        Intent intentAllowThisTime = new Intent(originalIntent);
-        intentAllowThisTime.setAction(PlaybackServiceInterface.EXTRA_ALLOW_STREAM_THIS_TIME);
-        intentAllowThisTime.putExtra(PlaybackServiceInterface.EXTRA_ALLOW_STREAM_THIS_TIME, true);
-        PendingIntent pendingIntentAllowThisTime;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            pendingIntentAllowThisTime = PendingIntent.getForegroundService(this,
-                    R.id.pending_intent_allow_stream_this_time, intentAllowThisTime,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            pendingIntentAllowThisTime = PendingIntent.getService(this,
-                    R.id.pending_intent_allow_stream_this_time, intentAllowThisTime, PendingIntent.FLAG_UPDATE_CURRENT
-                            | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
-        }
 
-        Intent intentAlwaysAllow = new Intent(intentAllowThisTime);
-        intentAlwaysAllow.setAction(PlaybackServiceInterface.EXTRA_ALLOW_STREAM_ALWAYS);
-        intentAlwaysAllow.putExtra(PlaybackServiceInterface.EXTRA_ALLOW_STREAM_ALWAYS, true);
-        PendingIntent pendingIntentAlwaysAllow;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            pendingIntentAlwaysAllow = PendingIntent.getForegroundService(this,
-                    R.id.pending_intent_allow_stream_always, intentAlwaysAllow,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            pendingIntentAlwaysAllow = PendingIntent.getService(this,
-                    R.id.pending_intent_allow_stream_always, intentAlwaysAllow, PendingIntent.FLAG_UPDATE_CURRENT
-                            | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
-                NotificationUtils.CHANNEL_ID_USER_ACTION)
-                .setSmallIcon(R.drawable.ic_notification_stream)
-                .setContentTitle(getString(R.string.confirm_mobile_streaming_notification_title))
-                .setContentText(getString(R.string.confirm_mobile_streaming_notification_message))
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(getString(R.string.confirm_mobile_streaming_notification_message)))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntentAllowThisTime)
-                .addAction(R.drawable.ic_notification_stream,
-                        getString(R.string.confirm_mobile_streaming_button_once),
-                        pendingIntentAllowThisTime)
-                .addAction(R.drawable.ic_notification_stream,
-                        getString(R.string.confirm_mobile_streaming_button_always),
-                        pendingIntentAlwaysAllow)
-                .setAutoCancel(true);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(R.id.notification_streaming_confirmation, builder.build());
     }
 
     /**
@@ -1250,7 +1187,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
         }
 
         if (stateManager.hasReceivedValidStartCommand()) {
-            mediaSession.setSessionActivity(PendingIntent.getActivity(this, R.id.pending_intent_player_activity,
+            mediaSession.setSessionActivity(PendingIntent.getActivity(this, 0,
                     PlaybackService.getPlayerActivityIntent(this), PendingIntent.FLAG_UPDATE_CURRENT
                             | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0)));
             try {

@@ -25,7 +25,6 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.common.ThemeUtils;
-import de.danoeh.antennapod.ui.glide.PaletteBitmap;
 
 public class CoverLoader {
     private int resource = 0;
@@ -79,93 +78,9 @@ public class CoverLoader {
     }
 
     public void load() {
-        CoverTarget coverTarget = new CoverTarget(txtvPlaceholder, imgvCover, textAndImageCombined);
 
-        if (resource != 0) {
-            Glide.with(activity).clear(coverTarget);
-            imgvCover.setImageResource(resource);
-            CoverTarget.setPlaceholderVisibility(txtvPlaceholder, textAndImageCombined, null);
-            return;
-        }
 
-        RequestOptions options = new RequestOptions()
-                .fitCenter()
-                .dontAnimate();
-
-        RequestBuilder<PaletteBitmap> builder = Glide.with(activity)
-                .as(PaletteBitmap.class)
-                .load(uri)
-                .apply(options);
-
-        if (fallbackUri != null && txtvPlaceholder != null && imgvCover != null) {
-            builder = builder.error(Glide.with(activity)
-                    .as(PaletteBitmap.class)
-                    .load(fallbackUri)
-                    .apply(options));
-        }
-
-        builder.into(coverTarget);
     }
 
-    static class CoverTarget extends CustomViewTarget<ImageView, PaletteBitmap> {
-        private final WeakReference<TextView> placeholder;
-        private final WeakReference<ImageView> cover;
-        private boolean textAndImageCombined;
 
-        public CoverTarget(TextView txtvPlaceholder, ImageView imgvCover, boolean textAndImageCombined) {
-            super(imgvCover);
-            if (txtvPlaceholder != null) {
-                txtvPlaceholder.setVisibility(View.VISIBLE);
-            }
-            placeholder = new WeakReference<>(txtvPlaceholder);
-            cover = new WeakReference<>(imgvCover);
-            this.textAndImageCombined = textAndImageCombined;
-        }
-
-        @Override
-        public void onLoadFailed(Drawable errorDrawable) {
-            setPlaceholderVisibility(this.placeholder.get(), true, null);
-        }
-
-        @Override
-        public void onResourceReady(@NonNull PaletteBitmap resource,
-                                    @Nullable Transition<? super PaletteBitmap> transition) {
-            ImageView ivCover = cover.get();
-            ivCover.setImageBitmap(resource.bitmap);
-            setPlaceholderVisibility(placeholder.get(), textAndImageCombined, resource.palette);
-        }
-
-        @Override
-        protected void onResourceCleared(@Nullable Drawable placeholder) {
-            ImageView ivCover = cover.get();
-            ivCover.setImageDrawable(placeholder);
-            setPlaceholderVisibility(this.placeholder.get(), textAndImageCombined, null);
-        }
-
-        static void setPlaceholderVisibility(TextView placeholder, boolean textAndImageCombined, Palette palette) {
-            boolean showTitle = UserPreferences.shouldShowSubscriptionTitle();
-            if (placeholder != null) {
-                if (textAndImageCombined || showTitle) {
-                    final Context context = placeholder.getContext();
-                    placeholder.setVisibility(View.VISIBLE);
-                    int bgColor = ContextCompat.getColor(context, R.color.feed_text_bg);
-                    if (palette == null || !showTitle) {
-                        placeholder.setBackgroundColor(bgColor);
-                        placeholder.setTextColor(ThemeUtils.getColorFromAttr(placeholder.getContext(),
-                                android.R.attr.textColorPrimary));
-                        return;
-                    }
-                    int dominantColor = palette.getDominantColor(bgColor);
-                    int textColor = ContextCompat.getColor(context, R.color.white);
-                    if (ColorUtils.calculateLuminance(dominantColor) > 0.5) {
-                        textColor = ContextCompat.getColor(context, R.color.black);
-                    }
-                    placeholder.setTextColor(textColor);
-                    placeholder.setBackgroundColor(dominantColor);
-                } else {
-                    placeholder.setVisibility(View.INVISIBLE);
-                }
-            }
-        }
-    }
 }

@@ -59,7 +59,6 @@ import de.danoeh.antennapod.fragment.SubscriptionFragment;
 import de.danoeh.antennapod.fragment.TransitionEffect;
 import de.danoeh.antennapod.playback.cast.CastEnabledActivity;
 import de.danoeh.antennapod.preferences.PreferenceUpgrader;
-import de.danoeh.antennapod.ui.appstartintent.MainActivityStarter;
 import de.danoeh.antennapod.ui.common.ThemeUtils;
 import de.danoeh.antennapod.ui.home.HomeFragment;
 import de.danoeh.antennapod.view.LockableBottomSheetBehavior;
@@ -525,9 +524,6 @@ public class MainActivity extends CastEnabledActivity {
                 }
             }
             sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        } else if (intent.getBooleanExtra(MainActivityStarter.EXTRA_OPEN_PLAYER, false)) {
-            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            bottomSheetCallback.onSlide(null, 1.0f);
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             handleDeeplink(intent.getData());
         }

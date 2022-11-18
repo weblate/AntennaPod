@@ -43,7 +43,6 @@ import de.danoeh.antennapod.core.util.syndication.HtmlToPlainText;
 import de.danoeh.antennapod.menuhandler.FeedMenuHandler;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedFunding;
-import de.danoeh.antennapod.ui.glide.FastBlurTransformation;
 import de.danoeh.antennapod.ui.statistics.StatisticsFragment;
 import de.danoeh.antennapod.view.ToolbarIconTintManager;
 import io.reactivex.Completable;
@@ -206,7 +205,6 @@ public class FeedInfoFragment extends Fragment implements MaterialToolbar.OnMenu
                 .apply(new RequestOptions()
                         .placeholder(R.color.image_readability_tint)
                         .error(R.color.image_readability_tint)
-                        .transform(new FastBlurTransformation())
                         .dontAnimate())
                 .into(imgvBackground);
 

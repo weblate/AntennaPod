@@ -62,7 +62,6 @@ import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.playback.Playable;
 import de.danoeh.antennapod.playback.base.PlayerStatus;
 import de.danoeh.antennapod.playback.cast.CastEnabledActivity;
-import de.danoeh.antennapod.ui.appstartintent.MainActivityStarter;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -243,7 +242,6 @@ public class VideoplayerActivity extends CastEnabledActivity implements SeekBar.
             Log.d(TAG, "Closing, no longer video");
             destroyingDueToReload = true;
             finish();
-            new MainActivityStarter(this).withOpenPlayer().start();
             return;
         }
         showTimeLeft = UserPreferences.shouldShowRemainingTime();

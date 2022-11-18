@@ -60,7 +60,6 @@ import de.danoeh.antennapod.model.download.DownloadStatus;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedItemFilter;
-import de.danoeh.antennapod.ui.glide.FastBlurTransformation;
 import de.danoeh.antennapod.view.ToolbarIconTintManager;
 import de.danoeh.antennapod.view.viewholder.EpisodeItemViewHolder;
 import io.reactivex.Maybe;
@@ -499,23 +498,7 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
     }
 
     private void loadFeedImage() {
-        Glide.with(getActivity())
-                .load(feed.getImageUrl())
-                .apply(new RequestOptions()
-                    .placeholder(R.color.image_readability_tint)
-                    .error(R.color.image_readability_tint)
-                    .transform(new FastBlurTransformation())
-                    .dontAnimate())
-                .into(viewBinding.imgvBackground);
 
-        Glide.with(getActivity())
-                .load(feed.getImageUrl())
-                .apply(new RequestOptions()
-                    .placeholder(R.color.light_gray)
-                    .error(R.color.light_gray)
-                    .fitCenter()
-                    .dontAnimate())
-                .into(viewBinding.header.imgvCover);
     }
 
     private void loadItems() {

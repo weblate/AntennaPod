@@ -65,7 +65,6 @@ import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedPreferences;
 import de.danoeh.antennapod.model.playback.RemoteMedia;
 import de.danoeh.antennapod.parser.feed.UnsupportedFeedtypeException;
-import de.danoeh.antennapod.ui.glide.FastBlurTransformation;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -409,120 +408,7 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
      * This method is executed on the GUI thread.
      */
     private void showFeedInformation(final Feed feed, Map<String, String> alternateFeedUrls) {
-        viewBinding.progressBar.setVisibility(View.GONE);
-        viewBinding.feedDisplayContainer.setVisibility(View.VISIBLE);
-        if (isFeedFoundBySearch) {
-            int resId = R.string.no_feed_url_podcast_found_by_search;
-            Snackbar.make(findViewById(android.R.id.content), resId, Snackbar.LENGTH_LONG).show();
-        }
 
-        viewBinding.backgroundImage.setColorFilter(new LightingColorFilter(0xff828282, 0x000000));
-
-        View header = View.inflate(this, R.layout.onlinefeedview_header, null);
-
-        viewBinding.listView.addHeaderView(header);
-        viewBinding.listView.setSelector(android.R.color.transparent);
-        viewBinding.listView.setAdapter(new FeedItemlistDescriptionAdapter(this, 0, feed.getItems()));
-
-        TextView description = header.findViewById(R.id.txtvDescription);
-
-        if (StringUtils.isNotBlank(feed.getImageUrl())) {
-            Glide.with(this)
-                    .load(feed.getImageUrl())
-                    .apply(new RequestOptions()
-                        .placeholder(R.color.light_gray)
-                        .error(R.color.light_gray)
-                        .fitCenter()
-                        .dontAnimate())
-                    .into(viewBinding.coverImage);
-            Glide.with(this)
-                    .load(feed.getImageUrl())
-                    .apply(new RequestOptions()
-                            .placeholder(R.color.image_readability_tint)
-                            .error(R.color.image_readability_tint)
-                            .transform(new FastBlurTransformation())
-                            .dontAnimate())
-                    .into(viewBinding.backgroundImage);
-        }
-
-        viewBinding.titleLabel.setText(feed.getTitle());
-        viewBinding.authorLabel.setText(feed.getAuthor());
-        description.setText(HtmlToPlainText.getPlainText(feed.getDescription()));
-
-        viewBinding.subscribeButton.setOnClickListener(v -> {
-            if (feedInFeedlist()) {
-                openFeed();
-            } else {
-                Feed f = new Feed(selectedDownloadUrl, null, feed.getTitle());
-                DownloadServiceInterface.get().download(this, false, DownloadRequestCreator.create(f)
-                        .withAuthentication(username, password)
-                        .build());
-                didPressSubscribe = true;
-                handleUpdatedFeedStatus();
-            }
-        });
-
-        viewBinding.stopPreviewButton.setOnClickListener(v -> {
-            PlaybackPreferences.writeNoMediaPlaying();
-            IntentUtils.sendLocalBroadcast(this, PlaybackServiceInterface.ACTION_SHUTDOWN_PLAYBACK_SERVICE);
-        });
-
-        if (UserPreferences.isEnableAutodownload()) {
-            SharedPreferences preferences = getSharedPreferences(PREFS, MODE_PRIVATE);
-            viewBinding.autoDownloadCheckBox.setChecked(preferences.getBoolean(PREF_LAST_AUTO_DOWNLOAD, true));
-        }
-
-        final int MAX_LINES_COLLAPSED = 10;
-        description.setMaxLines(MAX_LINES_COLLAPSED);
-        description.setOnClickListener(v -> {
-            if (description.getMaxLines() > MAX_LINES_COLLAPSED) {
-                description.setMaxLines(MAX_LINES_COLLAPSED);
-            } else {
-                description.setMaxLines(2000);
-            }
-        });
-
-        if (alternateFeedUrls.isEmpty()) {
-            viewBinding.alternateUrlsSpinner.setVisibility(View.GONE);
-        } else {
-            viewBinding.alternateUrlsSpinner.setVisibility(View.VISIBLE);
-
-            final List<String> alternateUrlsList = new ArrayList<>();
-            final List<String> alternateUrlsTitleList = new ArrayList<>();
-
-            alternateUrlsList.add(feed.getDownload_url());
-            alternateUrlsTitleList.add(feed.getTitle());
-
-
-            alternateUrlsList.addAll(alternateFeedUrls.keySet());
-            for (String url : alternateFeedUrls.keySet()) {
-                alternateUrlsTitleList.add(alternateFeedUrls.get(url));
-            }
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    R.layout.alternate_urls_item, alternateUrlsTitleList) {
-                @Override
-                public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    // reusing the old view causes a visual bug on Android <= 10
-                    return super.getDropDownView(position, null, parent);
-                }
-            };
-
-            adapter.setDropDownViewResource(R.layout.alternate_urls_dropdown_item);
-            viewBinding.alternateUrlsSpinner.setAdapter(adapter);
-            viewBinding.alternateUrlsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    selectedDownloadUrl = alternateUrlsList.get(position);
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-        }
-        handleUpdatedFeedStatus();
     }
 
     private void openFeed() {

@@ -295,32 +295,7 @@ public class SyncService extends Worker {
     }
 
     private void updateErrorNotification(Exception exception) {
-        if (!UserPreferences.gpodnetNotificationsEnabled()) {
-            Log.d(TAG, "Skipping sync error notification because of user setting");
-            return;
-        }
-        Log.d(TAG, "Posting sync error notification");
-        final String description = getApplicationContext().getString(R.string.gpodnetsync_error_descr)
-                + exception.getMessage();
 
-        Intent intent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(
-                getApplicationContext().getPackageName());
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
-                R.id.pending_intent_sync_error, intent, PendingIntent.FLAG_UPDATE_CURRENT
-                        | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
-        Notification notification = new NotificationCompat.Builder(getApplicationContext(),
-                NotificationUtils.CHANNEL_ID_SYNC_ERROR)
-                .setContentTitle(getApplicationContext().getString(R.string.gpodnetsync_error_title))
-                .setContentText(description)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(description))
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.ic_notification_sync_error)
-                .setAutoCancel(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .build();
-        NotificationManager nm = (NotificationManager) getApplicationContext()
-                .getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.notify(R.id.notification_gpodnet_sync_error, notification);
     }
 
     private static OneTimeWorkRequest.Builder getWorkRequest() {
