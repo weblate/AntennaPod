@@ -11,8 +11,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import com.google.android.material.appbar.MaterialToolbar;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
@@ -21,9 +19,6 @@ import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.event.StatisticsEvent;
 import de.danoeh.antennapod.ui.common.PagedToolbarFragment;
-import de.danoeh.antennapod.ui.statistics.downloads.DownloadStatisticsFragment;
-import de.danoeh.antennapod.ui.statistics.subscriptions.SubscriptionStatisticsFragment;
-import de.danoeh.antennapod.ui.statistics.years.YearsStatisticsFragment;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -62,7 +57,6 @@ public class StatisticsFragment extends PagedToolbarFragment {
         toolbar.setTitle(getString(R.string.statistics_label));
         toolbar.inflateMenu(R.menu.statistics);
         toolbar.setNavigationOnClickListener(v -> getParentFragmentManager().popBackStack());
-        viewPager.setAdapter(new StatisticsPagerAdapter(this));
         // Give the TabLayout the ViewPager
         tabLayout = rootView.findViewById(R.id.sliding_tabs);
         super.setupPagedToolbar(toolbar, viewPager);
@@ -122,29 +116,4 @@ public class StatisticsFragment extends PagedToolbarFragment {
                         error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 
-    public static class StatisticsPagerAdapter extends FragmentStateAdapter {
-
-        StatisticsPagerAdapter(@NonNull Fragment fragment) {
-            super(fragment);
-        }
-
-        @NonNull
-        @Override
-        public Fragment createFragment(int position) {
-            switch (position) {
-                case POS_SUBSCRIPTIONS:
-                    return new SubscriptionStatisticsFragment();
-                case POS_YEARS:
-                    return new YearsStatisticsFragment();
-                default:
-                case POS_SPACE_TAKEN:
-                    return new DownloadStatisticsFragment();
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return TOTAL_COUNT;
-        }
-    }
 }

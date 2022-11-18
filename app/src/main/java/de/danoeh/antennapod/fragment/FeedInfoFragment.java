@@ -45,7 +45,6 @@ import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedFunding;
 import de.danoeh.antennapod.ui.glide.FastBlurTransformation;
 import de.danoeh.antennapod.ui.statistics.StatisticsFragment;
-import de.danoeh.antennapod.ui.statistics.feed.FeedStatisticsFragment;
 import de.danoeh.antennapod.view.ToolbarIconTintManager;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
@@ -150,9 +149,6 @@ public class FeedInfoFragment extends Fragment implements MaterialToolbar.OnMenu
         txtvUrl.setOnClickListener(copyUrlToClipboard);
 
         long feedId = getArguments().getLong(EXTRA_FEED_ID);
-        getParentFragmentManager().beginTransaction().replace(R.id.statisticsFragmentContainer,
-                        FeedStatisticsFragment.newInstance(feedId, false), "feed_statistics_fragment")
-                .commitAllowingStateLoss();
 
         root.findViewById(R.id.btnvOpenStatistics).setOnClickListener(view -> {
             StatisticsFragment fragment = new StatisticsFragment();
