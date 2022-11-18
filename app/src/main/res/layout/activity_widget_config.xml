@@ -20,14 +20,6 @@
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/teaser" />
 
-        <include
-            android:id="@+id/widget_config_preview"
-            android:layout_width="match_parent"
-            android:layout_height="96dp"
-            android:layout_gravity="center"
-            android:layout_margin="16dp"
-            layout="@layout/player_widget" />
-
     </FrameLayout>
 
     <androidx.core.widget.NestedScrollView

@@ -3,9 +3,6 @@ include ':core'
 include ':event'
 include ':model'
 
-include ':playback:base'
-include ':playback:cast'
-
 include ':storage:database'
 include ':storage:preferences'
 

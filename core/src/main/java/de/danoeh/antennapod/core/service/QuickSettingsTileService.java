@@ -13,7 +13,6 @@ import androidx.annotation.RequiresApi;
 
 import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
 import de.danoeh.antennapod.core.receiver.MediaButtonReceiver;
-import de.danoeh.antennapod.core.service.playback.PlaybackService;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class QuickSettingsTileService extends TileService {
@@ -51,15 +50,6 @@ public class QuickSettingsTileService extends TileService {
     }
 
     public void updateTile() {
-        Tile qsTile = getQsTile();
-        if (qsTile == null) {
-            Log.d(TAG, "Ignored call to update QS tile: getQsTile() returned null.");
-        } else {
-            boolean isPlaying = PlaybackService.isRunning
-                    && PlaybackPreferences.getCurrentPlayerStatus()
-                        == PlaybackPreferences.PLAYER_STATUS_PLAYING;
-            qsTile.setState(isPlaying ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
-            qsTile.updateTile();
-        }
+
     }
 }

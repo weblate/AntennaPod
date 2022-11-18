@@ -7,7 +7,6 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.playback.MediaType;
-import de.danoeh.antennapod.core.service.playback.PlaybackService;
 import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.core.util.playback.PlaybackServiceStarter;
 
@@ -31,20 +30,6 @@ public class PlayActionButton extends ItemActionButton {
 
     @Override
     public void onClick(Context context) {
-        FeedMedia media = item.getMedia();
-        if (media == null) {
-            return;
-        }
-        if (!media.fileExists()) {
-            DBTasks.notifyMissingFeedMediaFile(context, media);
-            return;
-        }
-        new PlaybackServiceStarter(context, media)
-                .callEvenIfRunning(true)
-                .start();
 
-        if (media.getMediaType() == MediaType.VIDEO) {
-            context.startActivity(PlaybackService.getPlayerActivityIntent(context, media));
-        }
     }
 }

@@ -17,7 +17,6 @@ import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.core.receiver.MediaButtonReceiver;
-import de.danoeh.antennapod.core.service.playback.PlaybackServiceInterface;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.sync.SynchronizationSettings;
 import de.danoeh.antennapod.core.sync.queue.SynchronizationQueueSink;
@@ -157,53 +156,6 @@ public class FeedItemMenuHandler {
      */
     public static void markReadWithUndo(@NonNull Fragment fragment, FeedItem item,
                                         int playState, boolean showSnackbar) {
-        if (item == null) {
-            return;
-        }
-
-        Log.d(TAG, "markReadWithUndo(" + item.getId() + ")");
-        // we're marking it as unplayed since the user didn't actually play it
-        // but they don't want it considered 'NEW' anymore
-        DBWriter.markItemPlayed(playState, item.getId());
-
-        final Handler h = new Handler(fragment.requireContext().getMainLooper());
-        final Runnable r = () -> {
-            FeedMedia media = item.getMedia();
-            if (media != null && FeedItemUtil.hasAlmostEnded(media) && UserPreferences.isAutoDelete()) {
-                DBWriter.deleteFeedMediaOfItem(fragment.requireContext(), media.getId());
-            }
-        };
-
-        int playStateStringRes;
-        switch (playState) {
-            default:
-            case FeedItem.UNPLAYED:
-                if (item.getPlayState() == FeedItem.NEW) {
-                    //was new
-                    playStateStringRes = R.string.removed_inbox_label;
-                } else {
-                    //was played
-                    playStateStringRes = R.string.marked_as_unplayed_label;
-                }
-                break;
-            case FeedItem.PLAYED:
-                playStateStringRes = R.string.marked_as_played_label;
-                break;
-        }
-
-        int duration = Snackbar.LENGTH_LONG;
-
-        if (showSnackbar) {
-            ((MainActivity) fragment.getActivity()).showSnackbarAbovePlayer(
-                    playStateStringRes, duration)
-                    .setAction(fragment.getString(R.string.undo), v -> {
-                        DBWriter.markItemPlayed(item.getPlayState(), item.getId());
-                        // don't forget to cancel the thing that's going to remove the media
-                        h.removeCallbacks(r);
-                    });
-        }
-
-        h.postDelayed(r, (int) Math.ceil(duration * 1.05f));
     }
 
     public static void removeNewFlagWithUndo(@NonNull Fragment fragment, FeedItem item) {

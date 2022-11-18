@@ -21,7 +21,6 @@ import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
 import de.danoeh.antennapod.model.feed.Chapter;
 import de.danoeh.antennapod.model.playback.Playable;
-import de.danoeh.antennapod.playback.base.PlayerStatus;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -61,14 +60,7 @@ public class ChaptersFragment extends AppCompatDialogFragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation()));
 
-        adapter = new ChaptersListAdapter(getActivity(), pos -> {
-            if (controller.getStatus() != PlayerStatus.PLAYING) {
-                controller.playPause();
-            }
-            Chapter chapter = adapter.getItem(pos);
-            controller.seekTo((int) chapter.getStart());
-            updateChapterSelection(pos, true);
-        });
+
         recyclerView.setAdapter(adapter);
 
         progressBar.setVisibility(View.VISIBLE);

@@ -154,9 +154,6 @@
                 <action android:name="de.danoeh.antennapod.FORCE_WIDGET_UPDATE"/>
                 <action android:name="de.danoeh.antennapod.STOP_WIDGET_UPDATE"/>
             </intent-filter>
-            <meta-data
-                    android:name="android.appwidget.provider"
-                    android:resource="@xml/player_widget_info"/>
         </receiver>
 
         <activity

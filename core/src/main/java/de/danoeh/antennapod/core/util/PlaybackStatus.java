@@ -1,7 +1,6 @@
 package de.danoeh.antennapod.core.util;
 
 import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
-import de.danoeh.antennapod.core.service.playback.PlaybackService;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 
 public abstract class PlaybackStatus {
@@ -10,8 +9,7 @@ public abstract class PlaybackStatus {
      * currently being played and the current player status is playing.
      */
     public static boolean isCurrentlyPlaying(FeedMedia media) {
-        return isPlaying(media) && PlaybackService.isRunning
-                && ((PlaybackPreferences.getCurrentPlayerStatus() == PlaybackPreferences.PLAYER_STATUS_PLAYING));
+        return true;
     }
 
     public static boolean isPlaying(FeedMedia media) {

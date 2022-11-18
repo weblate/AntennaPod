@@ -2,17 +2,14 @@ package de.danoeh.antennapod.core.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
-
-import android.util.Log;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.event.PlayerStatusEvent;
 import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.model.playback.MediaType;
 import de.danoeh.antennapod.model.playback.Playable;
-import de.danoeh.antennapod.playback.base.PlayerStatus;
 import org.greenrobot.eventbus.EventBus;
 
 import static de.danoeh.antennapod.model.feed.FeedPreferences.SPEED_USE_GLOBAL;
@@ -132,38 +129,6 @@ public class PlaybackPreferences implements SharedPreferences.OnSharedPreference
         editor.apply();
     }
 
-    public static void writeMediaPlaying(Playable playable, PlayerStatus playerStatus) {
-        Log.d(TAG, "Writing playback preferences");
-        SharedPreferences.Editor editor = prefs.edit();
-
-        if (playable == null) {
-            writeNoMediaPlaying();
-        } else {
-            editor.putLong(PREF_CURRENTLY_PLAYING_MEDIA_TYPE, playable.getPlayableType());
-            editor.putBoolean(PREF_CURRENT_EPISODE_IS_VIDEO, playable.getMediaType() == MediaType.VIDEO);
-            if (playable instanceof FeedMedia) {
-                FeedMedia feedMedia = (FeedMedia) playable;
-                editor.putLong(PREF_CURRENTLY_PLAYING_FEED_ID, feedMedia.getItem().getFeed().getId());
-                editor.putLong(PREF_CURRENTLY_PLAYING_FEEDMEDIA_ID, feedMedia.getId());
-            } else {
-                editor.putLong(PREF_CURRENTLY_PLAYING_FEED_ID, NO_MEDIA_PLAYING);
-                editor.putLong(PREF_CURRENTLY_PLAYING_FEEDMEDIA_ID, NO_MEDIA_PLAYING);
-            }
-            playable.writeToPreferences(editor);
-        }
-        editor.putInt(PREF_CURRENT_PLAYER_STATUS, getCurrentPlayerStatusAsInt(playerStatus));
-
-        editor.apply();
-    }
-
-    public static void writePlayerStatus(PlayerStatus playerStatus) {
-        Log.d(TAG, "Writing player status playback preferences");
-
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(PREF_CURRENT_PLAYER_STATUS, getCurrentPlayerStatusAsInt(playerStatus));
-        editor.apply();
-    }
-
     public static void setCurrentlyPlayingTemporaryPlaybackSpeed(float speed) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putFloat(PREF_CURRENTLY_PLAYING_TEMPORARY_PLAYBACK_SPEED, speed);
@@ -176,20 +141,6 @@ public class PlaybackPreferences implements SharedPreferences.OnSharedPreference
         editor.apply();
     }
 
-    private static int getCurrentPlayerStatusAsInt(PlayerStatus playerStatus) {
-        int playerStatusAsInt;
-        switch (playerStatus) {
-            case PLAYING:
-                playerStatusAsInt = PLAYER_STATUS_PLAYING;
-                break;
-            case PAUSED:
-                playerStatusAsInt = PLAYER_STATUS_PAUSED;
-                break;
-            default:
-                playerStatusAsInt = PLAYER_STATUS_OTHER;
-        }
-        return playerStatusAsInt;
-    }
 
     /**
      * Restores a playable object from a sharedPreferences file. This method might load data from the database,

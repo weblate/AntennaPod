@@ -15,7 +15,6 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -30,19 +29,12 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import androidx.annotation.Nullable;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.bumptech.glide.Glide;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.dialog.VariableSpeedDialog;
-import de.danoeh.antennapod.event.playback.BufferUpdateEvent;
-import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
-import de.danoeh.antennapod.event.PlayerErrorEvent;
-import de.danoeh.antennapod.event.playback.PlaybackServiceEvent;
-import de.danoeh.antennapod.event.playback.SleepTimerUpdatedEvent;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
-import de.danoeh.antennapod.core.service.playback.PlaybackService;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.Converter;
@@ -57,11 +49,16 @@ import de.danoeh.antennapod.dialog.PlaybackControlsDialog;
 import de.danoeh.antennapod.dialog.ShareDialog;
 import de.danoeh.antennapod.dialog.SkipPreferenceDialog;
 import de.danoeh.antennapod.dialog.SleepTimerDialog;
+import de.danoeh.antennapod.dialog.VariableSpeedDialog;
+import de.danoeh.antennapod.event.PlayerErrorEvent;
+import de.danoeh.antennapod.event.playback.BufferUpdateEvent;
+import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
+import de.danoeh.antennapod.event.playback.PlaybackServiceEvent;
+import de.danoeh.antennapod.event.playback.SleepTimerUpdatedEvent;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.playback.Playable;
-import de.danoeh.antennapod.playback.base.PlayerStatus;
-import de.danoeh.antennapod.playback.cast.CastEnabledActivity;
+import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -74,7 +71,7 @@ import org.greenrobot.eventbus.ThreadMode;
 /**
  * Activity for playing video files.
  */
-public class VideoplayerActivity extends CastEnabledActivity implements SeekBar.OnSeekBarChangeListener {
+public class VideoplayerActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
     private static final String TAG = "VideoplayerActivity";
 
     /**
@@ -117,14 +114,6 @@ public class VideoplayerActivity extends CastEnabledActivity implements SeekBar.
     protected void onResume() {
         super.onResume();
         switchToAudioOnly = false;
-        if (PlaybackService.isCasting()) {
-            Intent intent = PlaybackService.getPlayerActivityIntent(this);
-            if (!intent.getComponent().getClassName().equals(VideoplayerActivity.class.getName())) {
-                destroyingDueToReload = true;
-                finish();
-                startActivity(intent);
-            }
-        }
     }
 
     @Override
@@ -160,16 +149,6 @@ public class VideoplayerActivity extends CastEnabledActivity implements SeekBar.
         loadMediaInfo();
         onPositionObserverUpdate();
         EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onPause() {
-        if (!PictureInPictureUtil.isInPictureInPictureMode(this)) {
-            if (controller != null && controller.getStatus() == PlayerStatus.PLAYING) {
-                controller.pause();
-            }
-        }
-        super.onPause();
     }
 
     @Override
@@ -234,24 +213,7 @@ public class VideoplayerActivity extends CastEnabledActivity implements SeekBar.
     }
 
     protected void loadMediaInfo() {
-        Log.d(TAG, "loadMediaInfo()");
-        if (controller == null || controller.getMedia() == null) {
-            return;
-        }
-        if (controller.getStatus() == PlayerStatus.PLAYING && !controller.isPlayingVideoLocally()) {
-            Log.d(TAG, "Closing, no longer video");
-            destroyingDueToReload = true;
-            finish();
-            return;
-        }
-        showTimeLeft = UserPreferences.shouldShowRemainingTime();
-        onPositionObserverUpdate();
-        checkFavorite();
-        Playable media = controller.getMedia();
-        if (media != null) {
-            getSupportActionBar().setSubtitle(media.getEpisodeTitle());
-            getSupportActionBar().setTitle(media.getFeedTitle());
-        }
+
     }
 
     protected void setupView() {
@@ -452,12 +414,7 @@ public class VideoplayerActivity extends CastEnabledActivity implements SeekBar.
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            Log.d(TAG, "Videoview holder created");
-            videoSurfaceCreated = true;
-            if (controller != null && controller.getStatus() == PlayerStatus.PLAYING) {
-                controller.setVideoSurface(holder);
-            }
-            setupVideoAspectRatio();
+
         }
 
         @Override
@@ -522,9 +479,6 @@ public class VideoplayerActivity extends CastEnabledActivity implements SeekBar.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        requestCastButton(menu);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.mediaplayer, menu);
         return true;
     }
 
