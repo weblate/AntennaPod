@@ -11,11 +11,10 @@ import androidx.annotation.NonNull;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedItemFilter;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -63,19 +62,6 @@ public class InboxFragment extends EpisodesListFragment {
             return true;
         }
         if (item.getItemId() == R.id.remove_all_inbox_item) {
-            ConfirmationDialog removeAllNewFlagsConfirmationDialog = new ConfirmationDialog(getActivity(),
-                    R.string.remove_all_inbox_label,
-                    R.string.remove_all_inbox_confirmation_msg) {
-
-                @Override
-                public void onConfirmButtonPressed(DialogInterface dialog) {
-                    dialog.dismiss();
-                    DBWriter.removeAllNewFlags();
-                    ((MainActivity) getActivity()).showSnackbarAbovePlayer(
-                            R.string.removed_all_inbox_msg, Toast.LENGTH_SHORT);
-                }
-            };
-            removeAllNewFlagsConfirmationDialog.createNewDialog().show();
             return true;
         }
         return false;
@@ -84,17 +70,12 @@ public class InboxFragment extends EpisodesListFragment {
     @NonNull
     @Override
     protected List<FeedItem> loadData() {
-        return DBReader.getNewItemsList(0, page * EPISODES_PER_PAGE);
+        return Collections.emptyList();
     }
 
     @NonNull
     @Override
     protected List<FeedItem> loadMoreData(int page) {
-        return DBReader.getNewItemsList((page - 1) * EPISODES_PER_PAGE, EPISODES_PER_PAGE);
-    }
-
-    @Override
-    protected int loadTotalItemCount() {
-        return DBReader.getTotalEpisodeCount(new FeedItemFilter(FeedItemFilter.NEW));
+        return Collections.emptyList();
     }
 }

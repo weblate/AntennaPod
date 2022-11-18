@@ -8,31 +8,8 @@ import android.content.Context;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-import org.apache.commons.io.IOUtils;
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.security.DigestInputStream;
-import java.security.DigestOutputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import de.danoeh.antennapod.core.export.opml.OpmlElement;
-import de.danoeh.antennapod.core.export.opml.OpmlReader;
-import de.danoeh.antennapod.core.export.opml.OpmlWriter;
-import de.danoeh.antennapod.model.feed.Feed;
-import de.danoeh.antennapod.core.storage.DBReader;
 
 public class OpmlBackupAgent extends BackupAgentHelper {
     private static final String OPML_BACKUP_KEY = "opml";
@@ -63,57 +40,7 @@ public class OpmlBackupAgent extends BackupAgentHelper {
 
         @Override
         public void performBackup(ParcelFileDescriptor oldState, BackupDataOutput data, ParcelFileDescriptor newState) {
-            Log.d(TAG, "Performing backup");
-            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-            MessageDigest digester = null;
-            Writer writer;
 
-            try {
-                digester = MessageDigest.getInstance("MD5");
-                writer = new OutputStreamWriter(new DigestOutputStream(byteStream, digester),
-                        Charset.forName("UTF-8"));
-            } catch (NoSuchAlgorithmException e) {
-                writer = new OutputStreamWriter(byteStream, Charset.forName("UTF-8"));
-            }
-
-            try {
-                // Write OPML
-                new OpmlWriter().writeDocument(DBReader.getFeedList(), writer, mContext);
-
-                // Compare checksum of new and old file to see if we need to perform a backup at all
-                if (digester != null) {
-                    byte[] newChecksum = digester.digest();
-                    Log.d(TAG, "New checksum: " + new BigInteger(1, newChecksum).toString(16));
-
-                    // Get the old checksum
-                    if (oldState != null) {
-                        FileInputStream inState = new FileInputStream(oldState.getFileDescriptor());
-                        int len = inState.read();
-
-                        if (len != -1) {
-                            byte[] oldChecksum = new byte[len];
-                            IOUtils.read(inState, oldChecksum, 0, len);
-                            Log.d(TAG, "Old checksum: " + new BigInteger(1, oldChecksum).toString(16));
-
-                            if (Arrays.equals(oldChecksum, newChecksum)) {
-                                Log.d(TAG, "Checksums are the same; won't backup");
-                                return;
-                            }
-                        }
-                    }
-
-                    writeNewStateDescription(newState, newChecksum);
-                }
-
-                Log.d(TAG, "Backing up OPML");
-                byte[] bytes = byteStream.toByteArray();
-                data.writeEntityHeader(OPML_ENTITY_KEY, bytes.length);
-                data.writeEntityData(bytes, bytes.length);
-            } catch (IOException e) {
-                Log.e(TAG, "Error during backup", e);
-            } finally {
-                IOUtils.closeQuietly(writer);
-            }
         }
 
         @Override

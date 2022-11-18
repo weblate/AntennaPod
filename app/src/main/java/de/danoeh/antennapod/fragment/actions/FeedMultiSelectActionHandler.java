@@ -14,7 +14,6 @@ import java.util.Locale;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.databinding.PlaybackSpeedFeedSettingDialogBinding;
 import de.danoeh.antennapod.dialog.RemoveFeedDialog;
 import de.danoeh.antennapod.dialog.TagSettingsDialog;
@@ -134,7 +133,6 @@ public class FeedMultiSelectActionHandler {
     private void saveFeedPreferences(Consumer<FeedPreferences> preferencesConsumer) {
         for (Feed feed : selectedItems) {
             preferencesConsumer.accept(feed.getPreferences());
-            DBWriter.setFeedPreferences(feed.getPreferences());
         }
         showMessage(R.plurals.updated_feeds_batch_label, selectedItems.size());
     }

@@ -14,8 +14,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.adapter.SimpleChipAdapter;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.storage.NavDrawerData;
 import de.danoeh.antennapod.databinding.EditTagsDialogBinding;
 import de.danoeh.antennapod.model.feed.FeedPreferences;
@@ -105,28 +103,7 @@ public class TagSettingsDialog extends DialogFragment {
     }
 
     private void loadTags() {
-        Observable.fromCallable(
-                () -> {
-                    NavDrawerData data = DBReader.getNavDrawerData();
-                    List<NavDrawerData.DrawerItem> items = data.items;
-                    List<String> folders = new ArrayList<String>();
-                    for (NavDrawerData.DrawerItem item : items) {
-                        if (item.type == NavDrawerData.DrawerItem.Type.TAG) {
-                            folders.add(item.getTitle());
-                        }
-                    }
-                    return folders;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> {
-                            ArrayAdapter<String> acAdapter = new ArrayAdapter<String>(getContext(),
-                                    R.layout.single_tag_text_view, result);
-                            viewBinding.newTagEditText.setAdapter(acAdapter);
-                        }, error -> {
-                            Log.e(TAG, Log.getStackTraceString(error));
-                        });
+
     }
 
     private void addTag(String name) {
@@ -141,11 +118,6 @@ public class TagSettingsDialog extends DialogFragment {
     private void updatePreferencesTags(List<FeedPreferences> feedPreferencesList, Set<String> commonTags) {
         if (viewBinding.rootFolderCheckbox.isChecked()) {
             displayedTags.add(FeedPreferences.TAG_ROOT);
-        }
-        for (FeedPreferences preferences : feedPreferencesList) {
-            preferences.getTags().removeAll(commonTags);
-            preferences.getTags().addAll(displayedTags);
-            DBWriter.setFeedPreferences(preferences);
         }
     }
 }

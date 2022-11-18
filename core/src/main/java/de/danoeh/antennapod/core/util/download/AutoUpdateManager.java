@@ -19,9 +19,7 @@ import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import de.danoeh.antennapod.core.R;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.FeedUpdateWorker;
-import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.core.util.NetworkUtils;
 
 public class AutoUpdateManager {
@@ -38,16 +36,7 @@ public class AutoUpdateManager {
      * @param context Context
      */
     public static void restartUpdateAlarm(Context context) {
-        if (UserPreferences.isAutoUpdateDisabled()) {
-            disableAutoUpdate(context);
-        } else if (UserPreferences.isAutoUpdateTimeOfDay()) {
-            int[] timeOfDay = UserPreferences.getUpdateTimeOfDay();
-            Log.d(TAG, "timeOfDay: " + Arrays.toString(timeOfDay));
-            restartUpdateTimeOfDayAlarm(timeOfDay[0], timeOfDay[1], context);
-        } else {
-            long milliseconds = UserPreferences.getUpdateInterval();
-            restartUpdateIntervalAlarm(milliseconds, context);
-        }
+
     }
 
     /**
@@ -131,22 +120,10 @@ public class AutoUpdateManager {
     }
 
     private static void confirmMobileAllFeedsRefresh(final Context context) {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.feed_refresh_title)
-                .setMessage(R.string.confirm_mobile_feed_refresh_dialog_message)
-                .setPositiveButton(R.string.confirm_mobile_streaming_button_once,
-                        (dialog, which) -> startRefreshAllFeeds(context))
-                .setNeutralButton(R.string.confirm_mobile_streaming_button_always, (dialog, which) -> {
-                    UserPreferences.setAllowMobileFeedRefresh(true);
-                    startRefreshAllFeeds(context);
-                })
-                .setNegativeButton(R.string.no, null);
-        builder.show();
+
     }
 
     private static void startRefreshAllFeeds(final Context context) {
-        new Thread(() -> DBTasks.refreshAllFeeds(
-                context.getApplicationContext(), true), "ManualRefreshAllFeeds").start();
     }
 
     public static void disableAutoUpdate(Context context) {
@@ -156,11 +133,7 @@ public class AutoUpdateManager {
     private static Constraints getConstraints() {
         Constraints.Builder constraints = new Constraints.Builder();
 
-        if (UserPreferences.isAllowMobileFeedRefresh()) {
-            constraints.setRequiredNetworkType(NetworkType.CONNECTED);
-        } else {
-            constraints.setRequiredNetworkType(NetworkType.UNMETERED);
-        }
+
         return constraints.build();
     }
 

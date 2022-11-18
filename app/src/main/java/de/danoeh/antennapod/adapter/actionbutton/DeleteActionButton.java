@@ -7,7 +7,6 @@ import androidx.annotation.StringRes;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.core.storage.DBWriter;
 
 public class DeleteActionButton extends ItemActionButton {
 
@@ -29,11 +28,7 @@ public class DeleteActionButton extends ItemActionButton {
 
     @Override
     public void onClick(Context context) {
-        final FeedMedia media = item.getMedia();
-        if (media == null) {
-            return;
-        }
-        DBWriter.deleteFeedMediaOfItem(context, media.getId());
+
     }
 
     @Override

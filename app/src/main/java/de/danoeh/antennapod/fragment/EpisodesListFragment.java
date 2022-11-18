@@ -31,7 +31,6 @@ import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.core.event.DownloaderUpdate;
 import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
 import de.danoeh.antennapod.core.service.download.DownloadService;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 import de.danoeh.antennapod.event.FeedItemEvent;
@@ -425,37 +424,17 @@ public abstract class EpisodesListFragment extends Fragment
         if (disposable != null) {
             disposable.dispose();
         }
-        disposable = Observable.fromCallable(() -> new Pair<>(loadData(), loadTotalItemCount()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        data -> {
-                            episodes = data.first;
-                            hasMoreItems = !(page == 1 && episodes.size() < EPISODES_PER_PAGE);
-                            listAdapter.setDummyViews(0);
-                            listAdapter.updateItems(episodes);
-                            listAdapter.setTotalNumberOfItems(data.second);
-                            recyclerView.restoreScrollPosition(getPrefName());
-                            updateToolbar();
-                        }, error -> {
-                            listAdapter.setDummyViews(0);
-                            listAdapter.updateItems(Collections.emptyList());
-                            Log.e(TAG, Log.getStackTraceString(error));
-                        });
+;
     }
 
     @NonNull
     protected List<FeedItem> loadData() {
-        return DBReader.getRecentlyPublishedEpisodes(0, page * EPISODES_PER_PAGE, getFilter());
+        return Collections.emptyList();
     }
 
     @NonNull
     protected List<FeedItem> loadMoreData(int page) {
-        return DBReader.getRecentlyPublishedEpisodes((page - 1) * EPISODES_PER_PAGE, EPISODES_PER_PAGE, getFilter());
-    }
-
-    protected int loadTotalItemCount() {
-        return DBReader.getTotalEpisodeCount(getFilter());
+        return Collections.emptyList();
     }
 
     protected abstract FeedItemFilter getFilter();

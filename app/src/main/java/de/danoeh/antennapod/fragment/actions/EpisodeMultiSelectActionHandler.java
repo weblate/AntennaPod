@@ -11,7 +11,6 @@ import java.util.List;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.LongList;
 import de.danoeh.antennapod.model.feed.FeedItem;
 
@@ -55,13 +54,11 @@ public class EpisodeMultiSelectActionHandler {
                 toQueue.add(episode.getId());
             }
         }
-        DBWriter.addQueueItem(activity, true, toQueue.toArray());
         showMessage(R.plurals.added_to_queue_batch_label, toQueue.size());
     }
 
     private void removeFromQueueChecked(List<FeedItem> items) {
         long[] checkedIds = getSelectedIds(items);
-        DBWriter.removeQueueItem(activity, true, checkedIds);
         showMessage(R.plurals.removed_from_queue_batch_label, checkedIds.length);
     }
 
@@ -72,19 +69,16 @@ public class EpisodeMultiSelectActionHandler {
                 markUnplayed.add(episode.getId());
             }
         }
-        DBWriter.markItemPlayed(FeedItem.UNPLAYED, markUnplayed.toArray());
         showMessage(R.plurals.removed_from_inbox_batch_label, markUnplayed.size());
     }
 
     private void markedCheckedPlayed(List<FeedItem> items) {
         long[] checkedIds = getSelectedIds(items);
-        DBWriter.markItemPlayed(FeedItem.PLAYED, checkedIds);
         showMessage(R.plurals.marked_read_batch_label, checkedIds.length);
     }
 
     private void markedCheckedUnplayed(List<FeedItem> items) {
         long[] checkedIds = getSelectedIds(items);
-        DBWriter.markItemPlayed(FeedItem.UNPLAYED, checkedIds);
         showMessage(R.plurals.marked_unread_batch_label, checkedIds.length);
     }
 
@@ -98,7 +92,6 @@ public class EpisodeMultiSelectActionHandler {
         for (FeedItem feedItem : items) {
             if (feedItem.hasMedia() && feedItem.getMedia().isDownloaded()) {
                 countHasMedia++;
-                DBWriter.deleteFeedMediaOfItem(activity, feedItem.getMedia().getId());
             }
         }
         showMessage(R.plurals.deleted_multi_episode_batch_label, countHasMedia);

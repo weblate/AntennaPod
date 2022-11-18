@@ -13,8 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
-
 public class CrashReportWriter implements Thread.UncaughtExceptionHandler {
 
     private static final String TAG = "CrashReportWriter";
@@ -26,7 +24,7 @@ public class CrashReportWriter implements Thread.UncaughtExceptionHandler {
     }
 
     public static File getFile() {
-        return new File(UserPreferences.getDataFolder(null), "crash-report.log");
+        return new File("crash-report.log");
     }
 
     @Override

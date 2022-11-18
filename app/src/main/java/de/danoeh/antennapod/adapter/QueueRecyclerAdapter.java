@@ -9,7 +9,6 @@ import android.view.View;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.fragment.swipeactions.SwipeActions;
 import de.danoeh.antennapod.view.viewholder.EpisodeItemViewHolder;
 
@@ -26,11 +25,9 @@ public class QueueRecyclerAdapter extends EpisodeItemListAdapter {
     public QueueRecyclerAdapter(MainActivity mainActivity, SwipeActions swipeActions) {
         super(mainActivity);
         this.swipeActions = swipeActions;
-        dragDropEnabled = ! (UserPreferences.isQueueKeepSorted() || UserPreferences.isQueueLocked());
     }
 
     public void updateDragDropEnabled() {
-        dragDropEnabled = ! (UserPreferences.isQueueKeepSorted() || UserPreferences.isQueueLocked());
         notifyDataSetChanged();
     }
 
@@ -74,18 +71,6 @@ public class QueueRecyclerAdapter extends EpisodeItemListAdapter {
         inflater.inflate(R.menu.queue_context, menu);
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        if (!inActionMode()) {
-            menu.findItem(R.id.multi_select).setVisible(true);
-            final boolean keepSorted = UserPreferences.isQueueKeepSorted();
-            if (getItem(0).getId() == getLongPressedItem().getId() || keepSorted) {
-                menu.findItem(R.id.move_to_top_item).setVisible(false);
-            }
-            if (getItem(getItemCount() - 1).getId() == getLongPressedItem().getId() || keepSorted) {
-                menu.findItem(R.id.move_to_bottom_item).setVisible(false);
-            }
-        } else {
-            menu.findItem(R.id.move_to_top_item).setVisible(false);
-            menu.findItem(R.id.move_to_bottom_item).setVisible(false);
-        }
+
     }
 }

@@ -18,7 +18,6 @@ import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
 import de.danoeh.antennapod.core.service.download.DownloadService;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 import de.danoeh.antennapod.databinding.HomeFragmentBinding;
 import de.danoeh.antennapod.event.FeedListUpdateEvent;
@@ -168,13 +167,7 @@ public class HomeFragment extends Fragment implements Toolbar.OnMenuItemClickLis
         if (disposable != null) {
             disposable.dispose();
         }
-        disposable = Observable.fromCallable(() -> DBReader.getNavDrawerData().items.size())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(numSubscriptions -> {
-                    viewBinding.welcomeContainer.setVisibility(numSubscriptions == 0 ? View.VISIBLE : View.GONE);
-                    viewBinding.homeContainer.setVisibility(numSubscriptions == 0 ? View.GONE : View.VISIBLE);
-                }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+
     }
 
 }

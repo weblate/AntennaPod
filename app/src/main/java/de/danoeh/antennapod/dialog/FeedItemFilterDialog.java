@@ -1,7 +1,6 @@
 package de.danoeh.antennapod.dialog;
 
 import android.os.Bundle;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.model.feed.Feed;
 
 import java.util.Set;
@@ -21,6 +20,5 @@ public class FeedItemFilterDialog extends ItemFilterDialog {
     @Override
     void onFilterChanged(Set<String> newFilterValues) {
         long feedId = getArguments().getLong(ARGUMENT_FEED_ID);
-        DBWriter.setFeedItemsFilter(feedId, newFilterValues);
     }
 }

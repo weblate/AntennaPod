@@ -9,14 +9,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.event.playback.PlaybackHistoryEvent;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PlaybackHistoryFragment extends EpisodesListFragment {
@@ -66,7 +65,6 @@ public class PlaybackHistoryFragment extends EpisodesListFragment {
                 @Override
                 public void onConfirmButtonPressed(DialogInterface dialog) {
                     dialog.dismiss();
-                    DBWriter.clearPlaybackHistory();
                 }
             };
             conDialog.createNewDialog().show();
@@ -91,17 +89,13 @@ public class PlaybackHistoryFragment extends EpisodesListFragment {
     @NonNull
     @Override
     protected List<FeedItem> loadData() {
-        return DBReader.getPlaybackHistory(0, page * EPISODES_PER_PAGE);
+        return Collections.emptyList();
     }
 
     @NonNull
     @Override
     protected List<FeedItem> loadMoreData(int page) {
-        return DBReader.getPlaybackHistory((page - 1) * EPISODES_PER_PAGE, EPISODES_PER_PAGE);
+        return Collections.emptyList();
     }
 
-    @Override
-    protected int loadTotalItemCount() {
-        return (int) DBReader.getPlaybackHistoryLength();
-    }
 }

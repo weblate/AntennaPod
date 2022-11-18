@@ -27,7 +27,6 @@ import java.util.List;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.preferences.ThemeSwitcher;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.NavDrawerData;
 import de.danoeh.antennapod.databinding.SubscriptionSelectionActivityBinding;
 import de.danoeh.antennapod.model.feed.Feed;
@@ -140,23 +139,6 @@ public class SelectSubscriptionActivity extends AppCompatActivity {
         if (disposable != null) {
             disposable.dispose();
         }
-        disposable = Observable.fromCallable(
-                () -> {
-                    NavDrawerData data = DBReader.getNavDrawerData();
-                    return getFeedItems(data.items, new ArrayList<>());
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> {
-                            listItems = result;
-                            ArrayList<String> titles = new ArrayList<>();
-                            for (Feed feed: result) {
-                                titles.add(feed.getTitle());
-                            }
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                                    R.layout.simple_list_item_multiple_choice_on_start, titles);
-                            viewBinding.list.setAdapter(adapter);
-                        }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+
     }
 }

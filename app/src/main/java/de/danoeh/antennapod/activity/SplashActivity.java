@@ -14,7 +14,6 @@ import android.widget.ProgressBar;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.error.CrashReportWriter;
-import de.danoeh.antennapod.storage.database.PodDBAdapter;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -40,8 +39,6 @@ public class SplashActivity extends AppCompatActivity {
 
         Completable.create(subscriber -> {
             // Trigger schema updates
-            PodDBAdapter.getInstance().open();
-            PodDBAdapter.getInstance().close();
             subscriber.onComplete();
         })
                 .subscribeOn(Schedulers.io())

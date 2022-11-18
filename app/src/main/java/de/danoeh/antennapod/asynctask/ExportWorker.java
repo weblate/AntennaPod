@@ -11,8 +11,6 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
 import de.danoeh.antennapod.core.export.ExportWriter;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
-import de.danoeh.antennapod.core.storage.DBReader;
 import io.reactivex.Observable;
 
 /**
@@ -29,7 +27,7 @@ public class ExportWorker {
     private final Context context;
 
     public ExportWorker(@NonNull ExportWriter exportWriter, Context context) {
-        this(exportWriter, new File(UserPreferences.getDataFolder(EXPORT_DIR),
+        this(exportWriter, new File(
                 DEFAULT_OUTPUT_NAME + "." + exportWriter.fileExtension()), context);
     }
 
@@ -45,23 +43,7 @@ public class ExportWorker {
             Log.w(TAG, "Overwriting previously exported file: " + success);
         }
         return Observable.create(subscriber -> {
-            OutputStreamWriter writer = null;
-            try {
-                writer = new OutputStreamWriter(new FileOutputStream(output), Charset.forName("UTF-8"));
-                exportWriter.writeDocument(DBReader.getFeedList(), writer, context);
-                subscriber.onNext(output);
-            } catch (IOException e) {
-                subscriber.onError(e);
-            } finally {
-                if (writer != null) {
-                    try {
-                        writer.close();
-                    } catch (IOException e) {
-                        subscriber.onError(e);
-                    }
-                }
                 subscriber.onComplete();
-            }
         });
     }
 

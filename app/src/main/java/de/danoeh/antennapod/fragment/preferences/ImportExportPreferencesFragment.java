@@ -31,7 +31,6 @@ import de.danoeh.antennapod.core.export.ExportWriter;
 import de.danoeh.antennapod.core.export.favorites.FavoritesWriter;
 import de.danoeh.antennapod.core.export.html.HtmlWriter;
 import de.danoeh.antennapod.core.export.opml.OpmlWriter;
-import de.danoeh.antennapod.core.storage.DatabaseExporter;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -246,13 +245,7 @@ public class ImportExportPreferencesFragment extends PreferenceFragmentCompat {
         }
         final Uri uri = result.getData().getData();
         progressDialog.show();
-        disposable = Completable.fromAction(() -> DatabaseExporter.importBackup(uri, getContext()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    showDatabaseImportSuccessDialog();
-                    progressDialog.dismiss();
-                }, this::showExportErrorDialog);
+
     }
 
     private void backupDatabaseResult(final Uri uri) {
@@ -260,13 +253,7 @@ public class ImportExportPreferencesFragment extends PreferenceFragmentCompat {
             return;
         }
         progressDialog.show();
-        disposable = Completable.fromAction(() -> DatabaseExporter.exportToDocument(uri, getContext()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    Snackbar.make(getView(), R.string.export_success_title, Snackbar.LENGTH_LONG).show();
-                    progressDialog.dismiss();
-                }, this::showExportErrorDialog);
+
     }
 
     private void chooseOpmlImportPathResult(final Uri uri) {

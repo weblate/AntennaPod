@@ -35,8 +35,6 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.IntentUtils;
@@ -58,7 +56,6 @@ import de.danoeh.antennapod.event.playback.SleepTimerUpdatedEvent;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.playback.Playable;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -217,59 +214,7 @@ public class VideoplayerActivity extends AppCompatActivity implements SeekBar.On
     }
 
     protected void setupView() {
-        showTimeLeft = UserPreferences.shouldShowRemainingTime();
-        Log.d("timeleft", showTimeLeft ? "true" : "false");
-        viewBinding.durationLabel.setOnClickListener(v -> {
-            showTimeLeft = !showTimeLeft;
-            Playable media = controller.getMedia();
-            if (media == null) {
-                return;
-            }
 
-            TimeSpeedConverter converter = new TimeSpeedConverter(controller.getCurrentPlaybackSpeedMultiplier());
-            String length;
-            if (showTimeLeft) {
-                int remainingTime = converter.convert(media.getDuration() - media.getPosition());
-                length = "-" + Converter.getDurationStringLong(remainingTime);
-            } else {
-                int duration = converter.convert(media.getDuration());
-                length = Converter.getDurationStringLong(duration);
-            }
-            viewBinding.durationLabel.setText(length);
-
-            UserPreferences.setShowRemainTimeSetting(showTimeLeft);
-            Log.d("timeleft on click", showTimeLeft ? "true" : "false");
-        });
-
-        viewBinding.sbPosition.setOnSeekBarChangeListener(this);
-        viewBinding.rewindButton.setOnClickListener(v -> onRewind());
-        viewBinding.rewindButton.setOnLongClickListener(v -> {
-            SkipPreferenceDialog.showSkipPreference(VideoplayerActivity.this,
-                    SkipPreferenceDialog.SkipDirection.SKIP_REWIND, null);
-            return true;
-        });
-        viewBinding.playButton.setIsVideoScreen(true);
-        viewBinding.playButton.setOnClickListener(v -> onPlayPause());
-        viewBinding.fastForwardButton.setOnClickListener(v -> onFastForward());
-        viewBinding.fastForwardButton.setOnLongClickListener(v -> {
-            SkipPreferenceDialog.showSkipPreference(VideoplayerActivity.this,
-                    SkipPreferenceDialog.SkipDirection.SKIP_FORWARD, null);
-            return false;
-        });
-        // To suppress touches directly below the slider
-        viewBinding.bottomControlsContainer.setOnTouchListener((view, motionEvent) -> true);
-        viewBinding.bottomControlsContainer.setFitsSystemWindows(true);
-        viewBinding.videoView.getHolder().addCallback(surfaceHolderCallback);
-        viewBinding.videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-
-        setupVideoControlsToggler();
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        viewBinding.videoPlayerContainer.setOnTouchListener(onVideoviewTouched);
-        viewBinding.videoPlayerContainer.getViewTreeObserver().addOnGlobalLayoutListener(() ->
-                viewBinding.videoView.setAvailableSize(
-                        viewBinding.videoPlayerContainer.getWidth(), viewBinding.videoPlayerContainer.getHeight()));
     }
 
     private final Runnable hideVideoControls = () -> {
@@ -381,12 +326,7 @@ public class VideoplayerActivity extends AppCompatActivity implements SeekBar.On
     }
 
     void onRewind() {
-        if (controller == null) {
-            return;
-        }
-        int curr = controller.getPosition();
-        controller.seekTo(curr - UserPreferences.getRewindSecs() * 1000);
-        setupVideoControlsToggler();
+
     }
 
     void onPlayPause() {
@@ -398,12 +338,7 @@ public class VideoplayerActivity extends AppCompatActivity implements SeekBar.On
     }
 
     void onFastForward() {
-        if (controller == null) {
-            return;
-        }
-        int curr = controller.getPosition();
-        controller.seekTo(curr + UserPreferences.getFastForwardSecs() * 1000);
-        setupVideoControlsToggler();
+
     }
 
     private final SurfaceHolder.Callback surfaceHolderCallback = new SurfaceHolder.Callback() {
@@ -518,55 +453,7 @@ public class VideoplayerActivity extends AppCompatActivity implements SeekBar.On
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.player_switch_to_audio_only) {
-            switchToAudioOnly = true;
-            finish();
-            return true;
-        }
-        if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(VideoplayerActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP  | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
-            return true;
-        }
 
-        if (controller == null) {
-            return false;
-        }
-
-        Playable media = controller.getMedia();
-        if (media == null) {
-            return false;
-        }
-        final @Nullable FeedItem feedItem = getFeedItem(media); // some options option requires FeedItem
-        if (item.getItemId() == R.id.add_to_favorites_item && feedItem != null) {
-            DBWriter.addFavoriteItem(feedItem);
-            isFavorite = true;
-            invalidateOptionsMenu();
-        } else if (item.getItemId() == R.id.remove_from_favorites_item && feedItem != null) {
-            DBWriter.removeFavoriteItem(feedItem);
-            isFavorite = false;
-            invalidateOptionsMenu();
-        } else if (item.getItemId() == R.id.disable_sleeptimer_item
-                || item.getItemId() == R.id.set_sleeptimer_item) {
-            new SleepTimerDialog().show(getSupportFragmentManager(), "SleepTimerDialog");
-        } else if (item.getItemId() == R.id.audio_controls) {
-            PlaybackControlsDialog dialog = PlaybackControlsDialog.newInstance();
-            dialog.show(getSupportFragmentManager(), "playback_controls");
-        } else if (item.getItemId() == R.id.open_feed_item && feedItem != null) {
-            Intent intent = MainActivity.getIntentToOpenFeed(this, feedItem.getFeedId());
-            startActivity(intent);
-        } else if (item.getItemId() == R.id.visit_website_item) {
-            IntentUtils.openInBrowser(VideoplayerActivity.this, getWebsiteLinkWithFallback(media));
-        } else if (item.getItemId() == R.id.share_item && feedItem != null) {
-            ShareDialog shareDialog = ShareDialog.newInstance(feedItem);
-            shareDialog.show(getSupportFragmentManager(), "ShareEpisodeDialog");
-        } else if (item.getItemId() == R.id.playback_speed) {
-            new VariableSpeedDialog().show(getSupportFragmentManager(), null);
-        } else {
-            return false;
-        }
         return true;
     }
 
@@ -652,26 +539,7 @@ public class VideoplayerActivity extends AppCompatActivity implements SeekBar.On
         setupVideoControlsToggler();
     }
 
-    private void checkFavorite() {
-        FeedItem feedItem = getFeedItem(controller.getMedia());
-        if (feedItem == null) {
-            return;
-        }
-        if (disposable != null) {
-            disposable.dispose();
-        }
-        disposable = Observable.fromCallable(() -> DBReader.getFeedItem(feedItem.getId()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        item -> {
-                            boolean isFav = item.isTagged(FeedItem.TAG_FAVORITE);
-                            if (isFavorite != isFav) {
-                                isFavorite = isFav;
-                                invalidateOptionsMenu();
-                            }
-                        }, error -> Log.e(TAG, Log.getStackTraceString(error)));
-    }
+
 
     @Nullable
     private static FeedItem getFeedItem(@Nullable Playable playable) {

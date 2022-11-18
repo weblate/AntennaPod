@@ -36,8 +36,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.joanzapata.iconify.Iconify;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.core.util.syndication.HtmlToPlainText;
 import de.danoeh.antennapod.menuhandler.FeedMenuHandler;
@@ -159,21 +157,7 @@ public class FeedInfoFragment extends Fragment implements MaterialToolbar.OnMenu
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        long feedId = getArguments().getLong(EXTRA_FEED_ID);
-        disposable = Maybe.create((MaybeOnSubscribe<Feed>) emitter -> {
-            Feed feed = DBReader.getFeed(feedId);
-            if (feed != null) {
-                emitter.onSuccess(feed);
-            } else {
-                emitter.onComplete();
-            }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
-                    feed = result;
-                    showFeed();
-                }, error -> Log.d(TAG, Log.getStackTraceString(error)), () -> { });
+
     }
 
     @Override
@@ -308,27 +292,7 @@ public class FeedInfoFragment extends Fragment implements MaterialToolbar.OnMenu
     }
 
     private void reconnectLocalFolder(Uri uri) {
-        if (Build.VERSION.SDK_INT < 21 || feed == null) {
-            return;
-        }
 
-        Completable.fromAction(() -> {
-            getActivity().getContentResolver()
-                    .takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            DocumentFile documentFile = DocumentFile.fromTreeUri(getContext(), uri);
-            if (documentFile == null) {
-                throw new IllegalArgumentException("Unable to retrieve document tree");
-            }
-            feed.setDownload_url(Feed.PREFIX_LOCAL_FOLDER + uri.toString());
-            DBTasks.updateFeed(getContext(), feed, true);
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        () -> ((MainActivity) getActivity())
-                                .showSnackbarAbovePlayer(android.R.string.ok, Snackbar.LENGTH_SHORT),
-                        error -> ((MainActivity) getActivity())
-                                .showSnackbarAbovePlayer(error.getLocalizedMessage(), Snackbar.LENGTH_LONG));
     }
 
     private static class AddLocalFolder extends ActivityResultContracts.OpenDocumentTree {

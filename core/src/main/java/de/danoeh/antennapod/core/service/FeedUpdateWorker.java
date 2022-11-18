@@ -8,8 +8,6 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import de.danoeh.antennapod.core.ClientConfigurator;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
-import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.core.util.NetworkUtils;
 import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 
@@ -29,18 +27,6 @@ public class FeedUpdateWorker extends Worker {
         final boolean isRunOnce = getInputData().getBoolean(PARAM_RUN_ONCE, false);
         Log.d(TAG, "doWork() : isRunOnce = " + isRunOnce);
         ClientConfigurator.initialize(getApplicationContext());
-
-        if (NetworkUtils.networkAvailable() && NetworkUtils.isFeedRefreshAllowed()) {
-            DBTasks.refreshAllFeeds(getApplicationContext(), false);
-        } else {
-            Log.d(TAG, "Blocking automatic update: no wifi available / no mobile updates allowed");
-        }
-
-        if (!isRunOnce && UserPreferences.isAutoUpdateTimeOfDay()) {
-            // WorkManager does not allow to set specific time for repeated tasks.
-            // We repeatedly schedule a OneTimeWorkRequest instead.
-            AutoUpdateManager.restartUpdateAlarm(getApplicationContext());
-        }
 
         return Result.success();
     }

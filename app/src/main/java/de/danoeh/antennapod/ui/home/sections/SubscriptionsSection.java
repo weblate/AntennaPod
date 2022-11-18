@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.HorizontalFeedListAdapter;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.event.FeedListUpdateEvent;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 import de.danoeh.antennapod.model.feed.Feed;
@@ -72,18 +71,6 @@ public class SubscriptionsSection extends HomeSection {
         if (disposable != null) {
             disposable.dispose();
         }
-        disposable = Observable.fromCallable(() -> DBReader.getStatistics(true, 0, Long.MAX_VALUE).feedTime)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(statisticsData -> {
-                    Collections.sort(statisticsData, (item1, item2) ->
-                            Long.compare(item2.timePlayed, item1.timePlayed));
-                    List<Feed> feeds = new ArrayList<>();
-                    for (int i = 0; i < statisticsData.size() && i < NUM_FEEDS; i++) {
-                        feeds.add(statisticsData.get(i).feed);
-                    }
-                    listAdapter.setDummyViews(0);
-                    listAdapter.updateData(feeds);
-                }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+
     }
 }

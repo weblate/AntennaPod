@@ -1,18 +1,14 @@
 package de.danoeh.antennapod.core.service;
 
 import android.text.TextUtils;
-import android.util.Log;
 import androidx.annotation.NonNull;
-import de.danoeh.antennapod.core.service.download.HttpCredentialEncoder;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.util.URIUtil;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.List;
-
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.List;
 
 public class BasicAuthorizationInterceptor implements Interceptor {
     private static final String TAG = "BasicAuthInterceptor";

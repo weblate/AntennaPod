@@ -7,23 +7,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
-import com.google.android.material.appbar.MaterialToolbar;
 import androidx.viewpager2.widget.ViewPager2;
-
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
-import de.danoeh.antennapod.core.storage.DBWriter;
-import de.danoeh.antennapod.event.StatisticsEvent;
 import de.danoeh.antennapod.ui.common.PagedToolbarFragment;
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import org.greenrobot.eventbus.EventBus;
 
 /**
  * Displays the 'statistics' screen
@@ -109,11 +99,6 @@ public class StatisticsFragment extends PagedToolbarFragment {
                 .putLong(PREF_FILTER_TO, Long.MAX_VALUE)
                 .apply();
 
-        Disposable disposable = Completable.fromFuture(DBWriter.resetStatistics())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> EventBus.getDefault().post(new StatisticsEvent()),
-                        error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 
 }

@@ -6,7 +6,6 @@ import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.playback.MediaType;
 import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.model.playback.Playable;
 
 import static de.danoeh.antennapod.model.feed.FeedPreferences.SPEED_USE_GLOBAL;
@@ -27,26 +26,6 @@ public final class PlaybackSpeedUtils {
         float playbackSpeed = SPEED_USE_GLOBAL;
         MediaType mediaType = null;
 
-        if (media != null) {
-            mediaType = media.getMediaType();
-            playbackSpeed = PlaybackPreferences.getCurrentlyPlayingTemporaryPlaybackSpeed();
-
-            if (playbackSpeed == SPEED_USE_GLOBAL && media instanceof FeedMedia) {
-                FeedItem item = ((FeedMedia) media).getItem();
-                if (item != null) {
-                    Feed feed = item.getFeed();
-                    if (feed != null && feed.getPreferences() != null) {
-                        playbackSpeed = feed.getPreferences().getFeedPlaybackSpeed();
-                    } else {
-                        Log.d(TAG, "Can not get feed specific playback speed: " + feed);
-                    }
-                }
-            }
-        }
-
-        if (playbackSpeed == SPEED_USE_GLOBAL) {
-            playbackSpeed = UserPreferences.getPlaybackSpeed(mediaType);
-        }
 
         return playbackSpeed;
     }

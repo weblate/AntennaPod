@@ -23,8 +23,6 @@ android {
 dependencies {
     implementation project(':event')
     implementation project(':model')
-    implementation project(':storage:database')
-    implementation project(':storage:preferences')
     implementation project(':ui:common')
     implementation project(':ui:i18n')
     implementation project(':ui:png-icons')

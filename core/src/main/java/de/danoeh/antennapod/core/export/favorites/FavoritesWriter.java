@@ -17,7 +17,6 @@ import java.util.TreeMap;
 import de.danoeh.antennapod.core.export.ExportWriter;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
-import de.danoeh.antennapod.core.storage.DBReader;
 
 /** Writes saved favorites to file. */
 public class FavoritesWriter implements ExportWriter {
@@ -29,38 +28,6 @@ public class FavoritesWriter implements ExportWriter {
     @Override
     public void writeDocument(List<Feed> feeds, Writer writer, Context context)
             throws IllegalArgumentException, IllegalStateException, IOException {
-        Log.d(TAG, "Starting to write document");
-
-        InputStream templateStream = context.getAssets().open("html-export-template.html");
-        String template = IOUtils.toString(templateStream, UTF_8);
-        template = template.replaceAll("\\{TITLE\\}", "Favorites");
-        String[] templateParts = template.split("\\{FEEDS\\}");
-
-        InputStream favTemplateStream = context.getAssets().open(FAVORITE_TEMPLATE);
-        String favTemplate = IOUtils.toString(favTemplateStream, UTF_8);
-
-        InputStream feedTemplateStream = context.getAssets().open(FEED_TEMPLATE);
-        String feedTemplate = IOUtils.toString(feedTemplateStream, UTF_8);
-
-        List<FeedItem> allFavorites = DBReader.getRecentlyPublishedEpisodes(0, Integer.MAX_VALUE,
-                new FeedItemFilter(FeedItemFilter.IS_FAVORITE));
-        Map<Long, List<FeedItem>> favoriteByFeed = getFeedMap(allFavorites);
-
-        writer.append(templateParts[0]);
-
-        for (Long feedId : favoriteByFeed.keySet()) {
-            List<FeedItem> favorites = favoriteByFeed.get(feedId);
-            writer.append("<li><div>\n");
-            writeFeed(writer, favorites.get(0).getFeed(), feedTemplate);
-
-            writer.append("<ul>\n");
-            for (FeedItem item : favorites) {
-                writeFavoriteItem(writer, item, favTemplate);
-            }
-            writer.append("</ul></div></li>\n");
-        }
-
-        writer.append(templateParts[1]);
 
         Log.d(TAG, "Finished writing document");
     }

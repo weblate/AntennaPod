@@ -2,7 +2,6 @@ package de.danoeh.antennapod.fragment;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,22 +14,14 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.adapter.DownloadLogAdapter;
-import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.core.event.DownloadLogEvent;
-import de.danoeh.antennapod.core.event.DownloaderUpdate;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.databinding.DownloadLogFragmentBinding;
 import de.danoeh.antennapod.dialog.DownloadLogDetailsDialog;
 import de.danoeh.antennapod.model.download.DownloadStatus;
 import de.danoeh.antennapod.view.EmptyViewHandler;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +105,6 @@ public class DownloadLogFragment extends BottomSheetDialogFragment
         if (super.onOptionsItemSelected(item)) {
             return true;
         } else if (item.getItemId() == R.id.clear_logs_item) {
-            DBWriter.clearDownloadLog();
             return true;
         }
         return false;
@@ -124,14 +114,6 @@ public class DownloadLogFragment extends BottomSheetDialogFragment
         if (disposable != null) {
             disposable.dispose();
         }
-        disposable = Observable.fromCallable(DBReader::getDownloadLog)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
-                    if (result != null) {
-                        downloadLog = result;
-                        adapter.setDownloadLog(downloadLog);
-                    }
-                }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+
     }
 }

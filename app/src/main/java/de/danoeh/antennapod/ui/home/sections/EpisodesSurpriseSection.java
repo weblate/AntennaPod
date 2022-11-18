@@ -16,7 +16,6 @@ import de.danoeh.antennapod.adapter.HorizontalItemListAdapter;
 import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.core.event.DownloaderUpdate;
 import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.event.FeedItemEvent;
 import de.danoeh.antennapod.event.PlayerStatusEvent;
@@ -143,13 +142,6 @@ public class EpisodesSurpriseSection extends HomeSection {
         if (disposable != null) {
             disposable.dispose();
         }
-        disposable = Observable.fromCallable(() -> DBReader.getRandomEpisodes(NUM_EPISODES, seed))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(episodes -> {
-                    this.episodes = episodes;
-                    listAdapter.setDummyViews(0);
-                    listAdapter.updateData(episodes);
-                }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+
     }
 }

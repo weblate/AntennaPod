@@ -1,6 +1,5 @@
 package de.danoeh.antennapod.core.util;
 
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 
 public class TimeSpeedConverter {
     private final float speed;
@@ -14,10 +13,6 @@ public class TimeSpeedConverter {
      * @return converted time (can be < 0 if time is < 0)
      */
     public int convert(int time) {
-        boolean timeRespectsSpeed = UserPreferences.timeRespectsSpeed();
-        if (time > 0 && timeRespectsSpeed) {
-            return (int)(time / speed);
-        }
         return time;
     }
 }

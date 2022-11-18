@@ -16,13 +16,13 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.appbar.MaterialToolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.leinardi.android.speeddial.SpeedDialView;
 import de.danoeh.antennapod.R;
@@ -34,10 +34,7 @@ import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.core.event.DownloaderUpdate;
 import de.danoeh.antennapod.core.feed.util.PlaybackSpeedUtils;
 import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.download.DownloadService;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
@@ -253,143 +250,25 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
     }
 
     private void refreshToolbarState() {
-        boolean keepSorted = UserPreferences.isQueueKeepSorted();
-        toolbar.getMenu().findItem(R.id.queue_lock).setChecked(UserPreferences.isQueueLocked());
-        toolbar.getMenu().findItem(R.id.queue_lock).setVisible(!keepSorted);
-        toolbar.getMenu().findItem(R.id.queue_sort_random).setVisible(!keepSorted);
-        toolbar.getMenu().findItem(R.id.queue_keep_sorted).setChecked(keepSorted);
         MenuItemUtils.updateRefreshMenuItem(toolbar.getMenu(),
                 R.id.refresh_item, DownloadService.isRunning && DownloadService.isDownloadingFeeds());
     }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        final int itemId = item.getItemId();
-        if (itemId == R.id.queue_lock) {
-            toggleQueueLock();
-            return true;
-        } else if (itemId == R.id.refresh_item) {
-            AutoUpdateManager.runImmediate(requireContext());
-            return true;
-        } else if (itemId == R.id.clear_queue) {
-            // make sure the user really wants to clear the queue
-            ConfirmationDialog conDialog = new ConfirmationDialog(getActivity(),
-                    R.string.clear_queue_label,
-                    R.string.clear_queue_confirmation_msg) {
 
-                @Override
-                public void onConfirmButtonPressed(
-                        DialogInterface dialog) {
-                    dialog.dismiss();
-                    DBWriter.clearQueue();
-                }
-            };
-            conDialog.createNewDialog().show();
-            return true;
-        } else if (itemId == R.id.queue_sort_episode_title_asc) {
-            setSortOrder(SortOrder.EPISODE_TITLE_A_Z);
-            return true;
-        } else if (itemId == R.id.queue_sort_episode_title_desc) {
-            setSortOrder(SortOrder.EPISODE_TITLE_Z_A);
-            return true;
-        } else if (itemId == R.id.queue_sort_date_asc) {
-            setSortOrder(SortOrder.DATE_OLD_NEW);
-            return true;
-        } else if (itemId == R.id.queue_sort_date_desc) {
-            setSortOrder(SortOrder.DATE_NEW_OLD);
-            return true;
-        } else if (itemId == R.id.queue_sort_duration_asc) {
-            setSortOrder(SortOrder.DURATION_SHORT_LONG);
-            return true;
-        } else if (itemId == R.id.queue_sort_duration_desc) {
-            setSortOrder(SortOrder.DURATION_LONG_SHORT);
-            return true;
-        } else if (itemId == R.id.queue_sort_feed_title_asc) {
-            setSortOrder(SortOrder.FEED_TITLE_A_Z);
-            return true;
-        } else if (itemId == R.id.queue_sort_feed_title_desc) {
-            setSortOrder(SortOrder.FEED_TITLE_Z_A);
-            return true;
-        } else if (itemId == R.id.queue_sort_random) {
-            setSortOrder(SortOrder.RANDOM);
-            return true;
-        } else if (itemId == R.id.queue_sort_smart_shuffle_asc) {
-            setSortOrder(SortOrder.SMART_SHUFFLE_OLD_NEW);
-            return true;
-        } else if (itemId == R.id.queue_sort_smart_shuffle_desc) {
-            setSortOrder(SortOrder.SMART_SHUFFLE_NEW_OLD);
-            return true;
-        } else if (itemId == R.id.queue_keep_sorted) {
-            boolean keepSortedOld = UserPreferences.isQueueKeepSorted();
-            boolean keepSortedNew = !keepSortedOld;
-            UserPreferences.setQueueKeepSorted(keepSortedNew);
-            if (keepSortedNew) {
-                SortOrder sortOrder = UserPreferences.getQueueKeepSortedOrder();
-                DBWriter.reorderQueue(sortOrder, true);
-            }
-            if (recyclerAdapter != null) {
-                recyclerAdapter.updateDragDropEnabled();
-            }
-            refreshToolbarState();
-            return true;
-        } else if (itemId == R.id.action_search) {
-            ((MainActivity) getActivity()).loadChildFragment(SearchFragment.newInstance());
-            return true;
-        }
         return false;
     }
 
     private void toggleQueueLock() {
-        boolean isLocked = UserPreferences.isQueueLocked();
-        if (isLocked) {
-            setQueueLocked(false);
-        } else {
-            boolean shouldShowLockWarning = prefs.getBoolean(PREF_SHOW_LOCK_WARNING, true);
-            if (!shouldShowLockWarning) {
-                setQueueLocked(true);
-            } else {
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
-                builder.setTitle(R.string.lock_queue);
-                builder.setMessage(R.string.queue_lock_warning);
 
-                View view = View.inflate(getContext(), R.layout.checkbox_do_not_show_again, null);
-                CheckBox checkDoNotShowAgain = view.findViewById(R.id.checkbox_do_not_show_again);
-                builder.setView(view);
-
-                builder.setPositiveButton(R.string.lock_queue, (dialog, which) -> {
-                    prefs.edit().putBoolean(PREF_SHOW_LOCK_WARNING, !checkDoNotShowAgain.isChecked()).apply();
-                    setQueueLocked(true);
-                });
-                builder.setNegativeButton(R.string.cancel_label, null);
-                builder.show();
-            }
-        }
     }
 
     private void setQueueLocked(boolean locked) {
-        UserPreferences.setQueueLocked(locked);
-        refreshToolbarState();
-        if (recyclerAdapter != null) {
-            recyclerAdapter.updateDragDropEnabled();
-        }
-        if (queue.size() == 0) {
-            if (locked) {
-                ((MainActivity) getActivity()).showSnackbarAbovePlayer(R.string.queue_locked, Snackbar.LENGTH_SHORT);
-            } else {
-                ((MainActivity) getActivity()).showSnackbarAbovePlayer(R.string.queue_unlocked, Snackbar.LENGTH_SHORT);
-            }
-        }
+
     }
 
-    /**
-     * This method is called if the user clicks on a sort order menu item.
-     *
-     * @param sortOrder New sort order.
-     */
-    private void setSortOrder(SortOrder sortOrder) {
-        UserPreferences.setQueueKeepSortedOrder(sortOrder);
-        DBWriter.reorderQueue(sortOrder, true);
-    }
+
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -412,18 +291,7 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
             return true;
         }
 
-        final int itemId = item.getItemId();
-        if (itemId == R.id.move_to_top_item) {
-            queue.add(0, queue.remove(position));
-            recyclerAdapter.notifyItemMoved(position, 0);
-            DBWriter.moveQueueItemToTop(selectedItem.getId(), true);
-            return true;
-        } else if (itemId == R.id.move_to_bottom_item) {
-            queue.add(queue.size() - 1, queue.remove(position));
-            recyclerAdapter.notifyItemMoved(position, queue.size() - 1);
-            DBWriter.moveQueueItemToBottom(selectedItem.getId(), true);
-            return true;
-        }
+
         return FeedItemMenuHandler.onMenuItemClicked(this, item.getItemId(), selectedItem);
     }
 
@@ -530,13 +398,6 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
             long timeLeft = 0;
             for (FeedItem item : queue) {
                 float playbackSpeed = 1;
-                if (UserPreferences.timeRespectsSpeed()) {
-                    playbackSpeed = PlaybackSpeedUtils.getCurrentPlaybackSpeed(item.getMedia());
-                }
-                if (item.getMedia() != null) {
-                    long itemTimeLeft = item.getMedia().getDuration() - item.getMedia().getPosition();
-                    timeLeft += itemTimeLeft / playbackSpeed;
-                }
             }
             info += " • ";
             info += getString(R.string.time_left_label);
@@ -553,18 +414,6 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
         if (queue == null) {
             emptyView.hide();
         }
-        disposable = Observable.fromCallable(DBReader::getQueue)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(items -> {
-                    queue = items;
-                    recyclerAdapter.setDummyViews(0);
-                    recyclerAdapter.updateItems(queue);
-                    if (restoreScrollPosition) {
-                        recyclerView.restoreScrollPosition(QueueFragment.TAG);
-                    }
-                    refreshInfoBar();
-                }, error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 
     @Override
@@ -645,7 +494,6 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
         private void reallyMoved(int from, int to) {
             // Write drag operation to database
             Log.d(TAG, "Write to database move(" + from + ", " + to + ")");
-            DBWriter.moveQueueItem(from, to, true);
         }
 
     }

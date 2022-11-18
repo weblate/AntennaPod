@@ -5,11 +5,9 @@ import androidx.annotation.Nullable;
 
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.model.playback.Playable;
 
 /**
- * Utility class to use the appropriate image resource based on {@link UserPreferences}.
  */
 public final class ImageResourceUtils {
 
@@ -21,11 +19,7 @@ public final class ImageResourceUtils {
      */
     @Nullable
     public static String getEpisodeListImageLocation(@NonNull Playable playable) {
-        if (UserPreferences.getUseEpisodeCoverSetting()) {
-            return playable.getImageLocation();
-        } else {
             return getFallbackImageLocation(playable);
-        }
     }
 
     /**
@@ -33,11 +27,7 @@ public final class ImageResourceUtils {
      */
     @Nullable
     public static String getEpisodeListImageLocation(@NonNull FeedItem feedItem) {
-        if (UserPreferences.getUseEpisodeCoverSetting()) {
             return feedItem.getImageLocation();
-        } else {
-            return getFallbackImageLocation(feedItem);
-        }
     }
 
     @Nullable

@@ -8,8 +8,6 @@ import android.view.SurfaceHolder;
 import de.danoeh.antennapod.core.ClientConfig;
 import org.antennapod.audio.MediaPlayer;
 
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -19,12 +17,7 @@ public class AudioPlayer extends MediaPlayer implements IPlayer {
 
     public AudioPlayer(Context context) {
         super(context, true, ClientConfig.USER_AGENT);
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
-                    if (UserPreferences.PREF_MEDIA_PLAYER.equals(key)) {
-                        checkMpi();
-                    }
-                });
+
     }
 
     @Override
@@ -49,12 +42,12 @@ public class AudioPlayer extends MediaPlayer implements IPlayer {
 
     @Override
     protected boolean useSonic() {
-        return UserPreferences.useSonic();
+        return true;
     }
 
     @Override
     protected boolean downmix() {
-        return UserPreferences.stereoToMono();
+        return true;
     }
 
     public List<String> getAudioTracks() {

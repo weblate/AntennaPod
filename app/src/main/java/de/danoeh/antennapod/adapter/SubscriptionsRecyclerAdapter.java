@@ -34,7 +34,6 @@ import java.util.Locale;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.core.storage.NavDrawerData;
 import de.danoeh.antennapod.fragment.FeedItemlistFragment;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
@@ -225,11 +224,6 @@ public class SubscriptionsRecyclerAdapter extends SelectableAdapter<Subscription
         if (drawerItem.type == NavDrawerData.DrawerItem.Type.FEED) {
             super.setSelected(pos, selected);
         }
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return UserPreferences.shouldShowSubscriptionTitle() ? COVER_WITH_TITLE : 0;
     }
 
     public class SubscriptionViewHolder extends RecyclerView.ViewHolder {

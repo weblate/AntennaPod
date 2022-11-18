@@ -1,53 +1,20 @@
 package de.danoeh.antennapod.core.service.download;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Build;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-import androidx.core.app.ServiceCompat;
-
-import de.danoeh.antennapod.core.R;
-import de.danoeh.antennapod.core.feed.LocalFeedUpdater;
-import de.danoeh.antennapod.core.storage.EpisodeCleanupAlgorithmFactory;
 import de.danoeh.antennapod.model.download.DownloadStatus;
-import org.apache.commons.io.FileUtils;
-import org.greenrobot.eventbus.EventBus;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import de.danoeh.antennapod.core.event.DownloadEvent;
-import de.danoeh.antennapod.core.util.download.ConnectionStateMonitor;
-import de.danoeh.antennapod.event.FeedItemEvent;
-import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBTasks;
-import de.danoeh.antennapod.core.storage.DBWriter;
-import de.danoeh.antennapod.model.download.DownloadError;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Manages the download of feedfiles in the app. Downloads can be enqueued via the startService intent.
@@ -145,7 +112,6 @@ public class DownloadService extends Service {
      */
     private void saveDownloadStatus(@NonNull DownloadStatus status) {
         reportQueue.add(status);
-        DBWriter.addDownloadStatus(status);
     }
 
     /**
@@ -157,12 +123,7 @@ public class DownloadService extends Service {
 
     @Nullable
     private FeedItem getFeedItemFromId(long id) {
-        FeedMedia media = DBReader.getFeedMedia(id);
-        if (media != null) {
-            return media.getItem();
-        } else {
             return null;
-        }
     }
 
 

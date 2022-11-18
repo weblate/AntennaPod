@@ -51,7 +51,6 @@ import de.danoeh.antennapod.event.UnreadItemsUpdateEvent;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.core.feed.util.PlaybackSpeedUtils;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.core.util.ChapterUtils;
 import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.TimeSpeedConverter;
@@ -142,7 +141,6 @@ public class AudioPlayerFragment extends Fragment implements
         butRev.setOnClickListener(v -> {
             if (controller != null) {
                 int curr = controller.getPosition();
-                controller.seekTo(curr - UserPreferences.getRewindSecs() * 1000);
             }
         });
         butRev.setOnLongClickListener(v -> {
@@ -159,7 +157,6 @@ public class AudioPlayerFragment extends Fragment implements
         butFF.setOnClickListener(v -> {
             if (controller != null) {
                 int curr = controller.getPosition();
-                controller.seekTo(curr + UserPreferences.getFastForwardSecs() * 1000);
             }
         });
         butFF.setOnLongClickListener(v -> {
@@ -181,18 +178,7 @@ public class AudioPlayerFragment extends Fragment implements
     }
 
 
-    private void setupLengthTextView() {
-        showTimeLeft = UserPreferences.shouldShowRemainingTime();
-        txtvLength.setOnClickListener(v -> {
-            if (controller == null) {
-                return;
-            }
-            showTimeLeft = !showTimeLeft;
-            UserPreferences.setShowRemainTimeSetting(showTimeLeft);
-            updatePosition(new PlaybackPositionEvent(controller.getPosition(),
-                    controller.getDuration()));
-        });
-    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updatePlaybackSpeedButton(SpeedChangedEvent event) {
@@ -270,16 +256,6 @@ public class AudioPlayerFragment extends Fragment implements
         setRetainInstance(true);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        controller = newPlaybackController();
-        controller.init();
-        loadMediaInfo(false);
-        EventBus.getDefault().register(this);
-        txtvRev.setText(NumberFormat.getInstance().format(UserPreferences.getRewindSecs()));
-        txtvFF.setText(NumberFormat.getInstance().format(UserPreferences.getFastForwardSecs()));
-    }
 
     @Override
     public void onStop() {
@@ -313,28 +289,7 @@ public class AudioPlayerFragment extends Fragment implements
             return;
         }
 
-        TimeSpeedConverter converter = new TimeSpeedConverter(controller.getCurrentPlaybackSpeedMultiplier());
-        int currentPosition = converter.convert(event.getPosition());
-        int duration = converter.convert(event.getDuration());
-        int remainingTime = converter.convert(Math.max(event.getDuration() - event.getPosition(), 0));
-        currentChapterIndex = ChapterUtils.getCurrentChapterIndex(controller.getMedia(), currentPosition);
-        Log.d(TAG, "currentPosition " + Converter.getDurationStringLong(currentPosition));
-        if (currentPosition == Playable.INVALID_TIME || duration == Playable.INVALID_TIME) {
-            Log.w(TAG, "Could not react to position observer update because of invalid time");
-            return;
-        }
-        txtvPosition.setText(Converter.getDurationStringLong(currentPosition));
-        showTimeLeft = UserPreferences.shouldShowRemainingTime();
-        if (showTimeLeft) {
-            txtvLength.setText(((remainingTime > 0) ? "-" : "") + Converter.getDurationStringLong(remainingTime));
-        } else {
-            txtvLength.setText(Converter.getDurationStringLong(duration));
-        }
 
-        if (!sbPosition.isPressed()) {
-            float progress = ((float) event.getPosition()) / event.getDuration();
-            sbPosition.setProgress((int) (progress * sbPosition.getMax()));
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -21,7 +21,6 @@ import de.danoeh.antennapod.adapter.actionbutton.DeleteActionButton;
 import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.core.event.DownloadLogEvent;
 import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 import de.danoeh.antennapod.event.FeedItemEvent;
@@ -277,38 +276,7 @@ public class CompletedDownloadsFragment extends Fragment
     }
 
     private void loadItems() {
-        if (disposable != null) {
-            disposable.dispose();
-        }
-        emptyView.hide();
-        disposable = Observable.fromCallable(() -> {
-            List<FeedItem> downloadedItems = DBReader.getDownloadedItems();
-            List<Long> mediaIds = new ArrayList<>();
-            if (runningDownloads == null) {
-                return downloadedItems;
-            }
-            for (long id : runningDownloads) {
-                if (FeedItemUtil.indexOfItemWithMediaId(downloadedItems, id) != -1) {
-                    continue; // Already in list
-                }
-                mediaIds.add(id);
-            }
-            List<FeedItem> currentDownloads = DBReader.getFeedItemsWithMedia(mediaIds.toArray(new Long[0]));
-            currentDownloads.addAll(downloadedItems);
-            return currentDownloads;
-        })
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-                result -> {
-                    items = result;
-                    adapter.setDummyViews(0);
-                    adapter.updateItems(result);
-                }, error -> {
-                    adapter.setDummyViews(0);
-                    adapter.updateItems(Collections.emptyList());
-                    Log.e(TAG, Log.getStackTraceString(error));
-                });
+
     }
 
     @Override

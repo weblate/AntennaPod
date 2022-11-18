@@ -15,7 +15,6 @@ import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.EpisodeItemListAdapter;
 import de.danoeh.antennapod.core.event.DownloadLogEvent;
 import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.event.FeedItemEvent;
 import de.danoeh.antennapod.event.PlayerStatusEvent;
 import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
@@ -117,16 +116,5 @@ public class DownloadsSection extends HomeSection {
         if (disposable != null) {
             disposable.dispose();
         }
-        disposable = Observable.fromCallable(DBReader::getDownloadedItems)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(downloads -> {
-                    if (downloads.size() > NUM_EPISODES) {
-                        downloads = downloads.subList(0, NUM_EPISODES);
-                    }
-                    items = downloads;
-                    adapter.setDummyViews(0);
-                    adapter.updateItems(items);
-                }, error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 }

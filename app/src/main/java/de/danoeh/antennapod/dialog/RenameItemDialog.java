@@ -12,7 +12,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.storage.NavDrawerData;
 import de.danoeh.antennapod.model.feed.Feed;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.databinding.EditTextDialogBinding;
 import de.danoeh.antennapod.model.feed.FeedPreferences;
 
@@ -49,7 +48,6 @@ public class RenameItemDialog {
                     String newTitle = binding.urlEditText.getText().toString();
                     if (feed != null) {
                         feed.setCustomTitle(newTitle);
-                        DBWriter.setFeedCustomTitle(feed);
                     } else {
                         renameTag(newTitle);
                     }
@@ -73,7 +71,6 @@ public class RenameItemDialog {
             for (FeedPreferences preferences : feedPreferences) {
                 preferences.getTags().remove(drawerItem.getTitle());
                 preferences.getTags().add(title);
-                DBWriter.setFeedPreferences(preferences);
             }
         }
     }

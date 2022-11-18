@@ -12,7 +12,6 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.PreferenceActivity;
 import de.danoeh.antennapod.event.UnreadItemsUpdateEvent;
 import de.danoeh.antennapod.core.preferences.UsageStatistics;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.dialog.SkipPreferenceDialog;
 import de.danoeh.antennapod.dialog.VariableSpeedDialog;
 import java.util.Map;
@@ -65,27 +64,7 @@ public class PlaybackPreferencesFragment extends PreferenceFragmentCompat {
     }
 
     private void buildEnqueueLocationPreference() {
-        final Resources res = requireActivity().getResources();
-        final Map<String, String> options = new ArrayMap<>();
-        {
-            String[] keys = res.getStringArray(R.array.enqueue_location_values);
-            String[] values = res.getStringArray(R.array.enqueue_location_options);
-            for (int i = 0; i < keys.length; i++) {
-                options.put(keys[i], values[i]);
-            }
-        }
 
-        ListPreference pref = requirePreference(UserPreferences.PREF_ENQUEUE_LOCATION);
-        pref.setSummary(res.getString(R.string.pref_enqueue_location_sum, options.get(pref.getValue())));
-
-        pref.setOnPreferenceChangeListener((preference, newValue) -> {
-            if (!(newValue instanceof String)) {
-                return false;
-            }
-            String newValStr = (String)newValue;
-            pref.setSummary(res.getString(R.string.pref_enqueue_location_sum, options.get(newValStr)));
-            return true;
-        });
     }
 
     @NonNull
@@ -100,24 +79,6 @@ public class PlaybackPreferencesFragment extends PreferenceFragmentCompat {
     }
 
     private void buildSmartMarkAsPlayedPreference() {
-        final Resources res = getActivity().getResources();
 
-        ListPreference pref = findPreference(UserPreferences.PREF_SMART_MARK_AS_PLAYED_SECS);
-        String[] values = res.getStringArray(R.array.smart_mark_as_played_values);
-        String[] entries = new String[values.length];
-        for (int x = 0; x < values.length; x++) {
-            if(x == 0) {
-                entries[x] = res.getString(R.string.pref_smart_mark_as_played_disabled);
-            } else {
-                int v = Integer.parseInt(values[x]);
-                if(v < 60) {
-                    entries[x] = res.getQuantityString(R.plurals.time_seconds_quantified, v, v);
-                } else {
-                    v /= 60;
-                    entries[x] = res.getQuantityString(R.plurals.time_minutes_quantified, v, v);
-                }
-            }
-        }
-        pref.setEntries(entries);
     }
 }

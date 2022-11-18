@@ -17,7 +17,6 @@ import de.danoeh.antennapod.adapter.EpisodeItemListAdapter;
 import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.core.event.DownloaderUpdate;
 import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.event.FeedItemEvent;
 import de.danoeh.antennapod.event.UnreadItemsUpdateEvent;
@@ -25,7 +24,6 @@ import de.danoeh.antennapod.fragment.InboxFragment;
 import de.danoeh.antennapod.fragment.swipeactions.SwipeActions;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedItemFilter;
-import de.danoeh.antennapod.storage.database.PodDBAdapter;
 import de.danoeh.antennapod.ui.home.HomeSection;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -113,17 +111,6 @@ public class InboxSection extends HomeSection {
         if (disposable != null) {
             disposable.dispose();
         }
-        disposable = Observable.fromCallable(() ->
-                        new Pair<>(DBReader.getNewItemsList(0, NUM_EPISODES),
-                                PodDBAdapter.getInstance().getNumberOfNewItems()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(data -> {
-                    items = data.first;
-                    adapter.setDummyViews(0);
-                    adapter.updateItems(items);
-                    viewBinding.numNewItemsLabel.setVisibility(View.VISIBLE);
-                    viewBinding.numNewItemsLabel.setText(String.valueOf(data.second));
-                }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+
     }
 }

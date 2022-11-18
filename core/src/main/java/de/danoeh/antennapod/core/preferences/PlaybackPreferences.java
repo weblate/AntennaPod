@@ -6,7 +6,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.event.PlayerStatusEvent;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.playback.Playable;
@@ -179,10 +178,7 @@ public class PlaybackPreferences implements SharedPreferences.OnSharedPreference
 
     private static Playable createFeedMediaInstance(SharedPreferences pref) {
         Playable result = null;
-        long mediaId = pref.getLong(FeedMedia.PREF_MEDIA_ID, -1);
-        if (mediaId != -1) {
-            result =  DBReader.getFeedMedia(mediaId);
-        }
+
         return result;
     }
 }

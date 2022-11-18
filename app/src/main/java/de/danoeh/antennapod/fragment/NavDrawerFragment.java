@@ -27,9 +27,6 @@ import de.danoeh.antennapod.activity.PreferenceActivity;
 import de.danoeh.antennapod.adapter.NavListAdapter;
 import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
 import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.storage.NavDrawerData;
 import de.danoeh.antennapod.dialog.DrawerPreferencesDialog;
 import de.danoeh.antennapod.dialog.RemoveFeedDialog;
@@ -154,30 +151,7 @@ public class NavDrawerFragment extends Fragment implements SharedPreferences.OnS
 
     private boolean onFeedContextMenuClicked(Feed feed, MenuItem item) {
         final int itemId = item.getItemId();
-        if (itemId == R.id.remove_all_inbox_item) {
-            ConfirmationDialog removeAllNewFlagsConfirmationDialog = new ConfirmationDialog(getContext(),
-                    R.string.remove_all_inbox_label,
-                    R.string.remove_all_inbox_confirmation_msg) {
-                @Override
-                public void onConfirmButtonPressed(DialogInterface dialog) {
-                    dialog.dismiss();
-                    DBWriter.removeFeedNewFlag(feed.getId());
-                }
-            };
-            removeAllNewFlagsConfirmationDialog.createNewDialog().show();
-            return true;
-        } else if (itemId == R.id.edit_tags) {
-            TagSettingsDialog.newInstance(Collections.singletonList(feed.getPreferences()))
-                    .show(getChildFragmentManager(), TagSettingsDialog.TAG);
-            return true;
-        } else if (itemId == R.id.rename_item) {
-            new RenameItemDialog(getActivity(), feed).show();
-            return true;
-        } else if (itemId == R.id.remove_feed) {
-            ((MainActivity) getActivity()).loadFragment(AllEpisodesFragment.TAG, null);
-            RemoveFeedDialog.show(getContext(), feed);
-            return true;
-        }
+
         return super.onContextItemSelected(item);
     }
 
@@ -291,48 +265,7 @@ public class NavDrawerFragment extends Fragment implements SharedPreferences.OnS
 
         @Override
         public void onItemClick(int position) {
-            int viewType = navAdapter.getItemViewType(position);
-            if (viewType != NavListAdapter.VIEW_TYPE_SECTION_DIVIDER) {
-                if (position < navAdapter.getSubscriptionOffset()) {
-                    String tag = navAdapter.getFragmentTags().get(position);
-                    ((MainActivity) getActivity()).loadFragment(tag, null);
-                    ((MainActivity) getActivity()).getBottomSheet().setState(BottomSheetBehavior.STATE_COLLAPSED);
-                } else {
-                    int pos = position - navAdapter.getSubscriptionOffset();
-                    NavDrawerData.DrawerItem clickedItem = flatItemList.get(pos);
 
-                    if (clickedItem.type == NavDrawerData.DrawerItem.Type.FEED) {
-                        long feedId = ((NavDrawerData.FeedDrawerItem) clickedItem).feed.getId();
-                        ((MainActivity) getActivity()).loadFeedFragmentById(feedId, null);
-                        ((MainActivity) getActivity()).getBottomSheet()
-                                .setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    } else {
-                        NavDrawerData.TagDrawerItem folder = ((NavDrawerData.TagDrawerItem) clickedItem);
-                        if (openFolders.contains(folder.name)) {
-                            openFolders.remove(folder.name);
-                        } else {
-                            openFolders.add(folder.name);
-                        }
-
-                        getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-                                .edit()
-                                .putStringSet(PREF_OPEN_FOLDERS, openFolders)
-                                .apply();
-
-                        disposable = Observable.fromCallable(() -> makeFlatDrawerData(navDrawerData.items, 0))
-                                .subscribeOn(Schedulers.computation())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(
-                                        result -> {
-                                            flatItemList = result;
-                                            navAdapter.notifyDataSetChanged();
-                                        }, error -> Log.e(TAG, Log.getStackTraceString(error)));
-                    }
-                }
-            } else if (UserPreferences.getSubscriptionsFilter().isEnabled()
-                    && navAdapter.showSubscriptionList) {
-                SubscriptionsFilterDialog.showDialog(requireContext());
-            }
         }
 
         @Override
@@ -353,23 +286,7 @@ public class NavDrawerFragment extends Fragment implements SharedPreferences.OnS
     };
 
     private void loadData() {
-        disposable = Observable.fromCallable(
-                () -> {
-                    NavDrawerData data = DBReader.getNavDrawerData();
-                    return new Pair<>(data, makeFlatDrawerData(data.items, 0));
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> {
-                            navDrawerData = result.first;
-                            flatItemList = result.second;
-                            navAdapter.notifyDataSetChanged();
-                            progressBar.setVisibility(View.GONE); // Stays hidden once there is something in the list
-                        }, error -> {
-                            Log.e(TAG, Log.getStackTraceString(error));
-                            progressBar.setVisibility(View.GONE);
-                        });
+
     }
 
     private List<NavDrawerData.DrawerItem> makeFlatDrawerData(List<NavDrawerData.DrawerItem> items, int layer) {

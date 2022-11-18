@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 import androidx.recyclerview.widget.RecyclerView;
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.core.util.StorageUtils;
 
 import java.io.File;
@@ -65,10 +64,7 @@ public class DataFolderAdapter extends RecyclerView.Adapter<DataFolderAdapter.Vi
     }
 
     private String getCurrentPath() {
-        File dataFolder = UserPreferences.getDataFolder(null);
-        if (dataFolder != null) {
-            return dataFolder.getAbsolutePath();
-        }
+
         return null;
     }
 

@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import de.danoeh.antennapod.core.feed.ChapterMerger;
 import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.model.feed.Chapter;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.playback.Playable;
@@ -47,38 +46,7 @@ public class ChapterUtils {
     }
 
     public static void loadChapters(Playable playable, Context context) {
-        if (playable.getChapters() != null) {
-            // Already loaded
-            return;
-        }
 
-        List<Chapter> chaptersFromDatabase = null;
-        List<Chapter> chaptersFromPodcastIndex = null;
-        if (playable instanceof FeedMedia) {
-            FeedMedia feedMedia = (FeedMedia) playable;
-            if (feedMedia.getItem() == null) {
-                feedMedia.setItem(DBReader.getFeedItem(feedMedia.getItemId()));
-            }
-            if (feedMedia.getItem().hasChapters()) {
-                chaptersFromDatabase = DBReader.loadChaptersOfFeedItem(feedMedia.getItem());
-            }
-
-            if (!TextUtils.isEmpty(feedMedia.getItem().getPodcastIndexChapterUrl())) {
-                chaptersFromPodcastIndex = ChapterUtils.loadChaptersFromUrl(
-                        feedMedia.getItem().getPodcastIndexChapterUrl());
-            }
-
-        }
-
-        List<Chapter> chaptersFromMediaFile = ChapterUtils.loadChaptersFromMediaFile(playable, context);
-        List<Chapter> chaptersMergePhase1 = ChapterMerger.merge(chaptersFromDatabase, chaptersFromMediaFile);
-        List<Chapter> chapters = ChapterMerger.merge(chaptersMergePhase1, chaptersFromPodcastIndex);
-        if (chapters == null) {
-            // Do not try loading again. There are no chapters.
-            playable.setChapters(Collections.emptyList());
-        } else {
-            playable.setChapters(chapters);
-        }
     }
 
     public static List<Chapter> loadChaptersFromMediaFile(Playable playable, Context context) {

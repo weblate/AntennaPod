@@ -15,7 +15,6 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.event.playback.SpeedChangedEvent;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.view.ItemOffsetDecoration;
 import de.danoeh.antennapod.view.PlaybackSpeedSeekBar;
@@ -42,7 +41,7 @@ public class VariableSpeedDialog extends BottomSheetDialogFragment {
         DecimalFormatSymbols format = new DecimalFormatSymbols(Locale.US);
         format.setDecimalSeparator('.');
         speedFormat = new DecimalFormat("0.00", format);
-        selectedSpeeds = new ArrayList<>(UserPreferences.getPlaybackSpeedArray());
+        selectedSpeeds = new ArrayList<>();
     }
 
     @Override
@@ -106,7 +105,6 @@ public class VariableSpeedDialog extends BottomSheetDialogFragment {
         } else {
             selectedSpeeds.add(newSpeed);
             Collections.sort(selectedSpeeds);
-            UserPreferences.setPlaybackSpeedArray(selectedSpeeds);
             adapter.notifyDataSetChanged();
         }
     }
@@ -128,7 +126,6 @@ public class VariableSpeedDialog extends BottomSheetDialogFragment {
             holder.chip.setText(speedFormat.format(speed));
             holder.chip.setOnLongClickListener(v -> {
                 selectedSpeeds.remove(speed);
-                UserPreferences.setPlaybackSpeedArray(selectedSpeeds);
                 notifyDataSetChanged();
                 return true;
             });

@@ -20,7 +20,6 @@ import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedCounter;
 import de.danoeh.antennapod.model.feed.FeedPreferences;
 import de.danoeh.antennapod.core.util.gui.NotificationUtils;
-import de.danoeh.antennapod.storage.database.PodDBAdapter;
 
 import java.util.Map;
 
@@ -34,10 +33,7 @@ public class NewEpisodesNotification {
     }
 
     public void loadCountersBeforeRefresh() {
-        PodDBAdapter adapter = PodDBAdapter.getInstance();
-        adapter.open();
-        countersBefore = adapter.getFeedCounters(FeedCounter.SHOW_NEW);
-        adapter.close();
+
     }
 
     public void showIfNeeded(Context context, Feed feed) {
@@ -127,11 +123,7 @@ public class NewEpisodesNotification {
     }
 
     private static int getNewEpisodeCount(long feedId) {
-        PodDBAdapter adapter = PodDBAdapter.getInstance();
-        adapter.open();
-        Map<Long, Integer> counters = adapter.getFeedCounters(FeedCounter.SHOW_NEW, feedId);
-        int episodeCount = counters.containsKey(feedId) ? counters.get(feedId) : 0;
-        adapter.close();
-        return episodeCount;
+
+        return 0;
     }
 }

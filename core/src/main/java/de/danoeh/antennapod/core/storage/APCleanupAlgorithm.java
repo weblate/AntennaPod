@@ -41,43 +41,8 @@ public class APCleanupAlgorithm extends EpisodeCleanupAlgorithm {
     @Override
     public int performCleanup(Context context, int numberOfEpisodesToDelete) {
         List<FeedItem> candidates = getCandidates();
-        List<FeedItem> delete;
 
-        Collections.sort(candidates, (lhs, rhs) -> {
-            Date l = lhs.getMedia().getPlaybackCompletionDate();
-            Date r = rhs.getMedia().getPlaybackCompletionDate();
-
-            if (l == null) {
-                l = new Date();
-            }
-            if (r == null) {
-                r = new Date();
-            }
-            return l.compareTo(r);
-        });
-
-        if (candidates.size() > numberOfEpisodesToDelete) {
-            delete = candidates.subList(0, numberOfEpisodesToDelete);
-        } else {
-            delete = candidates;
-        }
-
-        for (FeedItem item : delete) {
-            try {
-                DBWriter.deleteFeedMediaOfItem(context, item.getMedia().getId()).get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-
-        int counter = delete.size();
-
-
-        Log.i(TAG, String.format(Locale.US,
-                "Auto-delete deleted %d episodes (%d requested)", counter,
-                numberOfEpisodesToDelete));
-
-        return counter;
+        return 0;
     }
 
     @VisibleForTesting
@@ -88,25 +53,7 @@ public class APCleanupAlgorithm extends EpisodeCleanupAlgorithm {
     @NonNull
     private List<FeedItem> getCandidates() {
         List<FeedItem> candidates = new ArrayList<>();
-        List<FeedItem> downloadedItems = DBReader.getDownloadedItems();
 
-        Date mostRecentDateForDeletion = calcMostRecentDateForDeletion(new Date());
-        for (FeedItem item : downloadedItems) {
-            if (item.hasMedia()
-                    && item.getMedia().isDownloaded()
-                    && !item.isTagged(FeedItem.TAG_QUEUE)
-                    && item.isPlayed()
-                    && !item.isTagged(FeedItem.TAG_FAVORITE)) {
-                FeedMedia media = item.getMedia();
-                // make sure this candidate was played at least the proper amount of days prior
-                // to now
-                if (media != null
-                        && media.getPlaybackCompletionDate() != null
-                        && media.getPlaybackCompletionDate().before(mostRecentDateForDeletion)) {
-                    candidates.add(item);
-                }
-            }
-        }
         return candidates;
     }
 

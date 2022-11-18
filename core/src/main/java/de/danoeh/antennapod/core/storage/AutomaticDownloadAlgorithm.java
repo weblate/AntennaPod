@@ -1,18 +1,6 @@
 package de.danoeh.antennapod.core.storage;
 
 import android.content.Context;
-import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import de.danoeh.antennapod.core.util.PlaybackStatus;
-import de.danoeh.antennapod.model.feed.FeedItem;
-import de.danoeh.antennapod.model.feed.FeedPreferences;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
-import de.danoeh.antennapod.core.util.NetworkUtils;
-import de.danoeh.antennapod.core.util.PowerUtils;
 
 /**
  * Implements the automatic download algorithm used by AntennaPod. This class assumes that

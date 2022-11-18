@@ -11,7 +11,6 @@ import de.danoeh.antennapod.core.service.download.DownloadService;
 import de.danoeh.antennapod.core.util.PlaybackStatus;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 
 public abstract class ItemActionButton {
     FeedItem item;
@@ -39,20 +38,7 @@ public abstract class ItemActionButton {
             return new MarkAsPlayedActionButton(item);
         }
 
-        final boolean isDownloadingMedia = DownloadService.isDownloadingFile(media.getDownload_url());
-        if (PlaybackStatus.isCurrentlyPlaying(media)) {
-            return new PauseActionButton(item);
-        } else if (item.getFeed().isLocalFeed()) {
-            return new PlayLocalActionButton(item);
-        } else if (media.isDownloaded()) {
-            return new PlayActionButton(item);
-        } else if (isDownloadingMedia) {
-            return new CancelDownloadActionButton(item);
-        } else if (UserPreferences.isStreamOverDownload()) {
-            return new StreamActionButton(item);
-        } else {
             return new DownloadActionButton(item);
-        }
     }
 
     public void configure(@NonNull View button, @NonNull ImageView icon, Context context) {

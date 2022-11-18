@@ -11,7 +11,6 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
 import de.danoeh.antennapod.core.export.ExportWriter;
-import de.danoeh.antennapod.core.storage.DBReader;
 import io.reactivex.Observable;
 
 /**
@@ -32,36 +31,8 @@ public class DocumentFileExportWorker {
     public Observable<DocumentFile> exportObservable() {
         DocumentFile output = DocumentFile.fromSingleUri(context, outputFileUri);
         return Observable.create(subscriber -> {
-            OutputStream outputStream = null;
-            OutputStreamWriter writer = null;
-            try {
-                Uri uri = output.getUri();
-                outputStream = context.getContentResolver().openOutputStream(uri, "wt");
-                if (outputStream == null) {
-                    throw new IOException();
-                }
-                writer = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
-                exportWriter.writeDocument(DBReader.getFeedList(), writer, context);
-                subscriber.onNext(output);
-            } catch (IOException e) {
-                subscriber.onError(e);
-            } finally {
-                if (writer != null) {
-                    try {
-                        writer.close();
-                    } catch (IOException e) {
-                        subscriber.onError(e);
-                    }
-                }
-                if (outputStream != null) {
-                    try {
-                        outputStream.close();
-                    } catch (IOException e) {
-                        subscriber.onError(e);
-                    }
-                }
+
                 subscriber.onComplete();
-            }
         });
     }
 

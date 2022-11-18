@@ -19,25 +19,13 @@ public class FeedSearcher {
 
     @NonNull
     public static List<FeedItem> searchFeedItems(final String query, final long selectedFeed) {
-        try {
-            FutureTask<List<FeedItem>> itemSearchTask = DBTasks.searchFeedItems(selectedFeed, query);
-            itemSearchTask.run();
-            return itemSearchTask.get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+
             return Collections.emptyList();
-        }
     }
 
     @NonNull
     public static List<Feed> searchFeeds(final String query) {
-        try {
-            FutureTask<List<Feed>> feedSearchTask = DBTasks.searchFeeds(query);
-            feedSearchTask.run();
-            return feedSearchTask.get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+
             return Collections.emptyList();
-        }
     }
 }

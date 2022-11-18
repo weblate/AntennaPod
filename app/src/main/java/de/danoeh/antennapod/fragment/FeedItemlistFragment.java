@@ -34,8 +34,6 @@ import de.danoeh.antennapod.core.event.DownloaderUpdate;
 import de.danoeh.antennapod.core.feed.FeedEvent;
 import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
 import de.danoeh.antennapod.core.service.download.DownloadService;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.core.util.FeedItemPermutors;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
 import de.danoeh.antennapod.core.util.gui.MoreContentListFooterUtil;
@@ -160,33 +158,6 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
         iconTintManager.updateTint();
         viewBinding.appBar.addOnOffsetChangedListener(iconTintManager);
 
-        nextPageLoader = new MoreContentListFooterUtil(viewBinding.moreContent.moreContentListFooter);
-        nextPageLoader.setClickListener(() -> {
-            if (feed != null) {
-                DBTasks.loadNextPageOfFeed(getActivity(), feed, false);
-            }
-        });
-        viewBinding.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView view, int deltaX, int deltaY) {
-                super.onScrolled(view, deltaX, deltaY);
-                boolean hasMorePages = feed != null && feed.isPaged() && feed.getNextPageLink() != null;
-                boolean pageLoaderVisible = viewBinding.recyclerView.isScrolledToBottom() && hasMorePages;
-                nextPageLoader.getRoot().setVisibility(pageLoaderVisible ? View.VISIBLE : View.GONE);
-                viewBinding.recyclerView.setPadding(
-                        viewBinding.recyclerView.getPaddingLeft(), 0, viewBinding.recyclerView.getPaddingRight(),
-                        pageLoaderVisible ? nextPageLoader.getRoot().getMeasuredHeight() : 0);
-            }
-        });
-
-        EventBus.getDefault().register(this);
-
-        viewBinding.swipeRefresh.setDistanceToTriggerSync(getResources().getInteger(R.integer.swipe_refresh_distance));
-        viewBinding.swipeRefresh.setOnRefreshListener(() -> {
-            DBTasks.forceRefreshFeed(requireContext(), feed, true);
-            new Handler(Looper.getMainLooper()).postDelayed(() -> viewBinding.swipeRefresh.setRefreshing(false),
-                    getResources().getInteger(R.integer.swipe_to_refresh_duration_in_ms));
-        });
 
         loadItems();
 
@@ -472,22 +443,7 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
     }
 
     private void showErrorDetails() {
-        Maybe.fromCallable(
-                () -> {
-                    List<DownloadStatus> feedDownloadLog = DBReader.getFeedDownloadLog(feedID);
-                    if (feedDownloadLog.size() == 0 || feedDownloadLog.get(0).isSuccessful()) {
-                        return null;
-                    }
-                    return feedDownloadLog.get(0);
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    downloadStatus -> new DownloadLogDetailsDialog(getContext(), downloadStatus).show(),
-                    error -> error.printStackTrace(),
-                    () -> {
-                        ((MainActivity) getActivity()).loadChildFragment(new DownloadLogFragment());
-                    });
+
     }
 
     private void showFeedInfo() {
@@ -530,17 +486,7 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
 
     @Nullable
     private Feed loadData() {
-        Feed feed = DBReader.getFeed(feedID, true);
-        if (feed == null) {
             return null;
-        }
-        DBReader.loadAdditionalFeedItemListData(feed.getItems());
-        if (feed.getSortOrder() != null) {
-            List<FeedItem> feedItems = feed.getItems();
-            FeedItemPermutors.getPermutor(feed.getSortOrder()).reorder(feedItems);
-            feed.setItems(feedItems);
-        }
-        return feed;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

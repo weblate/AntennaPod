@@ -23,7 +23,6 @@ import android.widget.TextView;
 import de.danoeh.antennapod.core.preferences.ThemeSwitcher;
 import de.danoeh.antennapod.error.CrashReportWriter;
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -95,7 +94,7 @@ public class BugReportActivity extends AppCompatActivity {
 
     private void exportLog() {
         try {
-            File filename = new File(UserPreferences.getDataFolder(null), "full-logs.txt");
+            File filename = new File("full-logs.txt");
             String cmd = "logcat -d -f " + filename.getAbsolutePath();
             Runtime.getRuntime().exec(cmd);
             //share file

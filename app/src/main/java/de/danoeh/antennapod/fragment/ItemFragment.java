@@ -33,7 +33,6 @@ import de.danoeh.antennapod.adapter.actionbutton.StreamActionButton;
 import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.core.feed.util.ImageResourceUtils;
 import de.danoeh.antennapod.core.preferences.UsageStatistics;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.DateFormatter;
 import de.danoeh.antennapod.core.util.gui.ShownotesCleaner;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
@@ -41,7 +40,6 @@ import de.danoeh.antennapod.event.FeedItemEvent;
 import de.danoeh.antennapod.event.PlayerStatusEvent;
 import de.danoeh.antennapod.event.UnreadItemsUpdateEvent;
 import de.danoeh.antennapod.model.feed.FeedItem;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.common.CircularProgressBar;
 import de.danoeh.antennapod.ui.common.ThemeUtils;
 import de.danoeh.antennapod.view.ShownotesWebView;
@@ -140,76 +138,10 @@ public class ItemFragment extends Fragment {
         });
         registerForContextMenu(webvDescription);
 
-        imgvCover = layout.findViewById(R.id.imgvCover);
-        imgvCover.setOnClickListener(v -> openPodcast());
-        progbarDownload = layout.findViewById(R.id.circularProgressBar);
-        progbarLoading = layout.findViewById(R.id.progbarLoading);
-        butAction1 = layout.findViewById(R.id.butAction1);
-        butAction2 = layout.findViewById(R.id.butAction2);
-        butAction1Icon = layout.findViewById(R.id.butAction1Icon);
-        butAction2Icon = layout.findViewById(R.id.butAction2Icon);
-        butAction1Text = layout.findViewById(R.id.butAction1Text);
-        butAction2Text = layout.findViewById(R.id.butAction2Text);
-        noMediaLabel = layout.findViewById(R.id.noMediaLabel);
 
-        butAction1.setOnClickListener(v -> {
-            if (actionButton1 instanceof StreamActionButton && !UserPreferences.isStreamOverDownload()
-                    && UsageStatistics.hasSignificantBiasTo(UsageStatistics.ACTION_STREAM)) {
-                showOnDemandConfigBalloon(true);
-                return;
-            } else if (actionButton1 == null) {
-                return; // Not loaded yet
-            }
-            actionButton1.onClick(getContext());
-        });
-        butAction2.setOnClickListener(v -> {
-            if (actionButton2 instanceof DownloadActionButton && UserPreferences.isStreamOverDownload()
-                    && UsageStatistics.hasSignificantBiasTo(UsageStatistics.ACTION_DOWNLOAD)) {
-                showOnDemandConfigBalloon(false);
-                return;
-            } else if (actionButton2 == null) {
-                return; // Not loaded yet
-            }
-            actionButton2.onClick(getContext());
-        });
         return layout;
     }
 
-    private void showOnDemandConfigBalloon(boolean offerStreaming) {
-        final boolean isLocaleRtl = TextUtils.getLayoutDirectionFromLocale(Locale.getDefault())
-                == View.LAYOUT_DIRECTION_RTL;
-        final Balloon balloon = new Balloon.Builder(getContext())
-                .setArrowOrientation(ArrowOrientation.TOP)
-                .setArrowOrientationRules(ArrowOrientationRules.ALIGN_FIXED)
-                .setArrowPosition(0.25f + ((isLocaleRtl ^ offerStreaming) ? 0f : 0.5f))
-                .setWidthRatio(1.0f)
-                .setMarginLeft(8)
-                .setMarginRight(8)
-                .setBackgroundColor(ThemeUtils.getColorFromAttr(getContext(), R.attr.colorSecondary))
-                .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-                .setLayout(R.layout.popup_bubble_view)
-                .setDismissWhenTouchOutside(true)
-                .setLifecycleOwner(this)
-                .build();
-        final Button positiveButton = balloon.getContentView().findViewById(R.id.balloon_button_positive);
-        final Button negativeButton = balloon.getContentView().findViewById(R.id.balloon_button_negative);
-        final TextView message = balloon.getContentView().findViewById(R.id.balloon_message);
-        message.setText(offerStreaming
-                ? R.string.on_demand_config_stream_text : R.string.on_demand_config_download_text);
-        positiveButton.setOnClickListener(v1 -> {
-            UserPreferences.setStreamOverDownload(offerStreaming);
-            // Update all visible lists to reflect new streaming action button
-            EventBus.getDefault().post(new UnreadItemsUpdateEvent());
-            ((MainActivity) getActivity()).showSnackbarAbovePlayer(
-                    R.string.on_demand_config_setting_changed, Snackbar.LENGTH_SHORT);
-            balloon.dismiss();
-        });
-        negativeButton.setOnClickListener(v1 -> {
-            UsageStatistics.doNotAskAgain(UsageStatistics.ACTION_STREAM); // Type does not matter. Both are silenced.
-            balloon.dismiss();
-        });
-        balloon.showAlignBottom(butAction1, 0, (int) (-12 * getResources().getDisplayMetrics().density));
-    }
 
     @Override
     public void onStart() {
@@ -353,15 +285,8 @@ public class ItemFragment extends Fragment {
 
     @Nullable
     private FeedItem loadInBackground() {
-        FeedItem feedItem = DBReader.getFeedItem(itemId);
-        Context context = getContext();
-        if (feedItem != null && context != null) {
-            int duration = feedItem.getMedia() != null ? feedItem.getMedia().getDuration() : Integer.MAX_VALUE;
-            DBReader.loadDescriptionOfFeedItem(feedItem);
-            ShownotesCleaner t = new ShownotesCleaner(context, feedItem.getDescription(), duration);
-            webviewData = t.processShownotes();
-        }
-        return feedItem;
+
+        return null;
     }
 
 }

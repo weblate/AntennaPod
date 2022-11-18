@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
-
 public class NetworkUtils {
     private static final String REGEX_PATTERN_IP_ADDRESS = "([0-9]{1,3}[\\.]){3}[0-9]{1,3}";
 
@@ -25,24 +23,6 @@ public class NetworkUtils {
         NetworkUtils.context = context;
     }
 
-    public static boolean isAutoDownloadAllowed() {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        if (networkInfo == null) {
-            return false;
-        }
-        if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-            if (UserPreferences.isEnableAutodownloadWifiFilter()) {
-                return isInAllowedWifiNetwork();
-            } else {
-                return !isNetworkMetered();
-            }
-        } else if (networkInfo.getType() == ConnectivityManager.TYPE_ETHERNET) {
-            return true;
-        } else {
-            return UserPreferences.isAllowMobileAutoDownload() || !NetworkUtils.isNetworkRestricted();
-        }
-    }
 
     public static boolean networkAvailable() {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -50,9 +30,7 @@ public class NetworkUtils {
         return info != null && info.isConnected();
     }
 
-    public static boolean isEpisodeDownloadAllowed() {
-        return UserPreferences.isAllowMobileEpisodeDownload() || !NetworkUtils.isNetworkRestricted();
-    }
+
 
     public static boolean isEpisodeHeadDownloadAllowed() {
         // It is not an image but it is a similarly tiny request
@@ -61,15 +39,12 @@ public class NetworkUtils {
     }
 
     public static boolean isImageAllowed() {
-        return UserPreferences.isAllowMobileImages() || !NetworkUtils.isNetworkRestricted();
+        return true;
     }
 
-    public static boolean isStreamingAllowed() {
-        return UserPreferences.isAllowMobileStreaming() || !NetworkUtils.isNetworkRestricted();
-    }
 
     public static boolean isFeedRefreshAllowed() {
-        return UserPreferences.isAllowMobileFeedRefresh() || !NetworkUtils.isNetworkRestricted();
+        return true;
     }
 
     public static boolean isNetworkRestricted() {
@@ -120,25 +95,5 @@ public class NetworkUtils {
         }
     }
 
-    private static boolean isInAllowedWifiNetwork() {
-        WifiManager wm = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        List<String> selectedNetworks = Arrays.asList(UserPreferences.getAutodownloadSelectedNetworks());
-        return selectedNetworks.contains(Integer.toString(wm.getConnectionInfo().getNetworkId()));
-    }
 
-    public static boolean wasDownloadBlocked(Throwable throwable) {
-        String message = throwable.getMessage();
-        if (message != null) {
-            Pattern pattern = Pattern.compile(REGEX_PATTERN_IP_ADDRESS);
-            Matcher matcher = pattern.matcher(message);
-            if (matcher.find()) {
-                String ip = matcher.group();
-                return ip.startsWith("127.") || ip.startsWith("0.");
-            }
-        }
-        if (throwable.getCause() != null) {
-            return wasDownloadBlocked(throwable.getCause());
-        }
-        return false;
-    }
 }

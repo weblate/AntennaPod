@@ -3,9 +3,6 @@ include ':core'
 include ':event'
 include ':model'
 
-include ':storage:database'
-include ':storage:preferences'
-
 include ':ui:common'
 include ':ui:i18n'
 include ':ui:png-icons'

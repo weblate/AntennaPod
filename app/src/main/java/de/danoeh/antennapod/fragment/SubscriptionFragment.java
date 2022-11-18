@@ -48,10 +48,7 @@ import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.event.FeedListUpdateEvent;
 import de.danoeh.antennapod.event.UnreadItemsUpdateEvent;
 import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.core.service.download.DownloadService;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.storage.NavDrawerData;
 import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 import de.danoeh.antennapod.dialog.FeedSortDialog;
@@ -291,46 +288,7 @@ public class SubscriptionFragment extends Fragment
     }
 
     private void loadSubscriptions() {
-        if (disposable != null) {
-            disposable.dispose();
-        }
-        emptyView.hide();
-        disposable = Observable.fromCallable(
-                () -> {
-                    NavDrawerData data = DBReader.getNavDrawerData();
-                    List<NavDrawerData.DrawerItem> items = data.items;
-                    for (NavDrawerData.DrawerItem item : items) {
-                        if (item.type == NavDrawerData.DrawerItem.Type.TAG
-                                && item.getTitle().equals(displayedFolder)) {
-                            return ((NavDrawerData.TagDrawerItem) item).children;
-                        }
-                    }
-                    return items;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    result -> {
-                        if (listItems != null && listItems.size() > result.size()) {
-                            // We have fewer items. This can result in items being selected that are no longer visible.
-                            subscriptionAdapter.endSelectMode();
-                        }
-                        listItems = result;
-                        subscriptionAdapter.setDummyViews(0);
-                        subscriptionAdapter.setItems(result);
-                        subscriptionAdapter.notifyDataSetChanged();
-                        emptyView.updateVisibility();
-                    }, error -> {
-                        Log.e(TAG, Log.getStackTraceString(error));
-                    });
 
-        if (UserPreferences.getSubscriptionsFilter().isEnabled()) {
-            feedsFilteredMsg.setText("{md-info-outline} " + getString(R.string.subscriptions_are_filtered));
-            Iconify.addIcons(feedsFilteredMsg);
-            feedsFilteredMsg.setVisibility(View.VISIBLE);
-        } else {
-            feedsFilteredMsg.setVisibility(View.GONE);
-        }
     }
 
     private int getDefaultNumOfColumns() {
@@ -343,33 +301,7 @@ public class SubscriptionFragment extends Fragment
         if (drawerItem == null) {
             return false;
         }
-        int itemId = item.getItemId();
-        if (drawerItem.type == NavDrawerData.DrawerItem.Type.TAG && itemId == R.id.rename_folder_item) {
-            new RenameItemDialog(getActivity(), drawerItem).show();
-            return true;
-        }
 
-        Feed feed = ((NavDrawerData.FeedDrawerItem) drawerItem).feed;
-        if (itemId == R.id.remove_all_inbox_item) {
-            displayConfirmationDialog(
-                    R.string.remove_all_inbox_label,
-                    R.string.remove_all_inbox_confirmation_msg,
-                    () -> DBWriter.removeFeedNewFlag(feed.getId()));
-            return true;
-        } else if (itemId == R.id.edit_tags) {
-            TagSettingsDialog.newInstance(Collections.singletonList(feed.getPreferences()))
-                    .show(getChildFragmentManager(), TagSettingsDialog.TAG);
-            return true;
-        } else if (itemId == R.id.rename_item) {
-            new RenameItemDialog(getActivity(), feed).show();
-            return true;
-        } else if (itemId == R.id.remove_feed) {
-            RemoveFeedDialog.show(getContext(), feed);
-            return true;
-        } else if (itemId == R.id.multi_select) {
-            speedDialView.setVisibility(View.VISIBLE);
-            return subscriptionAdapter.onContextItemSelected(item);
-        }
         return super.onContextItemSelected(item);
     }
 

@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.core.util.gui.ShownotesCleaner;
 import de.danoeh.antennapod.model.feed.FeedMedia;
@@ -86,30 +85,7 @@ public class ItemDescriptionFragment extends Fragment {
         if (webViewLoader != null) {
             webViewLoader.dispose();
         }
-        webViewLoader = Maybe.<String>create(emitter -> {
-            Playable media = controller.getMedia();
-            if (media == null) {
-                emitter.onComplete();
-                return;
-            }
-            if (media instanceof FeedMedia) {
-                FeedMedia feedMedia = ((FeedMedia) media);
-                if (feedMedia.getItem() == null) {
-                    feedMedia.setItem(DBReader.getFeedItem(feedMedia.getItemId()));
-                }
-                DBReader.loadDescriptionOfFeedItem(feedMedia.getItem());
-            }
-            ShownotesCleaner shownotesCleaner = new ShownotesCleaner(
-                    getActivity(), media.getDescription(), media.getDuration());
-            emitter.onSuccess(shownotesCleaner.processShownotes());
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(data -> {
-                    webvDescription.loadDataWithBaseURL("https://127.0.0.1", data, "text/html",
-                            "utf-8", "about:blank");
-                    Log.d(TAG, "Webview loaded");
-                }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+
     }
 
     @Override

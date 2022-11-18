@@ -50,8 +50,6 @@ import de.danoeh.antennapod.fragment.QueueFragment;
 import de.danoeh.antennapod.fragment.SearchFragment;
 import de.danoeh.antennapod.fragment.SubscriptionFragment;
 import de.danoeh.antennapod.fragment.TransitionEffect;
-import de.danoeh.antennapod.preferences.PreferenceUpgrader;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.common.ThemeUtils;
 import de.danoeh.antennapod.ui.home.HomeFragment;
 import de.danoeh.antennapod.view.LockableBottomSheetBehavior;
@@ -112,25 +110,7 @@ public class MainActivity extends AppCompatActivity {
         setNavDrawerSize();
 
         final FragmentManager fm = getSupportFragmentManager();
-        if (fm.findFragmentByTag(MAIN_FRAGMENT_TAG) == null) {
-            if (!UserPreferences.DEFAULT_PAGE_REMEMBER.equals(UserPreferences.getDefaultPage())) {
-                loadFragment(UserPreferences.getDefaultPage(), null);
-            } else {
-                String lastFragment = NavDrawerFragment.getLastNavFragment(this);
-                if (ArrayUtils.contains(NavDrawerFragment.NAV_DRAWER_TAGS, lastFragment)) {
-                    loadFragment(lastFragment, null);
-                } else {
-                    try {
-                        loadFeedFragmentById(Integer.parseInt(lastFragment), null);
-                    } catch (NumberFormatException e) {
-                        // it's not a number, this happens if we removed
-                        // a label from the NAV_DRAWER_TAGS
-                        // give them a nice default...
-                        loadFragment(HomeFragment.TAG, null);
-                    }
-                }
-            }
-        }
+
 
         FragmentTransaction transaction = fm.beginTransaction();
         NavDrawerFragment navDrawerFragment = new NavDrawerFragment();
@@ -140,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
 
         checkFirstLaunch();
-        PreferenceUpgrader.checkUpgrades(this);
         View bottomSheet = findViewById(R.id.audioplayerFragment);
         sheetBehavior = (LockableBottomSheetBehavior) BottomSheetBehavior.from(bottomSheet);
         sheetBehavior.setHideable(false);
@@ -223,16 +202,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkFirstLaunch() {
-        SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-        if (prefs.getBoolean(PREF_IS_FIRST_LAUNCH, true)) {
-            // for backward compatibility, we only change defaults for fresh installs
-            UserPreferences.setUpdateInterval(12);
-            AutoUpdateManager.restartUpdateAlarm(this);
 
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean(PREF_IS_FIRST_LAUNCH, false);
-            edit.apply();
-        }
     }
 
     public boolean isDrawerOpen() {
@@ -471,21 +441,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (isDrawerOpen()) {
-            drawerLayout.closeDrawer(navDrawer);
-        } else if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        } else if (getSupportFragmentManager().getBackStackEntryCount() != 0) {
-            super.onBackPressed();
-        } else {
-            String toPage = UserPreferences.getDefaultPage();
-            if (NavDrawerFragment.getLastNavFragment(this).equals(toPage)
-                    || UserPreferences.DEFAULT_PAGE_REMEMBER.equals(toPage)) {
-                super.onBackPressed();
-            } else {
-                loadFragment(toPage, null);
-            }
-        }
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -2,19 +2,10 @@ package de.danoeh.antennapod.adapter.actionbutton;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.Toast;
-
 import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
-
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.core.service.download.DownloadService;
 import de.danoeh.antennapod.model.feed.FeedItem;
-import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.core.preferences.UsageStatistics;
-import de.danoeh.antennapod.core.storage.DBWriter;
-import de.danoeh.antennapod.core.util.NetworkUtils;
 
 public class DownloadActionButton extends ItemActionButton {
 

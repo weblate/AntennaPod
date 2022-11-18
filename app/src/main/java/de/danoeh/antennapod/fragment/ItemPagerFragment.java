@@ -21,7 +21,6 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.event.FeedItemEvent;
 import de.danoeh.antennapod.model.feed.FeedItem;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.menuhandler.FeedItemMenuHandler;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -118,13 +117,7 @@ public class ItemPagerFragment extends Fragment implements MaterialToolbar.OnMen
             disposable.dispose();
         }
 
-        disposable = Observable.fromCallable(() -> DBReader.getFeedItem(itemId))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
-                    item = result;
-                    refreshToolbarState();
-                }, Throwable::printStackTrace);
+
     }
 
     public void refreshToolbarState() {

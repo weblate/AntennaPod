@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.danoeh.antennapod.core.R;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 
 public class NotificationUtils {
     public static final String CHANNEL_ID_USER_ACTION = "user_action";
@@ -77,10 +76,6 @@ public class NotificationUtils {
                 .setDescription(c.getString(R.string.notification_channel_download_error_description))
                 .setGroup(GROUP_ID_ERRORS);
 
-        if (!UserPreferences.getShowDownloadReportRaw()) {
-            // Migration from app managed setting: disable notification
-            notificationChannel.setImportance(NotificationManagerCompat.IMPORTANCE_NONE);
-        }
         return notificationChannel.build();
     }
 
@@ -91,10 +86,6 @@ public class NotificationUtils {
                 .setDescription(c.getString(R.string.notification_channel_sync_error_description))
                 .setGroup(GROUP_ID_ERRORS);
 
-        if (!UserPreferences.getGpodnetNotificationsEnabledRaw()) {
-            // Migration from app managed setting: disable notification
-            notificationChannel.setImportance(NotificationManagerCompat.IMPORTANCE_NONE);
-        }
         return notificationChannel.build();
     }
 
@@ -105,10 +96,7 @@ public class NotificationUtils {
                 .setDescription(c.getString(R.string.notification_channel_episode_auto_download))
                 .setGroup(GROUP_ID_NEWS);
 
-        if (UserPreferences.getShowAutoDownloadReportRaw()) {
-            // Migration from app managed setting: enable notification
-            notificationChannel.setImportance(NotificationManagerCompat.IMPORTANCE_DEFAULT);
-        }
+
         return notificationChannel.build();
     }
 

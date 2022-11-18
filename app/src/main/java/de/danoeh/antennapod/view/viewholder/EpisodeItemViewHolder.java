@@ -30,7 +30,6 @@ import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.playback.MediaType;
 import de.danoeh.antennapod.core.feed.util.ImageResourceUtils;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.NetworkUtils;
 import de.danoeh.antennapod.model.playback.Playable;
@@ -175,11 +174,7 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
             Log.w(TAG, "Could not react to position observer update because of invalid time");
             return;
         }
-        if (UserPreferences.shouldShowRemainingTime()) {
-            duration.setText(((remainingTime > 0) ? "-" : "") + Converter.getDurationStringLong(remainingTime));
-        } else {
-            duration.setText(Converter.getDurationStringLong(timeDuration));
-        }
+
     }
 
     public FeedItem getFeedItem() {

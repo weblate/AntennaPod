@@ -29,7 +29,6 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.activity.OpmlImportActivity;
 import de.danoeh.antennapod.model.feed.Feed;
-import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.model.feed.SortOrder;
 import de.danoeh.antennapod.databinding.AddfeedBinding;
 import de.danoeh.antennapod.databinding.EditTextDialogBinding;
@@ -166,41 +165,10 @@ public class AddFeedFragment extends Fragment {
         if (uri == null) {
             return;
         }
-        Observable.fromCallable(() -> addLocalFolder(uri))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        feed -> {
-                            Fragment fragment = FeedItemlistFragment.newInstance(feed.getId());
-                            ((MainActivity) getActivity()).loadChildFragment(fragment);
-                        }, error -> {
-                            Log.e(TAG, Log.getStackTraceString(error));
-                            ((MainActivity) getActivity())
-                                    .showSnackbarAbovePlayer(error.getLocalizedMessage(), Snackbar.LENGTH_LONG);
-                        });
+
     }
 
-    private Feed addLocalFolder(Uri uri) {
-        if (Build.VERSION.SDK_INT < 21) {
-            return null;
-        }
-        getActivity().getContentResolver()
-                .takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        DocumentFile documentFile = DocumentFile.fromTreeUri(getContext(), uri);
-        if (documentFile == null) {
-            throw new IllegalArgumentException("Unable to retrieve document tree");
-        }
-        String title = documentFile.getName();
-        if (title == null) {
-            title = getString(R.string.local_folder);
-        }
-        Feed dirFeed = new Feed(Feed.PREFIX_LOCAL_FOLDER + uri.toString(), null, title);
-        dirFeed.setItems(Collections.emptyList());
-        dirFeed.setSortOrder(SortOrder.EPISODE_TITLE_A_Z);
-        Feed fromDatabase = DBTasks.updateFeed(getContext(), dirFeed, false);
-        DBTasks.forceRefreshFeed(getContext(), fromDatabase, true);
-        return fromDatabase;
-    }
+
 
     private static class AddLocalFolder extends ActivityResultContracts.OpenDocumentTree {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

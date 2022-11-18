@@ -6,8 +6,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.core.storage.DBTasks;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.IntentUtils;
 import de.danoeh.antennapod.core.util.ShareUtils;
 import de.danoeh.antennapod.dialog.IntraFeedSortDialog;
@@ -47,32 +45,10 @@ public class FeedMenuHandler {
      * NOTE: This method does not handle clicks on the 'remove feed' - item.
      */
     public static boolean onOptionsItemClicked(final Context context, final MenuItem item, final Feed selectedFeed) {
-        final int itemId = item.getItemId();
-        if (itemId == R.id.refresh_item) {
-            DBTasks.forceRefreshFeed(context, selectedFeed, true);
-        } else if (itemId == R.id.refresh_complete_item) {
-            DBTasks.forceRefreshCompleteFeed(context, selectedFeed);
-        } else if (itemId == R.id.sort_items) {
-            showSortDialog(context, selectedFeed);
-        } else if (itemId == R.id.visit_website_item) {
-            IntentUtils.openInBrowser(context, selectedFeed.getLink());
-        } else if (itemId == R.id.share_item) {
-            ShareUtils.shareFeedLink(context, selectedFeed);
-        } else {
-            return false;
-        }
+
         return true;
     }
 
-    private static void showSortDialog(Context context, Feed selectedFeed) {
-        IntraFeedSortDialog sortDialog = new IntraFeedSortDialog(context, selectedFeed.getSortOrder(), selectedFeed.isLocalFeed()) {
-            @Override
-            protected void updateSort(@NonNull SortOrder sortOrder) {
-                selectedFeed.setSortOrder(sortOrder);
-                DBWriter.setFeedItemSortOrder(selectedFeed.getId(), sortOrder);
-            }
-        };
-        sortDialog.openDialog();
-    }
+
 
 }

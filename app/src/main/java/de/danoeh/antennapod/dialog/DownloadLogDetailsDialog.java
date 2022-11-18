@@ -9,7 +9,6 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.model.download.DownloadStatus;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.event.MessageEvent;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedMedia;
@@ -22,17 +21,6 @@ public class DownloadLogDetailsDialog extends MaterialAlertDialogBuilder {
 
         String url = "unknown";
         String message = context.getString(R.string.download_successful);
-        if (status.getFeedfileType() == FeedMedia.FEEDFILETYPE_FEEDMEDIA) {
-            FeedMedia media = DBReader.getFeedMedia(status.getFeedfileId());
-            if (media != null) {
-                url = media.getDownload_url();
-            }
-        } else if (status.getFeedfileType() == Feed.FEEDFILETYPE_FEED) {
-            Feed feed = DBReader.getFeed(status.getFeedfileId());
-            if (feed != null) {
-                url = feed.getDownload_url();
-            }
-        }
 
         if (!status.isSuccessful()) {
             message = status.getReasonDetailed();

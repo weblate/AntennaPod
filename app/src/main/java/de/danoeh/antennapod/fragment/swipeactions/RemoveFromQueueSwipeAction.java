@@ -8,8 +8,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedItemFilter;
 
@@ -37,17 +35,7 @@ public class RemoveFromQueueSwipeAction implements SwipeAction {
 
     @Override
     public void performAction(FeedItem item, Fragment fragment, FeedItemFilter filter) {
-        int position = DBReader.getQueueIDList().indexOf(item.getId());
 
-        DBWriter.removeQueueItem(fragment.requireActivity(), true, item);
-
-        if (willRemove(filter, item)) {
-            ((MainActivity) fragment.requireActivity()).showSnackbarAbovePlayer(
-                    fragment.getResources().getQuantityString(R.plurals.removed_from_queue_batch_label, 1, 1),
-                    Snackbar.LENGTH_LONG)
-                    .setAction(fragment.getString(R.string.undo), v ->
-                            DBWriter.addQueueItemAt(fragment.requireActivity(), item.getId(), position, false));
-        }
     }
 
     @Override

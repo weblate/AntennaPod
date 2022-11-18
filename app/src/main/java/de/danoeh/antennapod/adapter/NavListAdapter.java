@@ -29,7 +29,6 @@ import de.danoeh.antennapod.fragment.AllEpisodesFragment;
 import de.danoeh.antennapod.fragment.CompletedDownloadsFragment;
 import de.danoeh.antennapod.fragment.InboxFragment;
 import de.danoeh.antennapod.model.feed.Feed;
-import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.core.storage.NavDrawerData;
 import de.danoeh.antennapod.fragment.AddFeedFragment;
 import de.danoeh.antennapod.fragment.NavDrawerFragment;
@@ -80,30 +79,11 @@ public class NavListAdapter extends RecyclerView.Adapter<NavListAdapter.Holder>
     }
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (UserPreferences.PREF_HIDDEN_DRAWER_ITEMS.equals(key)) {
-            loadItems();
-        }
+
     }
 
     private void loadItems() {
-        List<String> newTags = new ArrayList<>(Arrays.asList(NavDrawerFragment.NAV_DRAWER_TAGS));
-        List<String> hiddenFragments = UserPreferences.getHiddenDrawerItems();
-        newTags.removeAll(hiddenFragments);
 
-        if (newTags.contains(SUBSCRIPTION_LIST_TAG)) {
-            // we never want SUBSCRIPTION_LIST_TAG to be in 'tags'
-            // since it doesn't actually correspond to a position in the list, but is
-            // a placeholder that indicates if we should show the subscription list in the
-            // nav drawer at all.
-            showSubscriptionList = true;
-            newTags.remove(SUBSCRIPTION_LIST_TAG);
-        } else {
-            showSubscriptionList = false;
-        }
-
-        fragmentTags.clear();
-        fragmentTags.addAll(newTags);
-        notifyDataSetChanged();
     }
 
     public String getLabel(String tag) {
@@ -225,62 +205,7 @@ public class NavListAdapter extends RecyclerView.Adapter<NavListAdapter.Holder>
     }
 
     private void bindNavView(String title, int position, NavHolder holder) {
-        Activity context = activity.get();
-        if (context == null) {
-            return;
-        }
-        holder.title.setText(title);
 
-        // reset for re-use
-        holder.count.setVisibility(View.GONE);
-        holder.count.setOnClickListener(null);
-        holder.count.setClickable(false);
-
-        String tag = fragmentTags.get(position);
-        if (tag.equals(QueueFragment.TAG)) {
-            int queueSize = itemAccess.getQueueSize();
-            if (queueSize > 0) {
-                holder.count.setText(NumberFormat.getInstance().format(queueSize));
-                holder.count.setVisibility(View.VISIBLE);
-            }
-        } else if (tag.equals(InboxFragment.TAG)) {
-            int unreadItems = itemAccess.getNumberOfNewItems();
-            if (unreadItems > 0) {
-                holder.count.setText(NumberFormat.getInstance().format(unreadItems));
-                holder.count.setVisibility(View.VISIBLE);
-            }
-        } else if (tag.equals(SubscriptionFragment.TAG)) {
-            int sum = itemAccess.getFeedCounterSum();
-            if (sum > 0) {
-                holder.count.setText(NumberFormat.getInstance().format(sum));
-                holder.count.setVisibility(View.VISIBLE);
-            }
-        } else if (tag.equals(CompletedDownloadsFragment.TAG) && UserPreferences.isEnableAutodownload()) {
-            int epCacheSize = UserPreferences.getEpisodeCacheSize();
-            // don't count episodes that can be reclaimed
-            int spaceUsed = itemAccess.getNumberOfDownloadedItems()
-                    - itemAccess.getReclaimableItems();
-
-            if (epCacheSize > 0 && spaceUsed >= epCacheSize) {
-                holder.count.setText("{md-disc-full 150%}");
-                Iconify.addIcons(holder.count);
-                holder.count.setVisibility(View.VISIBLE);
-                holder.count.setOnClickListener(v ->
-                        new MaterialAlertDialogBuilder(context)
-                            .setTitle(R.string.episode_cache_full_title)
-                            .setMessage(R.string.episode_cache_full_message)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .setNeutralButton(R.string.open_autodownload_settings, (dialog, which) -> {
-                                Intent intent = new Intent(context, PreferenceActivity.class);
-                                intent.putExtra(PreferenceActivity.OPEN_AUTO_DOWNLOAD_SETTINGS, true);
-                                context.startActivity(intent);
-                            })
-                            .show()
-                );
-            }
-        }
-
-        holder.image.setImageResource(getDrawable(fragmentTags.get(position)));
     }
 
     private void bindSectionDivider(DividerHolder holder) {
@@ -289,16 +214,7 @@ public class NavListAdapter extends RecyclerView.Adapter<NavListAdapter.Holder>
             return;
         }
 
-        if (UserPreferences.getSubscriptionsFilter().isEnabled() && showSubscriptionList) {
-            holder.itemView.setEnabled(true);
-            holder.feedsFilteredMsg.setText("{md-info-outline} "
-                    + context.getString(R.string.subscriptions_are_filtered));
-            Iconify.addIcons(holder.feedsFilteredMsg);
-            holder.feedsFilteredMsg.setVisibility(View.VISIBLE);
-        } else {
-            holder.itemView.setEnabled(false);
-            holder.feedsFilteredMsg.setVisibility(View.GONE);
-        }
+
     }
 
     private void bindListItem(NavDrawerData.DrawerItem item, FeedHolder holder) {

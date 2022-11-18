@@ -2,7 +2,6 @@ package de.danoeh.antennapod.core.util.download;
 
 import android.content.Context;
 import com.google.android.exoplayer2.util.Log;
-import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.core.util.NetworkUtils;
 
 public abstract class NetworkConnectionChangeHandler {
