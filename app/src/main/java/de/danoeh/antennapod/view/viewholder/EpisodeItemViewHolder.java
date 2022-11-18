@@ -21,7 +21,6 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.CoverLoader;
 import de.danoeh.antennapod.adapter.actionbutton.ItemActionButton;
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadRequest;
 import de.danoeh.antennapod.core.service.download.DownloadService;
 import de.danoeh.antennapod.core.util.PlaybackStatus;
 import de.danoeh.antennapod.core.util.download.MediaSizeLoader;
@@ -137,66 +136,7 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void bind(FeedMedia media) {
-        isVideo.setVisibility(media.getMediaType() == MediaType.VIDEO ? View.VISIBLE : View.GONE);
-        duration.setVisibility(media.getDuration() > 0 ? View.VISIBLE : View.GONE);
 
-        if (PlaybackStatus.isCurrentlyPlaying(media)) {
-            itemView.setBackgroundColor(ThemeUtils.getColorFromAttr(activity, R.attr.currently_playing_background));
-        } else {
-            itemView.setBackgroundResource(ThemeUtils.getDrawableFromAttr(activity, R.attr.selectableItemBackground));
-        }
-
-        if (DownloadService.isDownloadingFile(media.getDownload_url())) {
-            final DownloadRequest downloadRequest = DownloadService.findRequest(media.getDownload_url());
-            float percent = 0.01f * downloadRequest.getProgressPercent();
-            secondaryActionProgress.setPercentage(Math.max(percent, 0.01f), item);
-        } else if (media.isDownloaded()) {
-            secondaryActionProgress.setPercentage(1, item); // Do not animate 100% -> 0%
-        } else {
-            secondaryActionProgress.setPercentage(0, item); // Animate X% -> 0%
-        }
-
-        duration.setText(Converter.getDurationStringLong(media.getDuration()));
-        duration.setContentDescription(activity.getString(R.string.chapter_duration,
-                Converter.getDurationStringLocalized(activity, media.getDuration())));
-        if (PlaybackStatus.isPlaying(item.getMedia()) || item.isInProgress()) {
-            int progress = (int) (100.0 * media.getPosition() / media.getDuration());
-            int remainingTime = Math.max(media.getDuration() - media.getPosition(), 0);
-            progressBar.setProgress(progress);
-            position.setText(Converter.getDurationStringLong(media.getPosition()));
-            position.setContentDescription(activity.getString(R.string.position,
-                    Converter.getDurationStringLocalized(activity, media.getPosition())));
-            progressBar.setVisibility(View.VISIBLE);
-            position.setVisibility(View.VISIBLE);
-            if (UserPreferences.shouldShowRemainingTime()) {
-                duration.setText(((remainingTime > 0) ? "-" : "") + Converter.getDurationStringLong(remainingTime));
-                duration.setContentDescription(activity.getString(R.string.chapter_duration,
-                        Converter.getDurationStringLocalized(activity, (media.getDuration() - media.getPosition()))));
-            }
-        } else {
-            progressBar.setVisibility(View.GONE);
-            position.setVisibility(View.GONE);
-        }
-
-        if (media.getSize() > 0) {
-            size.setText(Formatter.formatShortFileSize(activity, media.getSize()));
-        } else if (NetworkUtils.isEpisodeHeadDownloadAllowed() && !media.checkedOnSizeButUnknown()) {
-            size.setText("{fa-spinner}");
-            Iconify.addIcons(size);
-            MediaSizeLoader.getFeedMediaSizeObservable(media).subscribe(
-                    sizeValue -> {
-                        if (sizeValue > 0) {
-                            size.setText(Formatter.formatShortFileSize(activity, sizeValue));
-                        } else {
-                            size.setText("");
-                        }
-                    }, error -> {
-                        size.setText("");
-                        Log.e(TAG, Log.getStackTraceString(error));
-                    });
-        } else {
-            size.setText("");
-        }
     }
 
     public void bindDummy() {

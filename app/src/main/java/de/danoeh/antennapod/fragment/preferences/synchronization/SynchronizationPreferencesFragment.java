@@ -28,7 +28,6 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.PreferenceActivity;
 import de.danoeh.antennapod.event.SyncServiceEvent;
 import de.danoeh.antennapod.core.sync.SynchronizationCredentials;
-import de.danoeh.antennapod.core.sync.SyncService;
 import de.danoeh.antennapod.core.sync.SynchronizationProviderViewData;
 import de.danoeh.antennapod.core.sync.SynchronizationSettings;
 import de.danoeh.antennapod.dialog.AuthenticationDialog;
@@ -42,7 +41,6 @@ public class SynchronizationPreferencesFragment extends PreferenceFragmentCompat
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        addPreferencesFromResource(R.xml.preferences_synchronization);
         setupScreen();
         updateScreen();
     }
@@ -79,34 +77,6 @@ public class SynchronizationPreferencesFragment extends PreferenceFragmentCompat
 
     private void setupScreen() {
         final Activity activity = getActivity();
-        findPreference(PREFERENCE_GPODNET_SETLOGIN_INFORMATION)
-                .setOnPreferenceClickListener(preference -> {
-                    AuthenticationDialog dialog = new AuthenticationDialog(activity,
-                            R.string.pref_gpodnet_setlogin_information_title,
-                            false, SynchronizationCredentials.getUsername(), null) {
-                        @Override
-                        protected void onConfirmed(String username, String password) {
-                            SynchronizationCredentials.setPassword(password);
-                        }
-                    };
-                    dialog.show();
-                    return true;
-                });
-        findPreference(PREFERENCE_SYNC).setOnPreferenceClickListener(preference -> {
-            SyncService.syncImmediately(getActivity().getApplicationContext());
-            return true;
-        });
-        findPreference(PREFERENCE_FORCE_FULL_SYNC).setOnPreferenceClickListener(preference -> {
-            SyncService.fullSync(getContext());
-            return true;
-        });
-        findPreference(PREFERENCE_LOGOUT).setOnPreferenceClickListener(preference -> {
-            SynchronizationCredentials.clear(getContext());
-            Snackbar.make(getView(), R.string.pref_synchronization_logout_toast, Snackbar.LENGTH_LONG).show();
-            SynchronizationSettings.setSelectedSyncProvider(null);
-            updateScreen();
-            return true;
-        });
     }
 
     private void updateScreen() {

@@ -3,13 +3,6 @@ include ':core'
 include ':event'
 include ':model'
 
-include ':net:common'
-include ':net:discovery'
-include ':net:download:service-interface'
-include ':net:ssl'
-include ':net:sync:gpoddernet'
-include ':net:sync:model'
-
 include ':parser:feed'
 include ':parser:media'
 

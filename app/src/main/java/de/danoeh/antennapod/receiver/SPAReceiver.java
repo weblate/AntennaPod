@@ -11,8 +11,6 @@ import java.util.Arrays;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.ClientConfigurator;
-import de.danoeh.antennapod.core.service.download.DownloadRequestCreator;
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadServiceInterface;
 import de.danoeh.antennapod.model.feed.Feed;
 
 /**
@@ -27,25 +25,6 @@ public class SPAReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (!TextUtils.equals(intent.getAction(), ACTION_SP_APPS_QUERY_FEEDS_REPSONSE)) {
-            return;
-        }
-        Log.d(TAG, "Received SP_APPS_QUERY_RESPONSE");
-        if (!intent.hasExtra(ACTION_SP_APPS_QUERY_FEEDS_REPSONSE_FEEDS_EXTRA)) {
-            Log.e(TAG, "Received invalid SP_APPS_QUERY_RESPONSE: Contains no extra");
-            return;
-        }
-        String[] feedUrls = intent.getStringArrayExtra(ACTION_SP_APPS_QUERY_FEEDS_REPSONSE_FEEDS_EXTRA);
-        if (feedUrls == null) {
-            Log.e(TAG, "Received invalid SP_APPS_QUERY_REPSONSE: extra was null");
-            return;
-        }
-        Log.d(TAG, "Received feeds list: " + Arrays.toString(feedUrls));
-        ClientConfigurator.initialize(context);
-        for (String url : feedUrls) {
-            Feed f = new Feed(url, null);
-            DownloadServiceInterface.get().download(context, false, DownloadRequestCreator.create(f).build());
-        }
-        Toast.makeText(context, R.string.sp_apps_importing_feeds_msg, Toast.LENGTH_LONG).show();
+
     }
 }

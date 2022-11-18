@@ -27,48 +27,32 @@ import com.skydoves.balloon.Balloon;
 import com.skydoves.balloon.BalloonAnimation;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
-import de.danoeh.antennapod.adapter.actionbutton.CancelDownloadActionButton;
-import de.danoeh.antennapod.adapter.actionbutton.DeleteActionButton;
 import de.danoeh.antennapod.adapter.actionbutton.DownloadActionButton;
 import de.danoeh.antennapod.adapter.actionbutton.ItemActionButton;
-import de.danoeh.antennapod.adapter.actionbutton.MarkAsPlayedActionButton;
-import de.danoeh.antennapod.adapter.actionbutton.PauseActionButton;
-import de.danoeh.antennapod.adapter.actionbutton.PlayActionButton;
-import de.danoeh.antennapod.adapter.actionbutton.PlayLocalActionButton;
 import de.danoeh.antennapod.adapter.actionbutton.StreamActionButton;
-import de.danoeh.antennapod.adapter.actionbutton.VisitWebsiteActionButton;
 import de.danoeh.antennapod.core.event.DownloadEvent;
-import de.danoeh.antennapod.core.event.DownloaderUpdate;
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadRequest;
-import de.danoeh.antennapod.core.service.download.DownloadService;
-import de.danoeh.antennapod.core.util.PlaybackStatus;
+import de.danoeh.antennapod.core.feed.util.ImageResourceUtils;
+import de.danoeh.antennapod.core.preferences.UsageStatistics;
+import de.danoeh.antennapod.core.storage.DBReader;
+import de.danoeh.antennapod.core.util.DateFormatter;
+import de.danoeh.antennapod.core.util.gui.ShownotesCleaner;
+import de.danoeh.antennapod.core.util.playback.PlaybackController;
 import de.danoeh.antennapod.event.FeedItemEvent;
 import de.danoeh.antennapod.event.PlayerStatusEvent;
 import de.danoeh.antennapod.event.UnreadItemsUpdateEvent;
 import de.danoeh.antennapod.model.feed.FeedItem;
-import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.core.feed.util.ImageResourceUtils;
-import de.danoeh.antennapod.core.preferences.UsageStatistics;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
-import de.danoeh.antennapod.core.service.download.Downloader;
-import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.util.Converter;
-import de.danoeh.antennapod.core.util.DateFormatter;
 import de.danoeh.antennapod.ui.common.CircularProgressBar;
 import de.danoeh.antennapod.ui.common.ThemeUtils;
-import de.danoeh.antennapod.core.util.playback.PlaybackController;
-import de.danoeh.antennapod.core.util.gui.ShownotesCleaner;
 import de.danoeh.antennapod.view.ShownotesWebView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import org.apache.commons.lang3.ArrayUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -98,7 +82,6 @@ public class ItemFragment extends Fragment {
     private long itemId;
     private FeedItem item;
     private String webviewData;
-    private List<Downloader> downloaderList;
 
     private ViewGroup root;
     private ShownotesWebView webvDescription;
@@ -308,57 +291,7 @@ public class ItemFragment extends Fragment {
     }
 
     private void updateButtons() {
-        progbarDownload.setVisibility(View.GONE);
-        if (item.hasMedia() && downloaderList != null) {
-            for (Downloader downloader : downloaderList) {
-                DownloadRequest request = downloader.getDownloadRequest();
-                if (request.getFeedfileType() == FeedMedia.FEEDFILETYPE_FEEDMEDIA
-                        && request.getFeedfileId() == item.getMedia().getId()) {
-                    progbarDownload.setVisibility(View.VISIBLE);
-                    progbarDownload.setPercentage(0.01f * Math.max(1, request.getProgressPercent()), request);
-                }
-            }
-        }
 
-        FeedMedia media = item.getMedia();
-        if (media == null) {
-            actionButton1 = new MarkAsPlayedActionButton(item);
-            actionButton2 = new VisitWebsiteActionButton(item);
-            noMediaLabel.setVisibility(View.VISIBLE);
-        } else {
-            noMediaLabel.setVisibility(View.GONE);
-            if (media.getDuration() > 0) {
-                txtvDuration.setText(Converter.getDurationStringLong(media.getDuration()));
-                txtvDuration.setContentDescription(
-                        Converter.getDurationStringLocalized(getContext(), media.getDuration()));
-            }
-            if (PlaybackStatus.isCurrentlyPlaying(media)) {
-                actionButton1 = new PauseActionButton(item);
-            } else if (item.getFeed().isLocalFeed()) {
-                actionButton1 = new PlayLocalActionButton(item);
-            } else if (media.isDownloaded()) {
-                actionButton1 = new PlayActionButton(item);
-            } else {
-                actionButton1 = new StreamActionButton(item);
-            }
-            if (DownloadService.isDownloadingFile(media.getDownload_url())) {
-                actionButton2 = new CancelDownloadActionButton(item);
-            } else if (!media.isDownloaded()) {
-                actionButton2 = new DownloadActionButton(item);
-            } else {
-                actionButton2 = new DeleteActionButton(item);
-            }
-        }
-
-        butAction1Text.setText(actionButton1.getLabel());
-        butAction1Text.setTransformationMethod(null);
-        butAction1Icon.setImageResource(actionButton1.getDrawable());
-        butAction1.setVisibility(actionButton1.getVisibility());
-
-        butAction2Text.setText(actionButton2.getLabel());
-        butAction2Text.setTransformationMethod(null);
-        butAction2Icon.setImageResource(actionButton2.getDrawable());
-        butAction2.setVisibility(actionButton2.getVisibility());
     }
 
     @Override
@@ -387,18 +320,7 @@ public class ItemFragment extends Fragment {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DownloadEvent event) {
-        Log.d(TAG, "onEventMainThread() called with: " + "event = [" + event + "]");
-        DownloaderUpdate update = event.update;
-        downloaderList = update.downloaders;
-        if (item == null || item.getMedia() == null) {
-            return;
-        }
-        long mediaId = item.getMedia().getId();
-        if (ArrayUtils.contains(update.mediaIds, mediaId)) {
-            if (itemsLoaded && getActivity() != null) {
-                updateButtons();
-            }
-        }
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

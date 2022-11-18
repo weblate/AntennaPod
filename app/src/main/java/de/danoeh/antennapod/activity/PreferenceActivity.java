@@ -77,8 +77,6 @@ public class PreferenceActivity extends AppCompatActivity implements SearchPrefe
             prefFragment = new ImportExportPreferencesFragment();
         } else if (screen == R.xml.preferences_autodownload) {
             prefFragment = new AutoDownloadPreferencesFragment();
-        } else if (screen == R.xml.preferences_synchronization) {
-            prefFragment = new SynchronizationPreferencesFragment();
         } else if (screen == R.xml.preferences_playback) {
             prefFragment = new PlaybackPreferencesFragment();
         } else if (screen == R.xml.preferences_notifications) {
@@ -102,8 +100,6 @@ public class PreferenceActivity extends AppCompatActivity implements SearchPrefe
             return R.string.import_export_pref;
         } else if (preferences == R.xml.preferences_user_interface) {
             return R.string.user_interface_label;
-        } else if (preferences == R.xml.preferences_synchronization) {
-            return R.string.synchronization_pref;
         } else if (preferences == R.xml.preferences_notifications) {
             return R.string.notification_pref_fragment;
         } else if (preferences == R.xml.feed_settings) {

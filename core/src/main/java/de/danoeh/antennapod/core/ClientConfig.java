@@ -12,5 +12,4 @@ public class ClientConfig {
 
     public static ApplicationCallbacks applicationCallbacks;
 
-    public static DownloadServiceCallbacks downloadServiceCallbacks;
 }

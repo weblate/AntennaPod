@@ -11,7 +11,6 @@ import com.joanzapata.iconify.fonts.MaterialModule;
 
 import de.danoeh.antennapod.activity.SplashActivity;
 import de.danoeh.antennapod.config.ApplicationCallbacksImpl;
-import de.danoeh.antennapod.config.DownloadServiceCallbacksImpl;
 import de.danoeh.antennapod.core.ApCoreEventBusIndex;
 import de.danoeh.antennapod.core.ClientConfig;
 import de.danoeh.antennapod.core.ClientConfigurator;
@@ -32,38 +31,7 @@ public class PodcastApp extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        ClientConfig.USER_AGENT = "AntennaPod/" + BuildConfig.VERSION_NAME;
-        ClientConfig.applicationCallbacks = new ApplicationCallbacksImpl();
-        ClientConfig.downloadServiceCallbacks = new DownloadServiceCallbacksImpl();
 
-        Thread.setDefaultUncaughtExceptionHandler(new CrashReportWriter());
-        RxJavaErrorHandlerSetup.setupRxJavaErrorHandler();
-
-        if (BuildConfig.DEBUG) {
-            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder()
-                    .detectLeakedSqlLiteObjects()
-                    .penaltyLog()
-                    .penaltyDropBox()
-                    .detectActivityLeaks()
-                    .detectLeakedClosableObjects()
-                    .detectLeakedRegistrationObjects();
-            StrictMode.setVmPolicy(builder.build());
-        }
-
-        singleton = this;
-
-        ClientConfigurator.initialize(this);
-
-        Iconify.with(new FontAwesomeModule());
-        Iconify.with(new MaterialModule());
-
-        SPAUtil.sendSPAppsQueryFeedsIntent(this);
-        EventBus.builder()
-                .addIndex(new ApEventBusIndex())
-                .addIndex(new ApCoreEventBusIndex())
-                .logNoSubscriberMessages(false)
-                .sendNoSubscriberEvent(false)
-                .installDefaultEventBus();
     }
 
     public static void forceRestart() {

@@ -5,10 +5,8 @@ import android.text.TextUtils;
 import androidx.appcompat.app.AppCompatActivity;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.preferences.ThemeSwitcher;
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadServiceInterface;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.feed.FeedPreferences;
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadRequest;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.dialog.AuthenticationDialog;
@@ -29,49 +27,5 @@ public class DownloadAuthenticationActivity extends AppCompatActivity {
      */
     public static final String ARG_DOWNLOAD_REQUEST = "request";
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        setTheme(ThemeSwitcher.getTranslucentTheme(this));
-        super.onCreate(savedInstanceState);
 
-        Validate.isTrue(getIntent().hasExtra(ARG_DOWNLOAD_REQUEST), "Download request missing");
-        DownloadRequest request = getIntent().getParcelableExtra(ARG_DOWNLOAD_REQUEST);
-
-        new AuthenticationDialog(this, R.string.authentication_label, true, "", "") {
-            @Override
-            protected void onConfirmed(String username, String password) {
-                Completable.fromAction(
-                        () -> {
-                            request.setUsername(username);
-                            request.setPassword(password);
-
-                            if (request.getFeedfileType() == FeedMedia.FEEDFILETYPE_FEEDMEDIA) {
-                                long mediaId = request.getFeedfileId();
-                                FeedMedia media = DBReader.getFeedMedia(mediaId);
-                                if (media != null) {
-                                    FeedPreferences preferences = media.getItem().getFeed().getPreferences();
-                                    if (TextUtils.isEmpty(preferences.getPassword())
-                                            || TextUtils.isEmpty(preferences.getUsername())) {
-                                        preferences.setUsername(username);
-                                        preferences.setPassword(password);
-                                        DBWriter.setFeedPreferences(preferences);
-                                    }
-                                }
-                            }
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(() -> {
-                            DownloadServiceInterface.get()
-                                    .download(DownloadAuthenticationActivity.this, false, request);
-                            finish();
-                        });
-            }
-
-            @Override
-            protected void onCancelled() {
-                finish();
-            }
-        }.show();
-    }
 }

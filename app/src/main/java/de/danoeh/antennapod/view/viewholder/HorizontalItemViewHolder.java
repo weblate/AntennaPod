@@ -12,7 +12,6 @@ import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.adapter.CoverLoader;
 import de.danoeh.antennapod.adapter.actionbutton.ItemActionButton;
 import de.danoeh.antennapod.core.feed.util.ImageResourceUtils;
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadRequest;
 import de.danoeh.antennapod.core.service.download.DownloadService;
 import de.danoeh.antennapod.core.util.DateFormatter;
 import de.danoeh.antennapod.core.util.PlaybackStatus;
@@ -51,35 +50,6 @@ public class HorizontalItemViewHolder extends RecyclerView.ViewHolder {
     public void bind(FeedItem item) {
         this.item = item;
 
-        card.setAlpha(1.0f);
-        new CoverLoader(activity)
-                .withUri(ImageResourceUtils.getEpisodeListImageLocation(item))
-                .withFallbackUri(item.getFeed().getImageUrl())
-                .withCoverView(cover)
-                .load();
-        title.setText(item.getTitle());
-        date.setText(DateFormatter.formatAbbrev(activity, item.getPubDate()));
-        ItemActionButton actionButton = ItemActionButton.forItem(item);
-        actionButton.configure(secondaryActionIcon, secondaryActionIcon, activity);
-        secondaryActionIcon.setFocusable(false);
-
-        FeedMedia media = item.getMedia();
-        if (media == null) {
-            circularProgressBar.setPercentage(0, item);
-        } else {
-            if (item.getMedia().getDuration() > 0) {
-                progressBar.setProgress(100 * item.getMedia().getPosition() / item.getMedia().getDuration());
-            }
-            if (DownloadService.isDownloadingFile(media.getDownload_url())) {
-                final DownloadRequest downloadRequest = DownloadService.findRequest(media.getDownload_url());
-                float percent = 0.01f * downloadRequest.getProgressPercent();
-                circularProgressBar.setPercentage(Math.max(percent, 0.01f), item);
-            } else if (media.isDownloaded()) {
-                circularProgressBar.setPercentage(1, item); // Do not animate 100% -> 0%
-            } else {
-                circularProgressBar.setPercentage(0, item); // Animate X% -> 0%
-            }
-        }
     }
 
     public void bindDummy() {

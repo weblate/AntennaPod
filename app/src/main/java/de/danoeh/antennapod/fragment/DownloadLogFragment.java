@@ -18,7 +18,6 @@ import de.danoeh.antennapod.adapter.DownloadLogAdapter;
 import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.core.event.DownloadLogEvent;
 import de.danoeh.antennapod.core.event.DownloaderUpdate;
-import de.danoeh.antennapod.core.service.download.Downloader;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.databinding.DownloadLogFragmentBinding;
@@ -44,7 +43,6 @@ public class DownloadLogFragment extends BottomSheetDialogFragment
     private static final String TAG = "DownloadLogFragment";
 
     private List<DownloadStatus> downloadLog = new ArrayList<>();
-    private List<Downloader> runningDownloads = new ArrayList<>();
     private DownloadLogAdapter adapter;
     private Disposable disposable;
     private DownloadLogFragmentBinding viewBinding;
@@ -120,14 +118,6 @@ public class DownloadLogFragment extends BottomSheetDialogFragment
             return true;
         }
         return false;
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onEvent(DownloadEvent event) {
-        Log.d(TAG, "onEvent() called with: " + "event = [" + event + "]");
-        DownloaderUpdate update = event.update;
-        runningDownloads = update.downloaders;
-        adapter.setRunningDownloads(runningDownloads);
     }
 
     private void loadDownloadLog() {

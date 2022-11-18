@@ -27,18 +27,13 @@ import com.google.android.material.snackbar.Snackbar;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
-import de.danoeh.antennapod.activity.OnlineFeedViewActivity;
 import de.danoeh.antennapod.activity.OpmlImportActivity;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.model.feed.SortOrder;
 import de.danoeh.antennapod.databinding.AddfeedBinding;
 import de.danoeh.antennapod.databinding.EditTextDialogBinding;
-import de.danoeh.antennapod.net.discovery.CombinedSearcher;
-import de.danoeh.antennapod.net.discovery.FyydPodcastSearcher;
-import de.danoeh.antennapod.net.discovery.GpodnetPodcastSearcher;
-import de.danoeh.antennapod.net.discovery.ItunesPodcastSearcher;
-import de.danoeh.antennapod.net.discovery.PodcastIndexPodcastSearcher;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -77,14 +72,6 @@ public class AddFeedFragment extends Fragment {
         }
         ((MainActivity) getActivity()).setupToolbarToggle(viewBinding.toolbar, displayUpArrow);
 
-        viewBinding.searchItunesButton.setOnClickListener(v
-                -> activity.loadChildFragment(OnlineSearchFragment.newInstance(ItunesPodcastSearcher.class)));
-        viewBinding.searchFyydButton.setOnClickListener(v
-                -> activity.loadChildFragment(OnlineSearchFragment.newInstance(FyydPodcastSearcher.class)));
-        viewBinding.searchGPodderButton.setOnClickListener(v
-                -> activity.loadChildFragment(OnlineSearchFragment.newInstance(GpodnetPodcastSearcher.class)));
-        viewBinding.searchPodcastIndexButton.setOnClickListener(v
-                -> activity.loadChildFragment(OnlineSearchFragment.newInstance(PodcastIndexPodcastSearcher.class)));
 
         viewBinding.combinedFeedSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
             performSearch();
@@ -153,22 +140,11 @@ public class AddFeedFragment extends Fragment {
     }
 
     private void addUrl(String url) {
-        Intent intent = new Intent(getActivity(), OnlineFeedViewActivity.class);
-        intent.putExtra(OnlineFeedViewActivity.ARG_FEEDURL, url);
-        startActivity(intent);
+
     }
 
     private void performSearch() {
-        viewBinding.combinedFeedSearchEditText.clearFocus();
-        InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        in.hideSoftInputFromWindow(viewBinding.combinedFeedSearchEditText.getWindowToken(), 0);
-        String query = viewBinding.combinedFeedSearchEditText.getText().toString();
-        if (query.matches("http[s]?://.*")) {
-            addUrl(query);
-            return;
-        }
-        activity.loadChildFragment(OnlineSearchFragment.newInstance(CombinedSearcher.class, query));
-        viewBinding.combinedFeedSearchEditText.post(() -> viewBinding.combinedFeedSearchEditText.setText(""));
+
     }
 
     @Override

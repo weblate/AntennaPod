@@ -6,9 +6,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationManagerCompat;
-
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadServiceInterface;
 import de.danoeh.antennapod.core.service.playback.PlaybackServiceInterface;
 import de.danoeh.antennapod.storage.database.PodDBAdapter;
 import org.greenrobot.eventbus.EventBus;
@@ -48,7 +45,6 @@ import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.feed.FeedPreferences;
 import de.danoeh.antennapod.model.feed.SortOrder;
 import de.danoeh.antennapod.model.playback.Playable;
-import de.danoeh.antennapod.net.sync.model.EpisodeAction;
 
 /**
  * Provides methods for writing data to AntennaPod's database.
@@ -108,40 +104,6 @@ public class DBWriter {
 
     private static boolean deleteFeedMediaSynchronous(
             @NonNull Context context, @NonNull FeedMedia media) {
-        Log.i(TAG, String.format(Locale.US, "Requested to delete FeedMedia [id=%d, title=%s, downloaded=%s",
-                media.getId(), media.getEpisodeTitle(), media.isDownloaded()));
-        if (media.isDownloaded()) {
-            // delete downloaded media file
-            File mediaFile = new File(media.getFile_url());
-            if (mediaFile.exists() && !mediaFile.delete()) {
-                MessageEvent evt = new MessageEvent(context.getString(R.string.delete_failed));
-                EventBus.getDefault().post(evt);
-                return false;
-            }
-            media.setDownloaded(false);
-            media.setFile_url(null);
-            media.setHasEmbeddedPicture(false);
-            PodDBAdapter adapter = PodDBAdapter.getInstance();
-            adapter.open();
-            adapter.setMedia(media);
-            adapter.close();
-
-            if (media.getId() == PlaybackPreferences.getCurrentlyPlayingFeedMediaId()) {
-                PlaybackPreferences.writeNoMediaPlaying();
-                IntentUtils.sendLocalBroadcast(context, PlaybackServiceInterface.ACTION_SHUTDOWN_PLAYBACK_SERVICE);
-
-                NotificationManagerCompat nm = NotificationManagerCompat.from(context);
-                nm.cancel(R.id.notification_playing);
-            }
-
-            // Gpodder: queue delete action for synchronization
-            FeedItem item = media.getItem();
-            EpisodeAction action = new EpisodeAction.Builder(item, EpisodeAction.DELETE)
-                    .currentTimestamp()
-                    .build();
-            SynchronizationQueueSink.enqueueEpisodeActionIfSynchronizationIsActive(context, action);
-        }
-        EventBus.getDefault().post(FeedItemEvent.updated(media.getItem()));
         return true;
     }
 
@@ -191,44 +153,7 @@ public class DBWriter {
      * Deleting media also removes the download log entries.
      */
     private static void deleteFeedItemsSynchronous(@NonNull Context context, @NonNull List<FeedItem> items) {
-        List<FeedItem> queue = DBReader.getQueue();
-        List<FeedItem> removedFromQueue = new ArrayList<>();
-        for (FeedItem item : items) {
-            if (queue.remove(item)) {
-                removedFromQueue.add(item);
-            }
-            if (item.getMedia() != null) {
-                if (item.getMedia().getId() == PlaybackPreferences.getCurrentlyPlayingFeedMediaId()) {
-                    // Applies to both downloaded and streamed media
-                    PlaybackPreferences.writeNoMediaPlaying();
-                    IntentUtils.sendLocalBroadcast(context, PlaybackServiceInterface.ACTION_SHUTDOWN_PLAYBACK_SERVICE);
-                }
-                if (item.getMedia().isDownloaded()) {
-                    deleteFeedMediaSynchronous(context, item.getMedia());
-                }
-                DownloadServiceInterface.get().cancel(context, item.getMedia().getDownload_url());
-            }
-        }
 
-        PodDBAdapter adapter = PodDBAdapter.getInstance();
-        adapter.open();
-        if (!removedFromQueue.isEmpty()) {
-            adapter.setQueue(queue);
-        }
-        adapter.removeFeedItems(items);
-        adapter.close();
-
-        for (FeedItem item : removedFromQueue) {
-            EventBus.getDefault().post(QueueEvent.irreversibleRemoved(item));
-        }
-
-        // we assume we also removed download log entries for the feed or its media files.
-        // especially important if download or refresh failed, as the user should not be able
-        // to retry these
-        EventBus.getDefault().post(DownloadLogEvent.listUpdated());
-
-        BackupManager backupManager = new BackupManager(context);
-        backupManager.dataChanged();
     }
 
     /**

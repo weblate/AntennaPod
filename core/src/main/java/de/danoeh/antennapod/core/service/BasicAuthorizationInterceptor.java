@@ -3,7 +3,6 @@ package de.danoeh.antennapod.core.service;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadRequest;
 import de.danoeh.antennapod.core.service.download.HttpCredentialEncoder;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.util.URIUtil;
@@ -43,41 +42,8 @@ public class BasicAuthorizationInterceptor implements Interceptor {
             }
         }
 
-        String userInfo;
-        if (request.tag() instanceof DownloadRequest) {
-            DownloadRequest downloadRequest = (DownloadRequest) request.tag();
-            userInfo = URIUtil.getURIFromRequestUrl(downloadRequest.getSource()).getUserInfo();
-            if (TextUtils.isEmpty(userInfo)
-                    && (!TextUtils.isEmpty(downloadRequest.getUsername())
-                        || !TextUtils.isEmpty(downloadRequest.getPassword()))) {
-                userInfo = downloadRequest.getUsername() + ":" + downloadRequest.getPassword();
-            }
-        } else {
-            userInfo = DBReader.getImageAuthentication(request.url().toString());
-        }
 
-        if (TextUtils.isEmpty(userInfo)) {
-            Log.d(TAG, "no credentials for '" + request.url() + "'");
-            return response;
-        }
 
-        if (!userInfo.contains(":")) {
-            Log.d(TAG, "Invalid credentials for '" + request.url() + "'");
-            return response;
-        }
-        String username = userInfo.substring(0, userInfo.indexOf(':'));
-        String password = userInfo.substring(userInfo.indexOf(':') + 1);
-
-        Log.d(TAG, "Authorization failed, re-trying with ISO-8859-1 encoded credentials");
-        newRequest.header(HEADER_AUTHORIZATION, HttpCredentialEncoder.encode(username, password, "ISO-8859-1"));
-        response = chain.proceed(newRequest.build());
-
-        if (response.code() != HttpURLConnection.HTTP_UNAUTHORIZED) {
-            return response;
-        }
-
-        Log.d(TAG, "Authorization failed, re-trying with UTF-8 encoded credentials");
-        newRequest.header(HEADER_AUTHORIZATION, HttpCredentialEncoder.encode(username, password, "UTF-8"));
         return chain.proceed(newRequest.build());
     }
 }

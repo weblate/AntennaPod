@@ -28,8 +28,6 @@ import de.danoeh.antennapod.core.export.opml.OpmlElement;
 import de.danoeh.antennapod.core.export.opml.OpmlReader;
 import de.danoeh.antennapod.core.preferences.ThemeSwitcher;
 
-import de.danoeh.antennapod.core.service.download.DownloadRequestCreator;
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadServiceInterface;
 import de.danoeh.antennapod.databinding.OpmlSelectionBinding;
 import de.danoeh.antennapod.model.feed.Feed;
 import io.reactivex.Completable;
@@ -86,33 +84,7 @@ public class OpmlImportActivity extends AppCompatActivity {
             setResult(RESULT_CANCELED);
             finish();
         });
-        viewBinding.butConfirm.setOnClickListener(v -> {
-            viewBinding.progressBar.setVisibility(View.VISIBLE);
-            Completable.fromAction(() -> {
-                SparseBooleanArray checked = viewBinding.feedlist.getCheckedItemPositions();
-                for (int i = 0; i < checked.size(); i++) {
-                    if (!checked.valueAt(i)) {
-                        continue;
-                    }
-                    OpmlElement element = readElements.get(checked.keyAt(i));
-                    Feed feed = new Feed(element.getXmlUrl(), null, element.getText());
-                    DownloadServiceInterface.get().download(this, false, DownloadRequestCreator.create(feed).build());
-                }
-            })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            () -> {
-                                viewBinding.progressBar.setVisibility(View.GONE);
-                                Intent intent = new Intent(OpmlImportActivity.this, MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                                finish();
-                            }, e -> {
-                                viewBinding.progressBar.setVisibility(View.GONE);
-                                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                            });
-        });
+
 
         Uri uri = getIntent().getData();
         if (uri != null && uri.toString().startsWith("/")) {

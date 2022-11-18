@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadRequest;
-import de.danoeh.antennapod.core.service.download.DownloadRequestCreator;
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadServiceInterface;
 import de.danoeh.antennapod.core.util.PlaybackStatus;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedPreferences;
@@ -37,72 +34,7 @@ public class AutomaticDownloadAlgorithm {
     public Runnable autoDownloadUndownloadedItems(final Context context) {
         return () -> {
 
-            // true if we should auto download based on network status
-            boolean networkShouldAutoDl = NetworkUtils.isAutoDownloadAllowed()
-                    && UserPreferences.isEnableAutodownload();
 
-            // true if we should auto download based on power status
-            boolean powerShouldAutoDl = PowerUtils.deviceCharging(context)
-                    || UserPreferences.isEnableAutodownloadOnBattery();
-
-            // we should only auto download if both network AND power are happy
-            if (networkShouldAutoDl && powerShouldAutoDl) {
-
-                Log.d(TAG, "Performing auto-dl of undownloaded episodes");
-
-                List<FeedItem> candidates;
-                final List<FeedItem> queue = DBReader.getQueue();
-                final List<FeedItem> newItems = DBReader.getNewItemsList(0, Integer.MAX_VALUE);
-                candidates = new ArrayList<>(queue.size() + newItems.size());
-                candidates.addAll(queue);
-                for (FeedItem newItem : newItems) {
-                    FeedPreferences feedPrefs = newItem.getFeed().getPreferences();
-                    if (feedPrefs.getAutoDownload()
-                            && !candidates.contains(newItem)
-                            && feedPrefs.getFilter().shouldAutoDownload(newItem)) {
-                        candidates.add(newItem);
-                    }
-                }
-
-                // filter items that are not auto downloadable
-                Iterator<FeedItem> it = candidates.iterator();
-                while (it.hasNext()) {
-                    FeedItem item = it.next();
-                    if (!item.isAutoDownloadable(System.currentTimeMillis())
-                            || PlaybackStatus.isPlaying(item.getMedia())
-                            || item.getFeed().isLocalFeed()) {
-                        it.remove();
-                    }
-                }
-
-                int autoDownloadableEpisodes = candidates.size();
-                int downloadedEpisodes = DBReader.getNumberOfDownloadedEpisodes();
-                int deletedEpisodes = EpisodeCleanupAlgorithmFactory.build()
-                        .makeRoomForEpisodes(context, autoDownloadableEpisodes);
-                boolean cacheIsUnlimited =
-                        UserPreferences.getEpisodeCacheSize() == UserPreferences.EPISODE_CACHE_SIZE_UNLIMITED;
-                int episodeCacheSize = UserPreferences.getEpisodeCacheSize();
-
-                int episodeSpaceLeft;
-                if (cacheIsUnlimited || episodeCacheSize >= downloadedEpisodes + autoDownloadableEpisodes) {
-                    episodeSpaceLeft = autoDownloadableEpisodes;
-                } else {
-                    episodeSpaceLeft = episodeCacheSize - (downloadedEpisodes - deletedEpisodes);
-                }
-
-                List<FeedItem> itemsToDownload = candidates.subList(0, episodeSpaceLeft);
-                if (itemsToDownload.size() > 0) {
-                    Log.d(TAG, "Enqueueing " + itemsToDownload.size() + " items for download");
-
-                    List<DownloadRequest> requests = new ArrayList<>();
-                    for (FeedItem episode : itemsToDownload) {
-                        DownloadRequest.Builder request = DownloadRequestCreator.create(episode.getMedia());
-                        request.withInitiatedByUser(false);
-                        requests.add(request.build());
-                    }
-                    DownloadServiceInterface.get().download(context, false, requests.toArray(new DownloadRequest[0]));
-                }
-            }
         };
     }
 }

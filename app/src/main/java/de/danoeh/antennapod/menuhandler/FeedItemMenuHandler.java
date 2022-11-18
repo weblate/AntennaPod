@@ -28,7 +28,6 @@ import de.danoeh.antennapod.core.util.ShareUtils;
 import de.danoeh.antennapod.dialog.ShareDialog;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.net.sync.model.EpisodeAction;
 
 /**
  * Handles interactions with the FeedItemMenu.
@@ -145,62 +144,7 @@ public class FeedItemMenuHandler {
                                             @NonNull FeedItem selectedItem) {
 
         @NonNull Context context = fragment.requireContext();
-        if (menuItemId == R.id.skip_episode_item) {
-            context.sendBroadcast(MediaButtonReceiver.createIntent(context, KeyEvent.KEYCODE_MEDIA_NEXT));
-        } else if (menuItemId == R.id.remove_item) {
-            DBWriter.deleteFeedMediaOfItem(context, selectedItem.getMedia().getId());
-        } else if (menuItemId == R.id.remove_inbox_item) {
-            removeNewFlagWithUndo(fragment, selectedItem);
-        } else if (menuItemId == R.id.mark_read_item) {
-            selectedItem.setPlayed(true);
-            DBWriter.markItemPlayed(selectedItem, FeedItem.PLAYED, true);
-            if (SynchronizationSettings.isProviderConnected()) {
-                FeedMedia media = selectedItem.getMedia();
-                // not all items have media, Gpodder only cares about those that do
-                if (media != null) {
-                    EpisodeAction actionPlay = new EpisodeAction.Builder(selectedItem, EpisodeAction.PLAY)
-                            .currentTimestamp()
-                            .started(media.getDuration() / 1000)
-                            .position(media.getDuration() / 1000)
-                            .total(media.getDuration() / 1000)
-                            .build();
-                    SynchronizationQueueSink.enqueueEpisodeActionIfSynchronizationIsActive(context, actionPlay);
-                }
-            }
-        } else if (menuItemId == R.id.mark_unread_item) {
-            selectedItem.setPlayed(false);
-            DBWriter.markItemPlayed(selectedItem, FeedItem.UNPLAYED, false);
-            if (selectedItem.getMedia() != null) {
-                EpisodeAction actionNew = new EpisodeAction.Builder(selectedItem, EpisodeAction.NEW)
-                        .currentTimestamp()
-                        .build();
-                SynchronizationQueueSink.enqueueEpisodeActionIfSynchronizationIsActive(context, actionNew);
-            }
-        } else if (menuItemId == R.id.add_to_queue_item) {
-            DBWriter.addQueueItem(context, selectedItem);
-        } else if (menuItemId == R.id.remove_from_queue_item) {
-            DBWriter.removeQueueItem(context, true, selectedItem);
-        } else if (menuItemId == R.id.add_to_favorites_item) {
-            DBWriter.addFavoriteItem(selectedItem);
-        } else if (menuItemId == R.id.remove_from_favorites_item) {
-            DBWriter.removeFavoriteItem(selectedItem);
-        } else if (menuItemId == R.id.reset_position) {
-            selectedItem.getMedia().setPosition(0);
-            if (PlaybackPreferences.getCurrentlyPlayingFeedMediaId() == selectedItem.getMedia().getId()) {
-                PlaybackPreferences.writeNoMediaPlaying();
-                IntentUtils.sendLocalBroadcast(context, PlaybackServiceInterface.ACTION_SHUTDOWN_PLAYBACK_SERVICE);
-            }
-            DBWriter.markItemPlayed(selectedItem, FeedItem.UNPLAYED, true);
-        } else if (menuItemId == R.id.visit_website_item) {
-            IntentUtils.openInBrowser(context, FeedItemUtil.getLinkWithFallback(selectedItem));
-        } else if (menuItemId == R.id.share_item) {
-            ShareDialog shareDialog = ShareDialog.newInstance(selectedItem);
-            shareDialog.show((fragment.getActivity().getSupportFragmentManager()), "ShareEpisodeDialog");
-        } else {
-            Log.d(TAG, "Unknown menuItemId: " + menuItemId);
-            return false;
-        }
-        // Refresh menu state
+
 
         return true;
     }

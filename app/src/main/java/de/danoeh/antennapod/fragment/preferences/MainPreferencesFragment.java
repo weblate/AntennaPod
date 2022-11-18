@@ -82,63 +82,7 @@ public class MainPreferencesFragment extends PreferenceFragmentCompat {
     }
 
     private void setupMainScreen() {
-        findPreference(PREF_SCREEN_USER_INTERFACE).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_user_interface);
-            return true;
-        });
-        findPreference(PREF_SCREEN_PLAYBACK).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_playback);
-            return true;
-        });
-        findPreference(PREF_SCREEN_NETWORK).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_network);
-            return true;
-        });
-        findPreference(PREF_SCREEN_SYNCHRONIZATION).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_synchronization);
-            return true;
-        });
-        findPreference(PREF_SCREEN_STORAGE).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_storage);
-            return true;
-        });
-        findPreference(PREF_NOTIFICATION).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_notifications);
-            return true;
-        });
-        findPreference(PREF_ABOUT).setOnPreferenceClickListener(
-                preference -> {
-                    getParentFragmentManager().beginTransaction()
-                            .replace(R.id.settingsContainer, new AboutFragment())
-                            .addToBackStack(getString(R.string.about_pref)).commit();
-                    return true;
-                }
-        );
-        findPreference(PREF_DOCUMENTATION).setOnPreferenceClickListener(preference -> {
-            IntentUtils.openInBrowser(getContext(), getLocalizedWebsiteLink() + "/documentation/");
-            return true;
-        });
-        findPreference(PREF_VIEW_FORUM).setOnPreferenceClickListener(preference -> {
-            IntentUtils.openInBrowser(getContext(), "https://forum.antennapod.org/");
-            return true;
-        });
-        findPreference(PREF_CONTRIBUTE).setOnPreferenceClickListener(preference -> {
-            IntentUtils.openInBrowser(getContext(), getLocalizedWebsiteLink() + "/contribute/");
-            return true;
-        });
-        findPreference(PREF_SEND_BUG_REPORT).setOnPreferenceClickListener(preference -> {
-            startActivity(new Intent(getActivity(), BugReportActivity.class));
-            return true;
-        });
-        findPreference(PREF_STATISTICS).setOnPreferenceClickListener(
-                preference -> {
-                    new MaterialAlertDialogBuilder(getContext())
-                            .setMessage(R.string.statistics_moved)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
-                    return true;
-                }
-        );
+
     }
 
     private String getLocalizedWebsiteLink() {
@@ -177,8 +121,6 @@ public class MainPreferencesFragment extends PreferenceFragmentCompat {
                 .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_network))
                 .addBreadcrumb(R.string.automation)
                 .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_autodownload));
-        config.index(R.xml.preferences_synchronization)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_synchronization));
         config.index(R.xml.preferences_notifications)
                 .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_notifications));
         config.index(R.xml.feed_settings)

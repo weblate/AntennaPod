@@ -10,9 +10,6 @@ import android.util.Log;
 
 import androidx.annotation.VisibleForTesting;
 
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadRequest;
-import de.danoeh.antennapod.core.service.download.DownloadRequestCreator;
-import de.danoeh.antennapod.net.download.serviceinterface.DownloadServiceInterface;
 import de.danoeh.antennapod.storage.database.PodDBAdapter;
 import de.danoeh.antennapod.storage.database.mapper.FeedCursorMapper;
 import org.greenrobot.eventbus.EventBus;
@@ -42,7 +39,6 @@ import de.danoeh.antennapod.core.util.comparator.FeedItemPubdateComparator;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.net.sync.model.EpisodeAction;
 
 /**
  * Provides methods for doing common tasks that use DBReader and DBWriter.
@@ -113,16 +109,7 @@ public final class DBTasks {
      * @param initiatedByUser a boolean indicating if the refresh was triggered by user action.
      */
     public static void refreshAllFeeds(final Context context, boolean initiatedByUser) {
-        DownloadServiceInterface.get().refreshAllFeeds(context, initiatedByUser);
 
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-        prefs.edit().putLong(PREF_LAST_REFRESH, System.currentTimeMillis()).apply();
-
-        SynchronizationQueueSink.syncNow();
-        // Note: automatic download of episodes will be done but not here.
-        // Instead it is done after all feeds have been refreshed (asynchronously),
-        // in DownloadService.onDestroy()
-        // See Issue #2577 for the details of the rationale
     }
 
 
@@ -136,19 +123,7 @@ public final class DBTasks {
      * @param loadAllPages True if any subsequent pages should also be loaded, false otherwise.
      */
     public static void loadNextPageOfFeed(final Context context, Feed feed, boolean loadAllPages) {
-        if (feed.isPaged() && feed.getNextPageLink() != null) {
-            int pageNr = feed.getPageNr() + 1;
-            Feed nextFeed = new Feed(feed.getNextPageLink(), null, feed.getTitle() + "(" + pageNr + ")");
-            nextFeed.setPageNr(pageNr);
-            nextFeed.setPaged(true);
-            nextFeed.setId(feed.getId());
 
-            DownloadRequest.Builder builder = DownloadRequestCreator.create(nextFeed);
-            builder.loadAllPages(loadAllPages);
-            DownloadServiceInterface.get().download(context, false, builder.build());
-        } else {
-            Log.e(TAG, "loadNextPageOfFeed: Feed was either not paged or contained no nextPageLink");
-        }
     }
 
     public static void forceRefreshFeed(Context context, Feed feed, boolean initiatedByUser) {
@@ -160,11 +135,7 @@ public final class DBTasks {
     }
 
     private static void forceRefreshFeed(Context context, Feed feed, boolean loadAllPages, boolean initiatedByUser) {
-        DownloadRequest.Builder builder = DownloadRequestCreator.create(feed);
-        builder.withInitiatedByUser(initiatedByUser);
-        builder.setForce(true);
-        builder.loadAllPages(loadAllPages);
-        DownloadServiceInterface.get().download(context, false, builder.build());
+
     }
 
     /**
@@ -286,167 +257,7 @@ public final class DBTasks {
      * @return The updated Feed from the database if it already existed, or the new Feed from the parameters otherwise.
      */
     public static synchronized Feed updateFeed(Context context, Feed newFeed, boolean removeUnlistedItems) {
-        Feed resultFeed;
-        List<FeedItem> unlistedItems = new ArrayList<>();
-
-        PodDBAdapter adapter = PodDBAdapter.getInstance();
-        adapter.open();
-
-        // Look up feed in the feedslist
-        final Feed savedFeed = searchFeedByIdentifyingValueOrID(newFeed);
-        if (savedFeed == null) {
-            Log.d(TAG, "Found no existing Feed with title "
-                            + newFeed.getTitle() + ". Adding as new one.");
-
-            // Add a new Feed
-            // all new feeds will have the most recent item marked as unplayed
-            FeedItem mostRecent = newFeed.getMostRecentItem();
-            if (mostRecent != null) {
-                mostRecent.setNew();
-            }
-
-            resultFeed = newFeed;
-        } else {
-            Log.d(TAG, "Feed with title " + newFeed.getTitle()
-                        + " already exists. Syncing new with existing one.");
-
-            Collections.sort(newFeed.getItems(), new FeedItemPubdateComparator());
-
-            if (newFeed.getPageNr() == savedFeed.getPageNr()) {
-                if (savedFeed.compareWithOther(newFeed)) {
-                    Log.d(TAG, "Feed has updated attribute values. Updating old feed's attributes");
-                    savedFeed.updateFromOther(newFeed);
-                }
-            } else {
-                Log.d(TAG, "New feed has a higher page number.");
-                savedFeed.setNextPageLink(newFeed.getNextPageLink());
-            }
-            if (savedFeed.getPreferences().compareWithOther(newFeed.getPreferences())) {
-                Log.d(TAG, "Feed has updated preferences. Updating old feed's preferences");
-                savedFeed.getPreferences().updateFromOther(newFeed.getPreferences());
-            }
-
-            // get the most recent date now, before we start changing the list
-            FeedItem priorMostRecent = savedFeed.getMostRecentItem();
-            Date priorMostRecentDate = null;
-            if (priorMostRecent != null) {
-                priorMostRecentDate = priorMostRecent.getPubDate();
-            }
-
-            // Look for new or updated Items
-            for (int idx = 0; idx < newFeed.getItems().size(); idx++) {
-                final FeedItem item = newFeed.getItems().get(idx);
-
-                FeedItem possibleDuplicate = searchFeedItemGuessDuplicate(newFeed.getItems(), item);
-                if (!newFeed.isLocalFeed() && possibleDuplicate != null && item != possibleDuplicate) {
-                    // Canonical episode is the first one returned (usually oldest)
-                    DBWriter.addDownloadStatus(new DownloadStatus(savedFeed,
-                            item.getTitle(), DownloadError.ERROR_PARSER_EXCEPTION_DUPLICATE, false,
-                            "The podcast host appears to have added the same episode twice. "
-                                    + "AntennaPod still refreshed the feed and attempted to repair it."
-                                    + "\n\nOriginal episode:\n" + duplicateEpisodeDetails(item)
-                                    + "\n\nSecond episode that is also in the feed:\n"
-                                    + duplicateEpisodeDetails(possibleDuplicate), false));
-                    continue;
-                }
-
-                FeedItem oldItem = searchFeedItemByIdentifyingValue(savedFeed.getItems(), item);
-                if (!newFeed.isLocalFeed() && oldItem == null) {
-                    oldItem = searchFeedItemGuessDuplicate(savedFeed.getItems(), item);
-                    if (oldItem != null) {
-                        Log.d(TAG, "Repaired duplicate: " + oldItem + ", " + item);
-                        DBWriter.addDownloadStatus(new DownloadStatus(savedFeed,
-                                item.getTitle(), DownloadError.ERROR_PARSER_EXCEPTION_DUPLICATE, false,
-                                "The podcast host changed the ID of an existing episode instead of just "
-                                        + "updating the episode itself. AntennaPod still refreshed the feed and "
-                                        + "attempted to repair it."
-                                        + "\n\nOriginal episode:\n" + duplicateEpisodeDetails(oldItem)
-                                        + "\n\nNow the feed contains:\n" + duplicateEpisodeDetails(item), false));
-                        oldItem.setItemIdentifier(item.getItemIdentifier());
-
-                        if (oldItem.isPlayed() && oldItem.getMedia() != null) {
-                            EpisodeAction action = new EpisodeAction.Builder(oldItem, EpisodeAction.PLAY)
-                                    .currentTimestamp()
-                                    .started(oldItem.getMedia().getDuration() / 1000)
-                                    .position(oldItem.getMedia().getDuration() / 1000)
-                                    .total(oldItem.getMedia().getDuration() / 1000)
-                                    .build();
-                            SynchronizationQueueSink.enqueueEpisodeActionIfSynchronizationIsActive(context, action);
-                        }
-                    }
-                }
-
-                if (oldItem != null) {
-                    oldItem.updateFromOther(item);
-                } else {
-                    // item is new
-                    item.setFeed(savedFeed);
-
-                    if (idx >= savedFeed.getItems().size()) {
-                        savedFeed.getItems().add(item);
-                    } else {
-                        savedFeed.getItems().add(idx, item);
-                    }
-
-                    // only mark the item new if it was published after or at the same time
-                    // as the most recent item
-                    // (if the most recent date is null then we can assume there are no items
-                    // and this is the first, hence 'new')
-                    // New items that do not have a pubDate set are always marked as new
-                    if (item.getPubDate() == null || priorMostRecentDate == null
-                            || priorMostRecentDate.before(item.getPubDate())
-                            || priorMostRecentDate.equals(item.getPubDate())) {
-                        Log.d(TAG, "Marking item published on " + item.getPubDate()
-                                + " new, prior most recent date = " + priorMostRecentDate);
-                        item.setNew();
-                    }
-                }
-            }
-
-            // identify items to be removed
-            if (removeUnlistedItems) {
-                Iterator<FeedItem> it = savedFeed.getItems().iterator();
-                while (it.hasNext()) {
-                    FeedItem feedItem = it.next();
-                    if (searchFeedItemByIdentifyingValue(newFeed.getItems(), feedItem) == null) {
-                        unlistedItems.add(feedItem);
-                        it.remove();
-                    }
-                }
-            }
-
-            // update attributes
-            savedFeed.setLastUpdate(newFeed.getLastUpdate());
-            savedFeed.setType(newFeed.getType());
-            savedFeed.setLastUpdateFailed(false);
-
-            resultFeed = savedFeed;
-        }
-
-        try {
-            if (savedFeed == null) {
-                DBWriter.addNewFeed(context, newFeed).get();
-                // Update with default values that are set in database
-                resultFeed = searchFeedByIdentifyingValueOrID(newFeed);
-            } else {
-                DBWriter.setCompleteFeed(savedFeed).get();
-            }
-            if (removeUnlistedItems) {
-                DBWriter.deleteFeedItems(context, unlistedItems).get();
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        adapter.close();
-
-        if (savedFeed != null) {
-            EventBus.getDefault().post(new FeedListUpdateEvent(savedFeed));
-        } else {
-            EventBus.getDefault().post(new FeedListUpdateEvent(Collections.emptyList()));
-        }
-
-        return resultFeed;
+        return null;
     }
 
     private static String duplicateEpisodeDetails(FeedItem item) {
