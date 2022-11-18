@@ -77,7 +77,6 @@ dependencies {
     implementation project(":core")
     implementation project(":event")
     implementation project(':model')
-    implementation project(':parser:feed')
     implementation project(':playback:base')
     implementation project(':playback:cast')
     implementation project(':storage:database')

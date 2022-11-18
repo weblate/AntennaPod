@@ -1,50 +1,25 @@
 package de.danoeh.antennapod.core.feed;
 
 import android.content.Context;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.text.TextUtils;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.UUID;
-
 import androidx.annotation.VisibleForTesting;
 import androidx.documentfile.provider.DocumentFile;
-import de.danoeh.antennapod.core.R;
-import de.danoeh.antennapod.core.util.FastDocumentFile;
-import de.danoeh.antennapod.model.download.DownloadStatus;
 import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.storage.DBTasks;
 import de.danoeh.antennapod.core.storage.DBWriter;
-import de.danoeh.antennapod.parser.feed.util.DateUtils;
+import de.danoeh.antennapod.core.util.FastDocumentFile;
 import de.danoeh.antennapod.model.download.DownloadError;
+import de.danoeh.antennapod.model.download.DownloadStatus;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.model.feed.FeedPreferences;
-import de.danoeh.antennapod.model.playback.MediaType;
-import de.danoeh.antennapod.parser.feed.util.MimeTypeUtils;
-import de.danoeh.antennapod.parser.media.id3.ID3ReaderException;
-import de.danoeh.antennapod.parser.media.id3.Id3MetadataReader;
-import de.danoeh.antennapod.parser.media.vorbis.VorbisCommentMetadataReader;
-import de.danoeh.antennapod.parser.media.vorbis.VorbisCommentReaderException;
-import org.apache.commons.io.input.CountingInputStream;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 public class LocalFeedUpdater {
     private static final String TAG = "LocalFeedUpdater";
@@ -78,61 +53,7 @@ public class LocalFeedUpdater {
     @VisibleForTesting
     static void tryUpdateFeed(Feed feed, Context context, Uri folderUri,
                               UpdaterProgressListener updaterProgressListener) {
-        if (feed.getItems() == null) {
-            feed.setItems(new ArrayList<>());
-        }
-        //make sure it is the latest 'version' of this feed from the db (all items etc)
-        feed = DBTasks.updateFeed(context, feed, false);
 
-        // list files in feed folder
-        List<FastDocumentFile> allFiles = FastDocumentFile.list(context, folderUri);
-        List<FastDocumentFile> mediaFiles = new ArrayList<>();
-        Set<String> mediaFileNames = new HashSet<>();
-        for (FastDocumentFile file : allFiles) {
-            String mimeType = MimeTypeUtils.getMimeType(file.getType(), file.getUri().toString());
-            MediaType mediaType = MediaType.fromMimeType(mimeType);
-            if (mediaType == MediaType.AUDIO || mediaType == MediaType.VIDEO) {
-                mediaFiles.add(file);
-                mediaFileNames.add(file.getName());
-            }
-        }
-
-        // add new files to feed and update item data
-        List<FeedItem> newItems = feed.getItems();
-        for (int i = 0; i < mediaFiles.size(); i++) {
-            FeedItem oldItem = feedContainsFile(feed, mediaFiles.get(i).getName());
-            FeedItem newItem = createFeedItem(feed, mediaFiles.get(i), context);
-            if (oldItem == null) {
-                newItems.add(newItem);
-            } else {
-                oldItem.updateFromOther(newItem);
-            }
-            if (updaterProgressListener != null) {
-                updaterProgressListener.onLocalFileScanned(i, mediaFiles.size());
-            }
-        }
-
-        // remove feed items without corresponding file
-        Iterator<FeedItem> it = newItems.iterator();
-        while (it.hasNext()) {
-            FeedItem feedItem = it.next();
-            if (!mediaFileNames.contains(feedItem.getLink())) {
-                it.remove();
-            }
-        }
-
-        feed.setImageUrl(getImageUrl(allFiles, folderUri));
-
-        feed.getPreferences().setAutoDownload(false);
-        feed.getPreferences().setAutoDeleteAction(FeedPreferences.AutoDeleteAction.NO);
-        feed.setDescription(context.getString(R.string.local_feed_description));
-        feed.setAuthor(context.getString(R.string.local_folder));
-
-        // update items, delete items without existing file;
-        // only delete items if the folder contains at least one element to avoid accidentally
-        // deleting played state or position in case the folder is temporarily unavailable.
-        boolean removeUnlistedItems = (newItems.size() >= 1);
-        DBTasks.updateFeed(context, feed, removeUnlistedItems);
     }
 
     /**
@@ -201,49 +122,7 @@ public class LocalFeedUpdater {
     }
 
     private static void loadMetadata(FeedItem item, FastDocumentFile file, Context context) {
-        MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-        mediaMetadataRetriever.setDataSource(context, file.getUri());
 
-        String dateStr = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE);
-        if (!TextUtils.isEmpty(dateStr)) {
-            try {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss", Locale.getDefault());
-                item.setPubDate(simpleDateFormat.parse(dateStr));
-            } catch (ParseException parseException) {
-                Date date = DateUtils.parse(dateStr);
-                if (date != null) {
-                    item.setPubDate(date);
-                }
-            }
-        }
-
-        String title = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-        if (!TextUtils.isEmpty(title)) {
-            item.setTitle(title);
-        }
-
-        String durationStr = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        item.getMedia().setDuration((int) Long.parseLong(durationStr));
-
-        item.getMedia().setHasEmbeddedPicture(mediaMetadataRetriever.getEmbeddedPicture() != null);
-        mediaMetadataRetriever.close();
-
-        try (InputStream inputStream = context.getContentResolver().openInputStream(file.getUri())) {
-            Id3MetadataReader reader = new Id3MetadataReader(
-                    new CountingInputStream(new BufferedInputStream(inputStream)));
-            reader.readInputStream();
-            item.setDescriptionIfLonger(reader.getComment());
-        } catch (IOException | ID3ReaderException e) {
-            Log.d(TAG, "Unable to parse ID3 of " + file.getUri() + ": " + e.getMessage());
-
-            try (InputStream inputStream = context.getContentResolver().openInputStream(file.getUri())) {
-                VorbisCommentMetadataReader reader = new VorbisCommentMetadataReader(inputStream);
-                reader.readInputStream();
-                item.setDescriptionIfLonger(reader.getDescription());
-            } catch (IOException | VorbisCommentReaderException e2) {
-                Log.d(TAG, "Unable to parse vorbis comments of " + file.getUri() + ": " + e2.getMessage());
-            }
-        }
     }
 
     private static void reportError(Feed feed, String reasonDetailed) {

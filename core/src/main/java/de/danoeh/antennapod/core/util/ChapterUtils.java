@@ -4,21 +4,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 import androidx.annotation.NonNull;
-import de.danoeh.antennapod.model.feed.Chapter;
 import de.danoeh.antennapod.core.feed.ChapterMerger;
-import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
 import de.danoeh.antennapod.core.storage.DBReader;
-import de.danoeh.antennapod.core.util.comparator.ChapterStartTimeComparator;
-import de.danoeh.antennapod.parser.feed.PodcastIndexChapterParser;
-import de.danoeh.antennapod.parser.media.id3.ChapterReader;
-import de.danoeh.antennapod.parser.media.id3.ID3ReaderException;
+import de.danoeh.antennapod.model.feed.Chapter;
+import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.playback.Playable;
-import de.danoeh.antennapod.parser.media.vorbis.VorbisCommentChapterReader;
-import de.danoeh.antennapod.parser.media.vorbis.VorbisCommentReaderException;
-import okhttp3.CacheControl;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.io.input.CountingInputStream;
@@ -90,25 +82,6 @@ public class ChapterUtils {
     }
 
     public static List<Chapter> loadChaptersFromMediaFile(Playable playable, Context context) {
-        try (CountingInputStream in = openStream(playable, context)) {
-            List<Chapter> chapters = readId3ChaptersFrom(in);
-            if (!chapters.isEmpty()) {
-                Log.i(TAG, "Chapters loaded");
-                return chapters;
-            }
-        } catch (IOException | ID3ReaderException e) {
-            Log.e(TAG, "Unable to load ID3 chapters: " + e.getMessage());
-        }
-
-        try (CountingInputStream in = openStream(playable, context)) {
-            List<Chapter> chapters = readOggChaptersFromInputStream(in);
-            if (!chapters.isEmpty()) {
-                Log.i(TAG, "Chapters loaded");
-                return chapters;
-            }
-        } catch (IOException | VorbisCommentReaderException e) {
-            Log.e(TAG, "Unable to load vorbis chapters: " + e.getMessage());
-        }
         return null;
     }
 
@@ -136,53 +109,16 @@ public class ChapterUtils {
     }
 
     public static List<Chapter> loadChaptersFromUrl(String url) {
-        try {
-            Request request = new Request.Builder().url(url).cacheControl(CacheControl.FORCE_CACHE).build();
-            Response response = AntennapodHttpClient.getHttpClient().newCall(request).execute();
-            if (response.isSuccessful() && response.body() != null) {
-                List<Chapter> chapters = PodcastIndexChapterParser.parse(response.body().string());
-                if (chapters != null && !chapters.isEmpty()) {
-                    return chapters;
-                }
-            }
-            request = new Request.Builder().url(url).build();
-            response = AntennapodHttpClient.getHttpClient().newCall(request).execute();
-            if (response.isSuccessful() && response.body() != null) {
-                return PodcastIndexChapterParser.parse(response.body().string());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return null;
     }
 
     @NonNull
-    private static List<Chapter> readId3ChaptersFrom(CountingInputStream in) throws IOException, ID3ReaderException {
-        ChapterReader reader = new ChapterReader(in);
-        reader.readInputStream();
-        List<Chapter> chapters = reader.getChapters();
-        Collections.sort(chapters, new ChapterStartTimeComparator());
-        enumerateEmptyChapterTitles(chapters);
-        if (!chaptersValid(chapters)) {
-            Log.e(TAG, "Chapter data was invalid");
+    private static List<Chapter> readId3ChaptersFrom(CountingInputStream in) throws IOException {
             return Collections.emptyList();
-        }
-        return chapters;
     }
 
     @NonNull
-    private static List<Chapter> readOggChaptersFromInputStream(InputStream input) throws VorbisCommentReaderException {
-        VorbisCommentChapterReader reader = new VorbisCommentChapterReader(new BufferedInputStream(input));
-        reader.readInputStream();
-        List<Chapter> chapters = reader.getChapters();
-        if (chapters == null) {
-            return Collections.emptyList();
-        }
-        Collections.sort(chapters, new ChapterStartTimeComparator());
-        enumerateEmptyChapterTitles(chapters);
-        if (chaptersValid(chapters)) {
-            return chapters;
-        }
+    private static List<Chapter> readOggChaptersFromInputStream(InputStream input)  {
         return Collections.emptyList();
     }
 
