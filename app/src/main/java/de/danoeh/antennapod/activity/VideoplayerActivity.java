@@ -423,31 +423,7 @@ public class VideoplayerActivity extends AppCompatActivity implements SeekBar.On
         if (controller == null) {
             return false;
         }
-        Playable media = controller.getMedia();
-        boolean isFeedMedia = (media instanceof FeedMedia);
 
-        menu.findItem(R.id.open_feed_item).setVisible(isFeedMedia); // FeedMedia implies it belongs to a Feed
-
-        boolean hasWebsiteLink = getWebsiteLinkWithFallback(media) != null;
-        menu.findItem(R.id.visit_website_item).setVisible(hasWebsiteLink);
-
-        boolean isItemAndHasLink = isFeedMedia && ShareUtils.hasLinkToShare(((FeedMedia) media).getItem());
-        boolean isItemHasDownloadLink = isFeedMedia && ((FeedMedia) media).getDownload_url() != null;
-        menu.findItem(R.id.share_item).setVisible(hasWebsiteLink || isItemAndHasLink || isItemHasDownloadLink);
-
-        menu.findItem(R.id.add_to_favorites_item).setVisible(false);
-        menu.findItem(R.id.remove_from_favorites_item).setVisible(false);
-        if (isFeedMedia) {
-            menu.findItem(R.id.add_to_favorites_item).setVisible(!isFavorite);
-            menu.findItem(R.id.remove_from_favorites_item).setVisible(isFavorite);
-        }
-
-        menu.findItem(R.id.set_sleeptimer_item).setVisible(!controller.sleepTimerActive());
-        menu.findItem(R.id.disable_sleeptimer_item).setVisible(controller.sleepTimerActive());
-
-        menu.findItem(R.id.player_switch_to_audio_only).setVisible(true);
-        menu.findItem(R.id.audio_controls).setIcon(R.drawable.ic_sliders);
-        menu.findItem(R.id.playback_speed).setVisible(true);
         return true;
     }
 

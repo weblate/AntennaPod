@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textColor="?android:attr/textColorSecondary"
-                android:text="@string/download_error_tap_for_details"/>
+        />
 
     </LinearLayout>
 

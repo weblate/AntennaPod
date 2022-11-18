@@ -32,23 +32,7 @@ public class FeedMultiSelectActionHandler {
         this.selectedItems = selectedItems;
     }
 
-    public void handleAction(int id) {
-        if (id == R.id.remove_feed) {
-            RemoveFeedDialog.show(activity, selectedItems);
-        } else if (id == R.id.keep_updated) {
-            keepUpdatedPrefHandler();
-        } else if (id == R.id.autodownload) {
-            autoDownloadPrefHandler();
-        } else if (id == R.id.autoDeleteDownload) {
-            autoDeleteEpisodesPrefHandler();
-        } else if (id == R.id.playback_speed) {
-            playbackSpeedPrefHandler();
-        } else if (id == R.id.edit_tags) {
-            editFeedPrefTags();
-        } else {
-            Log.e(TAG, "Unrecognized speed dial action item. Do nothing. id=" + id);
-        }
-    }
+
 
     private void autoDownloadPrefHandler() {
         PreferenceSwitchDialog preferenceSwitchDialog = new PreferenceSwitchDialog(activity,

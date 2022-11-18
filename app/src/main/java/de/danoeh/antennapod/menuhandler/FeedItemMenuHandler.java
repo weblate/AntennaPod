@@ -38,29 +38,9 @@ public class FeedItemMenuHandler {
         final boolean fileDownloaded = hasMedia && selectedItem.getMedia().fileExists();
         final boolean isFavorite = selectedItem.isTagged(FeedItem.TAG_FAVORITE);
 
-        setItemVisibility(menu, R.id.skip_episode_item, isPlaying);
-        setItemVisibility(menu, R.id.remove_from_queue_item, isInQueue);
-        setItemVisibility(menu, R.id.add_to_queue_item, !isInQueue && selectedItem.getMedia() != null);
-        setItemVisibility(menu, R.id.visit_website_item, !selectedItem.getFeed().isLocalFeed()
-                && ShareUtils.hasLinkToShare(selectedItem));
-        setItemVisibility(menu, R.id.share_item, !selectedItem.getFeed().isLocalFeed());
-        setItemVisibility(menu, R.id.remove_inbox_item, selectedItem.isNew());
-        setItemVisibility(menu, R.id.mark_read_item, !selectedItem.isPlayed());
-        setItemVisibility(menu, R.id.mark_unread_item, selectedItem.isPlayed());
-        setItemVisibility(menu, R.id.reset_position, hasMedia && selectedItem.getMedia().getPosition() != 0);
 
-        // Display proper strings when item has no media
-        if (hasMedia) {
-            setItemTitle(menu, R.id.mark_read_item, R.string.mark_read_label);
-            setItemTitle(menu, R.id.mark_unread_item, R.string.mark_unread_label);
-        } else {
-            setItemTitle(menu, R.id.mark_read_item, R.string.mark_read_no_media_label);
-            setItemTitle(menu, R.id.mark_unread_item, R.string.mark_unread_label_no_media);
-        }
 
-        setItemVisibility(menu, R.id.add_to_favorites_item, !isFavorite);
-        setItemVisibility(menu, R.id.remove_from_favorites_item, isFavorite);
-        setItemVisibility(menu, R.id.remove_item, fileDownloaded);
+
         return true;
     }
 

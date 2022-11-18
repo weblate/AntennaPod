@@ -8,17 +8,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
-import de.danoeh.antennapod.ui.common.PagedToolbarFragment;
 
 /**
  * Displays the 'statistics' screen
  */
-public class StatisticsFragment extends PagedToolbarFragment {
+public class StatisticsFragment extends Fragment {
     public static final String TAG = "StatisticsFragment";
     public static final String PREF_NAME = "StatisticsActivityPrefs";
     public static final String PREF_INCLUDE_MARKED_PLAYED = "countAll";
@@ -41,55 +40,17 @@ public class StatisticsFragment extends PagedToolbarFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         setHasOptionsMenu(true);
 
-        View rootView = inflater.inflate(R.layout.pager_fragment, container, false);
-        viewPager = rootView.findViewById(R.id.viewpager);
-        toolbar = rootView.findViewById(R.id.toolbar);
-        toolbar.setTitle(getString(R.string.statistics_label));
-        toolbar.inflateMenu(R.menu.statistics);
-        toolbar.setNavigationOnClickListener(v -> getParentFragmentManager().popBackStack());
-        // Give the TabLayout the ViewPager
-        tabLayout = rootView.findViewById(R.id.sliding_tabs);
-        super.setupPagedToolbar(toolbar, viewPager);
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            switch (position) {
-                case POS_SUBSCRIPTIONS:
-                    tab.setText(R.string.subscriptions_label);
-                    break;
-                case POS_YEARS:
-                    tab.setText(R.string.years_statistics_label);
-                    break;
-                case POS_SPACE_TAKEN:
-                    tab.setText(R.string.downloads_label);
-                    break;
-                default:
-                    break;
-            }
-        }).attach();
-        return rootView;
+
+        return container;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.statistics_reset) {
-            confirmResetStatistics();
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
     private void confirmResetStatistics() {
-        ConfirmationDialog conDialog = new ConfirmationDialog(
-                getActivity(),
-                R.string.statistics_reset_data,
-                R.string.statistics_reset_data_msg) {
 
-            @Override
-            public void onConfirmButtonPressed(DialogInterface dialog) {
-                dialog.dismiss();
-                doResetStatistics();
-            }
-        };
-        conDialog.createNewDialog().show();
     }
 
     private void doResetStatistics() {

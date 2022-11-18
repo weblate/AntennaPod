@@ -25,16 +25,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.joanzapata.iconify.Iconify;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.PreferenceActivity;
-import de.danoeh.antennapod.fragment.AllEpisodesFragment;
-import de.danoeh.antennapod.fragment.CompletedDownloadsFragment;
-import de.danoeh.antennapod.fragment.InboxFragment;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.core.storage.NavDrawerData;
-import de.danoeh.antennapod.fragment.AddFeedFragment;
 import de.danoeh.antennapod.fragment.NavDrawerFragment;
-import de.danoeh.antennapod.fragment.PlaybackHistoryFragment;
-import de.danoeh.antennapod.fragment.QueueFragment;
-import de.danoeh.antennapod.fragment.SubscriptionFragment;
 import de.danoeh.antennapod.ui.home.HomeFragment;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -95,20 +88,6 @@ public class NavListAdapter extends RecyclerView.Adapter<NavListAdapter.Holder>
         switch (tag) {
             case HomeFragment.TAG:
                 return R.drawable.ic_home;
-            case QueueFragment.TAG:
-                return R.drawable.ic_playlist_play;
-            case InboxFragment.TAG:
-                return R.drawable.ic_inbox;
-            case AllEpisodesFragment.TAG:
-                return R.drawable.ic_feed;
-            case CompletedDownloadsFragment.TAG:
-                return R.drawable.ic_download;
-            case PlaybackHistoryFragment.TAG:
-                return R.drawable.ic_history;
-            case SubscriptionFragment.TAG:
-                return R.drawable.ic_subscriptions;
-            case AddFeedFragment.TAG:
-                return R.drawable.ic_add;
             default:
                 return 0;
         }

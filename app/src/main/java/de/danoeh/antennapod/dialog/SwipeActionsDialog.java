@@ -23,14 +23,8 @@ import de.danoeh.antennapod.databinding.SwipeactionsDialogBinding;
 import de.danoeh.antennapod.databinding.SwipeactionsPickerBinding;
 import de.danoeh.antennapod.databinding.SwipeactionsPickerItemBinding;
 import de.danoeh.antennapod.databinding.SwipeactionsRowBinding;
-import de.danoeh.antennapod.fragment.AllEpisodesFragment;
-import de.danoeh.antennapod.fragment.CompletedDownloadsFragment;
-import de.danoeh.antennapod.fragment.FeedItemlistFragment;
-import de.danoeh.antennapod.fragment.InboxFragment;
-import de.danoeh.antennapod.fragment.QueueFragment;
 import de.danoeh.antennapod.fragment.swipeactions.SwipeAction;
 import de.danoeh.antennapod.fragment.swipeactions.SwipeActions;
-import de.danoeh.antennapod.ui.common.ThemeUtils;
 
 public class SwipeActionsDialog {
     private static final int LEFT = 1;
@@ -57,36 +51,10 @@ public class SwipeActionsDialog {
 
         keys = SwipeActions.swipeActions;
 
-        String forFragment = "";
-        switch (tag) {
-            case InboxFragment.TAG:
-                forFragment = context.getString(R.string.inbox_label);
-                keys = Stream.of(keys).filter(a -> !a.getId().equals(SwipeAction.TOGGLE_PLAYED)
-                        && !a.getId().equals(SwipeAction.DELETE)).toList();
-                break;
-            case AllEpisodesFragment.TAG:
-                forFragment = context.getString(R.string.episodes_label);
-                break;
-            case CompletedDownloadsFragment.TAG:
-                forFragment = context.getString(R.string.downloads_label);
-                keys = Stream.of(keys).filter(a -> !a.getId().equals(SwipeAction.REMOVE_FROM_INBOX)).toList();
-                break;
-            case FeedItemlistFragment.TAG:
-                forFragment = context.getString(R.string.feeds_label);
-                break;
-            case QueueFragment.TAG:
-                forFragment = context.getString(R.string.queue_label);
-                keys = Stream.of(keys).filter(a -> !a.getId().equals(SwipeAction.ADD_TO_QUEUE)
-                        && !a.getId().equals(SwipeAction.REMOVE_FROM_INBOX)).toList();
-                break;
-            default: break;
-        }
 
-        if (!tag.equals(QueueFragment.TAG)) {
-            keys = Stream.of(keys).filter(a -> !a.getId().equals(SwipeAction.REMOVE_FROM_QUEUE)).toList();
-        }
 
-        builder.setTitle(context.getString(R.string.swipeactions_label) + " - " + forFragment);
+
+        builder.setTitle(context.getString(R.string.swipeactions_label) + " - ");
         SwipeactionsDialogBinding viewBinding = SwipeactionsDialogBinding.inflate(LayoutInflater.from(context));
         builder.setView(viewBinding.getRoot());
 
@@ -122,7 +90,6 @@ public class SwipeActionsDialog {
         }
 
         view.swipeIcon.setImageResource(action.getActionIcon());
-        view.swipeIcon.setColorFilter(ThemeUtils.getColorFromAttr(context, action.getActionColor()));
 
         view.changeButton.setOnClickListener(v -> showPicker(view, direction));
         view.previewContainer.setOnClickListener(v -> showPicker(view, direction));
@@ -146,12 +113,6 @@ public class SwipeActionsDialog {
             Drawable icon = DrawableCompat.wrap(AppCompatResources.getDrawable(context, action.getActionIcon()));
             icon.mutate();
             DrawableCompat.setTintMode(icon, PorterDuff.Mode.SRC_ATOP);
-            if ((direction == LEFT && leftAction == action) || (direction == RIGHT && rightAction == action)) {
-                DrawableCompat.setTint(icon, ThemeUtils.getColorFromAttr(context, action.getActionColor()));
-                item.swipeActionLabel.setTextColor(ThemeUtils.getColorFromAttr(context, action.getActionColor()));
-            } else {
-                DrawableCompat.setTint(icon, ThemeUtils.getColorFromAttr(context, R.attr.action_icon_color));
-            }
             item.swipeIcon.setImageDrawable(icon);
 
             item.getRoot().setOnClickListener(v -> {

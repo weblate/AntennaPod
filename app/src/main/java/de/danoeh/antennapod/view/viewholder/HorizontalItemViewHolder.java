@@ -18,17 +18,13 @@ import de.danoeh.antennapod.core.util.PlaybackStatus;
 import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.ui.common.CircularProgressBar;
-import de.danoeh.antennapod.ui.common.SquareImageView;
 
 public class HorizontalItemViewHolder extends RecyclerView.ViewHolder {
     public final View card;
     public final ImageView secondaryActionIcon;
-    private final SquareImageView cover;
     private final TextView title;
     private final TextView date;
     private final ProgressBar progressBar;
-    private final CircularProgressBar circularProgressBar;
 
     private final MainActivity activity;
     private FeedItem item;
@@ -38,11 +34,9 @@ public class HorizontalItemViewHolder extends RecyclerView.ViewHolder {
         this.activity = activity;
 
         card = itemView.findViewById(R.id.card);
-        cover = itemView.findViewById(R.id.cover);
         title = itemView.findViewById(R.id.titleLabel);
         date = itemView.findViewById(R.id.dateLabel);
         secondaryActionIcon = itemView.findViewById(R.id.secondaryActionIcon);
-        circularProgressBar = itemView.findViewById(R.id.circularProgressBar);
         progressBar = itemView.findViewById(R.id.progressBar);
         itemView.setTag(this);
     }
@@ -56,12 +50,10 @@ public class HorizontalItemViewHolder extends RecyclerView.ViewHolder {
         card.setAlpha(0.1f);
         new CoverLoader(activity)
                 .withResource(android.R.color.transparent)
-                .withCoverView(cover)
                 .load();
         title.setText("████ █████");
         date.setText("███");
         secondaryActionIcon.setImageDrawable(null);
-        circularProgressBar.setPercentage(0, null);
         progressBar.setProgress(50);
     }
 

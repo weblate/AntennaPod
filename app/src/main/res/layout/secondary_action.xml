@@ -20,10 +20,5 @@
             tools:ignore="ContentDescription"
             tools:src="@sample/secondaryaction"/>
 
-    <de.danoeh.antennapod.ui.common.CircularProgressBar
-            android:id="@+id/secondaryActionProgress"
-            android:layout_width="40dp"
-            android:layout_gravity="center"
-            android:layout_height="40dp"
-            app:foregroundColor="?attr/action_icon_color"/>
+
 </FrameLayout>

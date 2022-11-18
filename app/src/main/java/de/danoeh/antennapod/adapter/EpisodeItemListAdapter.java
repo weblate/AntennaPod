@@ -24,7 +24,6 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
-import de.danoeh.antennapod.fragment.ItemPagerFragment;
 import de.danoeh.antennapod.menuhandler.FeedItemMenuHandler;
 import de.danoeh.antennapod.view.viewholder.EpisodeItemViewHolder;
 
@@ -91,7 +90,6 @@ public class EpisodeItemListAdapter extends SelectableAdapter<EpisodeItemViewHol
             if (activity != null && !inActionMode()) {
                 long[] ids = FeedItemUtil.getIds(episodes);
                 int position = ArrayUtils.indexOf(ids, item.getId());
-                activity.loadChildFragment(ItemPagerFragment.newInstance(ids, position));
             } else {
                 toggleSelection(holder.getBindingAdapterPosition());
             }

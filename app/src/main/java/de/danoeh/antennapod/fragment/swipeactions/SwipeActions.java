@@ -21,13 +21,8 @@ import java.util.List;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.dialog.SwipeActionsDialog;
-import de.danoeh.antennapod.fragment.AllEpisodesFragment;
-import de.danoeh.antennapod.fragment.CompletedDownloadsFragment;
-import de.danoeh.antennapod.fragment.InboxFragment;
-import de.danoeh.antennapod.fragment.QueueFragment;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedItemFilter;
-import de.danoeh.antennapod.ui.common.ThemeUtils;
 import de.danoeh.antennapod.view.viewholder.EpisodeItemViewHolder;
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
@@ -94,24 +89,7 @@ public class SwipeActions extends ItemTouchHelper.SimpleCallback implements Life
     }
 
     public static Actions getPrefsWithDefaults(Context context, String tag) {
-        String defaultActions;
-        switch (tag) {
-            case InboxFragment.TAG:
-                defaultActions = SwipeAction.ADD_TO_QUEUE + "," + SwipeAction.REMOVE_FROM_INBOX;
-                break;
-            case QueueFragment.TAG:
-                defaultActions = SwipeAction.REMOVE_FROM_QUEUE + "," + SwipeAction.REMOVE_FROM_QUEUE;
-                break;
-            case CompletedDownloadsFragment.TAG:
-                defaultActions = SwipeAction.DELETE + "," + SwipeAction.DELETE;
-                break;
-            default:
-            case AllEpisodesFragment.TAG:
-                defaultActions = SwipeAction.MARK_FAV + "," + SwipeAction.START_DOWNLOAD;
-                break;
-        }
-
-        return getPrefs(context, tag, defaultActions);
+        return getPrefs(context, tag, "");
     }
 
     public static boolean isSwipeActionEnabled(Context context, String tag) {
@@ -187,19 +165,10 @@ public class SwipeActions extends ItemTouchHelper.SimpleCallback implements Life
 
         //add color and icon
         Context context = fragment.requireContext();
-        int themeColor = ThemeUtils.getColorFromAttr(context, android.R.attr.windowBackground);
-        int actionColor = ThemeUtils.getColorFromAttr(context,
-                dx > 0 ? right.getActionColor() : left.getActionColor());
         RecyclerViewSwipeDecorator.Builder builder = new RecyclerViewSwipeDecorator.Builder(
                 c, recyclerView, viewHolder, dx, dy, actionState, isCurrentlyActive)
                 .addSwipeRightActionIcon(right.getActionIcon())
-                .addSwipeLeftActionIcon(left.getActionIcon())
-                .addSwipeRightBackgroundColor(ThemeUtils.getColorFromAttr(context, R.attr.background_elevated))
-                .addSwipeLeftBackgroundColor(ThemeUtils.getColorFromAttr(context, R.attr.background_elevated))
-                .setActionIconTint(
-                        ColorUtils.blendARGB(themeColor,
-                                actionColor,
-                                Math.max(0.5f, displacementPercentage)));
+                .addSwipeLeftActionIcon(left.getActionIcon());
         builder.create().decorate();
 
 

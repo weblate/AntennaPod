@@ -21,7 +21,6 @@ import de.danoeh.antennapod.core.service.download.DownloadService;
 import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 import de.danoeh.antennapod.databinding.HomeFragmentBinding;
 import de.danoeh.antennapod.event.FeedListUpdateEvent;
-import de.danoeh.antennapod.fragment.SearchFragment;
 import de.danoeh.antennapod.ui.home.sections.DownloadsSection;
 import de.danoeh.antennapod.ui.home.sections.EpisodesSurpriseSection;
 import de.danoeh.antennapod.ui.home.sections.InboxSection;
@@ -134,7 +133,6 @@ public class HomeFragment extends Fragment implements Toolbar.OnMenuItemClickLis
             AutoUpdateManager.runImmediate(requireContext());
             return true;
         } else if (item.getItemId() == R.id.action_search) {
-            ((MainActivity) getActivity()).loadChildFragment(SearchFragment.newInstance());
             return true;
         }
         return super.onOptionsItemSelected(item);

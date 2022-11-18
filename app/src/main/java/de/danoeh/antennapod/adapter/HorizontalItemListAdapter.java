@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.core.util.FeedItemUtil;
-import de.danoeh.antennapod.fragment.ItemPagerFragment;
 import de.danoeh.antennapod.menuhandler.FeedItemMenuHandler;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.view.viewholder.HorizontalItemViewHolder;
@@ -72,7 +71,6 @@ public class HorizontalItemListAdapter extends RecyclerView.Adapter<HorizontalIt
             if (activity != null) {
                 long[] ids = FeedItemUtil.getIds(data);
                 int clickPosition = ArrayUtils.indexOf(ids, item.getId());
-                activity.loadChildFragment(ItemPagerFragment.newInstance(ids, clickPosition));
             }
         });
     }

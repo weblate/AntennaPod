@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:squareImageView="http://schemas.android.com/apk/de.danoeh.antennapod"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="96dp"
@@ -18,15 +17,6 @@
         app:cardPreventCornerOverlap="false"
         app:cardElevation="2dp">
 
-        <de.danoeh.antennapod.ui.common.SquareImageView
-            android:id="@+id/discovery_cover"
-            android:layout_width="match_parent"
-            android:layout_height="96dp"
-            android:elevation="4dp"
-            android:outlineProvider="bounds"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:background="?android:attr/windowBackground"
-            squareImageView:direction="height" />
 
     </androidx.cardview.widget.CardView>
 

@@ -41,7 +41,6 @@ public abstract class IntraFeedSortDialog {
 
         MaterialAlertDialogBuilder builder =
                 new MaterialAlertDialogBuilder(context)
-                        .setTitle(R.string.sort)
                         .setSingleChoiceItems(sortItems, idxCurrentSort, (dialog, idxNewSort) -> {
                             updateSort(sortValues[idxNewSort]);
                             dialog.dismiss();

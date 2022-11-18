@@ -3,7 +3,5 @@ include ':core'
 include ':event'
 include ':model'
 
-include ':ui:common'
 include ':ui:i18n'
-include ':ui:png-icons'
 include ':ui:statistics'

@@ -2,7 +2,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:squareImageView="http://schemas.android.com/apk/de.danoeh.antennapod"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -42,13 +41,6 @@
                         android:layout_height="128dp"
                         android:background="@color/image_readability_tint">
 
-                        <de.danoeh.antennapod.ui.common.SquareImageView
-                            android:id="@+id/cover"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:outlineProvider="bounds"
-                            squareImageView:direction="width"
-                            tools:src="@tools:sample/avatars" />
 
                         <ImageView
                             android:layout_width="48dp"
@@ -58,13 +50,7 @@
                             android:padding="3dp"
                             app:srcCompat="@drawable/bg_circle" />
 
-                        <de.danoeh.antennapod.ui.common.CircularProgressBar
-                            android:id="@+id/circularProgressBar"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_gravity="bottom|end"
-                            android:layout_margin="4dp"
-                            app:foregroundColor="?attr/colorOnPrimary" />
+
 
                         <ImageView
                             android:id="@+id/secondaryActionIcon"

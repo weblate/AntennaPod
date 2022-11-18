@@ -27,16 +27,7 @@ public class FeedMenuHandler {
             return true;
         }
 
-        Log.d(TAG, "Preparing options menu");
 
-        menu.findItem(R.id.refresh_complete_item).setVisible(selectedFeed.isPaged());
-        if (StringUtils.isBlank(selectedFeed.getLink())) {
-            menu.findItem(R.id.visit_website_item).setVisible(false);
-        }
-        if (selectedFeed.isLocalFeed()) {
-            // hide complete submenu "Share..." as both sub menu items are not visible
-            menu.findItem(R.id.share_item).setVisible(false);
-        }
 
         return true;
     }

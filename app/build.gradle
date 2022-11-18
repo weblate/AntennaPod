@@ -77,7 +77,6 @@ dependencies {
     implementation project(":core")
     implementation project(":event")
     implementation project(':model')
-    implementation project(':ui:common')
     implementation project(':ui:i18n')
     implementation project(':ui:statistics')
 

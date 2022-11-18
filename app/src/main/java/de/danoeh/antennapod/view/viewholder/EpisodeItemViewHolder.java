@@ -33,8 +33,6 @@ import de.danoeh.antennapod.core.feed.util.ImageResourceUtils;
 import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.core.util.NetworkUtils;
 import de.danoeh.antennapod.model.playback.Playable;
-import de.danoeh.antennapod.ui.common.CircularProgressBar;
-import de.danoeh.antennapod.ui.common.ThemeUtils;
 
 /**
  * Holds the view which shows FeedItems.
@@ -58,7 +56,6 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
     private final ProgressBar progressBar;
     public final View secondaryActionButton;
     public final ImageView secondaryActionIcon;
-    private final CircularProgressBar secondaryActionProgress;
     private final TextView separatorIcons;
     private final View leftPadding;
     public final CardView coverHolder;
@@ -88,7 +85,6 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
         isFavorite = itemView.findViewById(R.id.isFavorite);
         size = itemView.findViewById(R.id.size);
         separatorIcons = itemView.findViewById(R.id.separatorIcons);
-        secondaryActionProgress = itemView.findViewById(R.id.secondaryActionProgress);
         secondaryActionButton = itemView.findViewById(R.id.secondaryActionButton);
         secondaryActionIcon = itemView.findViewById(R.id.secondaryActionIcon);
         coverHolder = itemView.findViewById(R.id.coverHolder);
@@ -116,12 +112,10 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
         if (item.getMedia() != null) {
             bind(item.getMedia());
         } else {
-            secondaryActionProgress.setPercentage(0, item);
             isVideo.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
             duration.setVisibility(View.GONE);
             position.setVisibility(View.GONE);
-            itemView.setBackgroundResource(ThemeUtils.getDrawableFromAttr(activity, R.attr.selectableItemBackground));
         }
 
         if (coverHolder.getVisibility() == View.VISIBLE) {
@@ -149,16 +143,13 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
         title.setText("███████");
         pubDate.setText("████");
         duration.setText("████");
-        secondaryActionProgress.setPercentage(0, null);
         progressBar.setVisibility(View.GONE);
         position.setVisibility(View.GONE);
         dragHandle.setVisibility(View.GONE);
         size.setText("");
-        itemView.setBackgroundResource(ThemeUtils.getDrawableFromAttr(activity, R.attr.selectableItemBackground));
         placeholder.setText("");
         if (coverHolder.getVisibility() == View.VISIBLE) {
             new CoverLoader(activity)
-                    .withResource(ThemeUtils.getDrawableFromAttr(activity, android.R.attr.textColorSecondary))
                     .withPlaceholderView(placeholder)
                     .withCoverView(cover)
                     .load();

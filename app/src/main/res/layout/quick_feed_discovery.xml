@@ -36,17 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <de.danoeh.antennapod.ui.common.WrappingGridView
-            android:id="@+id/discover_grid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:numColumns="4"
-            android:scrollbars="none"
-            android:layout_marginTop="8dp"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center_horizontal"
-            app:layout_columnWeight="1"
-            app:layout_rowWeight="1" />
+
 
         <LinearLayout
             android:id="@+id/discover_error"

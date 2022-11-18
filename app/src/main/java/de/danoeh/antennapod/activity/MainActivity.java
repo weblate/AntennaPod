@@ -38,22 +38,10 @@ import de.danoeh.antennapod.core.receiver.MediaButtonReceiver;
 import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 import de.danoeh.antennapod.dialog.RatingDialog;
 import de.danoeh.antennapod.event.MessageEvent;
-import de.danoeh.antennapod.fragment.AddFeedFragment;
-import de.danoeh.antennapod.fragment.AllEpisodesFragment;
-import de.danoeh.antennapod.fragment.AudioPlayerFragment;
-import de.danoeh.antennapod.fragment.CompletedDownloadsFragment;
-import de.danoeh.antennapod.fragment.FeedItemlistFragment;
-import de.danoeh.antennapod.fragment.InboxFragment;
 import de.danoeh.antennapod.fragment.NavDrawerFragment;
-import de.danoeh.antennapod.fragment.PlaybackHistoryFragment;
-import de.danoeh.antennapod.fragment.QueueFragment;
-import de.danoeh.antennapod.fragment.SearchFragment;
-import de.danoeh.antennapod.fragment.SubscriptionFragment;
 import de.danoeh.antennapod.fragment.TransitionEffect;
-import de.danoeh.antennapod.ui.common.ThemeUtils;
 import de.danoeh.antennapod.ui.home.HomeFragment;
 import de.danoeh.antennapod.view.LockableBottomSheetBehavior;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -115,8 +103,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fm.beginTransaction();
         NavDrawerFragment navDrawerFragment = new NavDrawerFragment();
         transaction.replace(R.id.navDrawerFragment, navDrawerFragment, NavDrawerFragment.TAG);
-        AudioPlayerFragment audioPlayerFragment = new AudioPlayerFragment();
-        transaction.replace(R.id.audioplayerFragment, audioPlayerFragment, AudioPlayerFragment.TAG);
         transaction.commit();
 
         checkFirstLaunch();
@@ -165,20 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onSlide(@NonNull View view, float slideOffset) {
-            AudioPlayerFragment audioPlayer = (AudioPlayerFragment) getSupportFragmentManager()
-                    .findFragmentByTag(AudioPlayerFragment.TAG);
-            if (audioPlayer == null) {
-                return;
-            }
 
-            if (slideOffset == 0.0f) { //STATE_COLLAPSED
-                audioPlayer.scrollToPage(AudioPlayerFragment.POS_COVER);
-            }
-
-            float condensedSlideOffset = Math.max(0.0f, Math.min(0.2f, slideOffset - 0.2f)) / 0.2f;
-            audioPlayer.getExternalPlayerHolder().setAlpha(1 - condensedSlideOffset);
-            audioPlayer.getExternalPlayerHolder().setVisibility(
-                    condensedSlideOffset > 0.99f ? View.GONE : View.VISIBLE);
         }
     };
 
@@ -196,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (!displayUpArrow) {
             toolbar.setNavigationIcon(null);
         } else {
-            toolbar.setNavigationIcon(ThemeUtils.getDrawableFromAttr(this, R.attr.homeAsUpIndicator));
             toolbar.setNavigationOnClickListener(v -> getSupportFragmentManager().popBackStack());
         }
     }
@@ -244,27 +216,6 @@ public class MainActivity extends AppCompatActivity {
             case HomeFragment.TAG:
                 fragment = new HomeFragment();
                 break;
-            case QueueFragment.TAG:
-                fragment = new QueueFragment();
-                break;
-            case InboxFragment.TAG:
-                fragment = new InboxFragment();
-                break;
-            case AllEpisodesFragment.TAG:
-                fragment = new AllEpisodesFragment();
-                break;
-            case CompletedDownloadsFragment.TAG:
-                fragment = new CompletedDownloadsFragment();
-                break;
-            case PlaybackHistoryFragment.TAG:
-                fragment = new PlaybackHistoryFragment();
-                break;
-            case AddFeedFragment.TAG:
-                fragment = new AddFeedFragment();
-                break;
-            case SubscriptionFragment.TAG:
-                fragment = new SubscriptionFragment();
-                break;
             default:
                 // default to home screen
                 fragment = new HomeFragment();
@@ -281,12 +232,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadFeedFragmentById(long feedId, Bundle args) {
-        Fragment fragment = FeedItemlistFragment.newInstance(feedId);
-        if (args != null) {
-            fragment.setArguments(args);
-        }
-        NavDrawerFragment.saveLastNavFragment(this, String.valueOf(feedId));
-        loadFragment(fragment);
     }
 
     private void loadFragment(Fragment fragment) {
@@ -450,7 +395,6 @@ public class MainActivity extends AppCompatActivity {
 
         Snackbar snackbar = showSnackbarAbovePlayer(event.message, Snackbar.LENGTH_SHORT);
         if (event.action != null) {
-            snackbar.setAction(getString(R.string.undo), v -> event.action.run());
         }
     }
 
@@ -472,7 +416,6 @@ public class MainActivity extends AppCompatActivity {
                 boolean startedFromSearch = intent.getBooleanExtra(EXTRA_STARTED_FROM_SEARCH, false);
                 boolean addToBackStack = intent.getBooleanExtra(EXTRA_ADD_TO_BACK_STACK, false);
                 if (startedFromSearch || addToBackStack) {
-                    loadChildFragment(FeedItemlistFragment.newInstance(feedId));
                 } else {
                     loadFeedFragmentById(feedId, args);
                 }
@@ -518,49 +461,7 @@ public class MainActivity extends AppCompatActivity {
      * @param uri incoming deep link
      */
     private void handleDeeplink(Uri uri) {
-        if (uri == null || uri.getPath() == null) {
-            return;
-        }
-        Log.d(TAG, "Handling deeplink: " + uri.toString());
-        switch (uri.getPath()) {
-            case "/deeplink/search":
-                String query = uri.getQueryParameter("query");
-                if (query == null) {
-                    return;
-                }
 
-                this.loadChildFragment(SearchFragment.newInstance(query));
-                break;
-            case "/deeplink/main":
-                String feature = uri.getQueryParameter("page");
-                if (feature == null) {
-                    return;
-                }
-                switch (feature) {
-                    case "DOWNLOADS":
-                        loadFragment(CompletedDownloadsFragment.TAG, null);
-                        break;
-                    case "HISTORY":
-                        loadFragment(PlaybackHistoryFragment.TAG, null);
-                        break;
-                    case "EPISODES":
-                        loadFragment(AllEpisodesFragment.TAG, null);
-                        break;
-                    case "QUEUE":
-                        loadFragment(QueueFragment.TAG, null);
-                        break;
-                    case "SUBSCRIPTIONS":
-                        loadFragment(SubscriptionFragment.TAG, null);
-                        break;
-                    default:
-                        showSnackbarAbovePlayer(getString(R.string.app_action_not_found, feature),
-                                Snackbar.LENGTH_LONG);
-                        return;
-                }
-                break;
-            default:
-                break;
-        }
     }
   
     //Hardware keyboard support

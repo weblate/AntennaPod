@@ -27,23 +27,7 @@ public class EpisodeMultiSelectActionHandler {
     }
 
     public void handleAction(List<FeedItem> items) {
-        if (actionId == R.id.add_to_queue_batch) {
-            queueChecked(items);
-        } else if (actionId == R.id.remove_from_queue_batch) {
-            removeFromQueueChecked(items);
-        }  else if (actionId == R.id.remove_from_inbox_batch) {
-            removeFromInboxChecked(items);
-        } else if (actionId == R.id.mark_read_batch) {
-            markedCheckedPlayed(items);
-        } else if (actionId == R.id.mark_unread_batch) {
-            markedCheckedUnplayed(items);
-        } else if (actionId == R.id.download_batch) {
-            downloadChecked(items);
-        } else if (actionId == R.id.delete_batch) {
-            deleteChecked(items);
-        } else {
-            Log.e(TAG, "Unrecognized speed dial action item. Do nothing. id=" + actionId);
-        }
+
     }
 
     private void queueChecked(List<FeedItem> items) {
