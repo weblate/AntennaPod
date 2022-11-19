@@ -35,7 +35,6 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.preferences.ThemeSwitcher;
 import de.danoeh.antennapod.core.receiver.MediaButtonReceiver;
 import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
-import de.danoeh.antennapod.dialog.RatingDialog;
 import de.danoeh.antennapod.event.MessageEvent;
 import de.danoeh.antennapod.ui.home.HomeFragment;
 import de.danoeh.antennapod.view.LockableBottomSheetBehavior;
@@ -295,14 +294,12 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        RatingDialog.init(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         handleNavIntent();
-        RatingDialog.check();
 
         if (lastTheme != ThemeSwitcher.getNoTitleTheme(this)) {
             finish();
