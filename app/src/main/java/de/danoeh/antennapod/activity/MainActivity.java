@@ -2,7 +2,6 @@ package de.danoeh.antennapod.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -38,11 +37,8 @@ import de.danoeh.antennapod.core.receiver.MediaButtonReceiver;
 import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 import de.danoeh.antennapod.dialog.RatingDialog;
 import de.danoeh.antennapod.event.MessageEvent;
-import de.danoeh.antennapod.fragment.NavDrawerFragment;
-import de.danoeh.antennapod.fragment.TransitionEffect;
 import de.danoeh.antennapod.ui.home.HomeFragment;
 import de.danoeh.antennapod.view.LockableBottomSheetBehavior;
-import org.apache.commons.lang3.Validate;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -98,12 +94,6 @@ public class MainActivity extends AppCompatActivity {
         setNavDrawerSize();
 
         final FragmentManager fm = getSupportFragmentManager();
-
-
-        FragmentTransaction transaction = fm.beginTransaction();
-        NavDrawerFragment navDrawerFragment = new NavDrawerFragment();
-        transaction.replace(R.id.navDrawerFragment, navDrawerFragment, NavDrawerFragment.TAG);
-        transaction.commit();
 
         checkFirstLaunch();
         View bottomSheet = findViewById(R.id.audioplayerFragment);
@@ -227,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
         if (args != null) {
             fragment.setArguments(args);
         }
-        NavDrawerFragment.saveLastNavFragment(this, tag);
         loadFragment(fragment);
     }
 
@@ -256,32 +245,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void loadChildFragment(Fragment fragment, TransitionEffect transition) {
-        Validate.notNull(fragment);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        switch (transition) {
-            case FADE:
-                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-                break;
-            case SLIDE:
-                transaction.setCustomAnimations(
-                        R.anim.slide_right_in,
-                        R.anim.slide_left_out,
-                        R.anim.slide_left_in,
-                        R.anim.slide_right_out);
-                break;
-        }
-
-        transaction
-                .hide(getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG))
-                .add(R.id.main_view, fragment, MAIN_FRAGMENT_TAG)
-                .addToBackStack(null)
-                .commit();
-    }
-
     public void loadChildFragment(Fragment fragment) {
-        loadChildFragment(fragment, TransitionEffect.NONE);
     }
 
     @Override
