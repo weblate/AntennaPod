@@ -2,25 +2,18 @@ package de.danoeh.antennapod.core.util.download;
 
 import android.content.Context;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.work.Constraints;
 import androidx.work.Data;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.ExistingWorkPolicy;
-import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
+import de.danoeh.antennapod.core.util.NetworkUtils;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
-
-import de.danoeh.antennapod.core.R;
-import de.danoeh.antennapod.core.service.FeedUpdateWorker;
-import de.danoeh.antennapod.core.util.NetworkUtils;
 
 public class AutoUpdateManager {
     private static final String WORK_ID_FEED_UPDATE = "de.danoeh.antennapod.core.service.FeedUpdateWorker";
@@ -45,13 +38,8 @@ public class AutoUpdateManager {
     private static void restartUpdateIntervalAlarm(long intervalMillis, Context context) {
         Log.d(TAG, "Restarting update alarm.");
 
-        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(FeedUpdateWorker.class,
-                intervalMillis, TimeUnit.MILLISECONDS)
-                .setConstraints(getConstraints())
-                .build();
 
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                WORK_ID_FEED_UPDATE, ExistingPeriodicWorkPolicy.REPLACE, workRequest);
+;
     }
 
     /**
@@ -69,13 +57,7 @@ public class AutoUpdateManager {
         }
         long triggerAtMillis = alarm.getTimeInMillis() - now.getTimeInMillis();
 
-        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(FeedUpdateWorker.class)
-                .setConstraints(getConstraints())
-                .setInitialDelay(triggerAtMillis, TimeUnit.MILLISECONDS)
-                .build();
 
-        WorkManager.getInstance(context).enqueueUniqueWork(WORK_ID_FEED_UPDATE,
-                ExistingWorkPolicy.REPLACE, workRequest);
     }
 
     /**
@@ -88,17 +70,6 @@ public class AutoUpdateManager {
     public static void runOnce(Context context) {
         Log.d(TAG, "Run auto update once, as soon as OS allows.");
 
-        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(FeedUpdateWorker.class)
-                .setConstraints(getConstraints())
-                .setInitialDelay(0L, TimeUnit.MILLISECONDS)
-                .setInputData(new Data.Builder()
-                        .putBoolean(FeedUpdateWorker.PARAM_RUN_ONCE, true)
-                        .build()
-                )
-                .build();
-
-        WorkManager.getInstance(context).enqueueUniqueWork(WORK_ID_FEED_UPDATE_ONCE,
-                ExistingWorkPolicy.REPLACE, workRequest);
 
     }
 

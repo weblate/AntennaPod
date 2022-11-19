@@ -4,7 +4,6 @@ import android.content.Context;
 import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
 import de.danoeh.antennapod.core.preferences.SleepTimerPreferences;
 import de.danoeh.antennapod.core.preferences.UsageStatistics;
-import de.danoeh.antennapod.core.service.download.AntennapodHttpClient;
 import de.danoeh.antennapod.core.util.NetworkUtils;
 import de.danoeh.antennapod.core.util.download.NetworkConnectionChangeHandler;
 import de.danoeh.antennapod.core.util.gui.NotificationUtils;
@@ -22,7 +21,6 @@ public class ClientConfigurator {
         PlaybackPreferences.init(context);
         NetworkUtils.init(context);
         NetworkConnectionChangeHandler.init(context);
-        AntennapodHttpClient.setCacheDirectory(new File(context.getCacheDir(), "okhttp"));
         SleepTimerPreferences.init(context);
         NotificationUtils.createChannels(context);
         initialized = true;
