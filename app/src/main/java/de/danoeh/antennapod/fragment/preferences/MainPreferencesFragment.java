@@ -92,33 +92,6 @@ public class MainPreferencesFragment extends PreferenceFragmentCompat {
     }
 
     private void setupSearch() {
-        SearchPreference searchPreference = findPreference("searchPreference");
-        SearchConfiguration config = searchPreference.getSearchConfiguration();
-        config.setActivity((AppCompatActivity) getActivity());
-        config.setFragmentContainerViewId(R.id.settingsContainer);
-        config.setBreadcrumbsEnabled(true);
 
-        config.index(R.xml.preferences_user_interface)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_user_interface));
-        config.index(R.xml.preferences_playback)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_playback));
-        config.index(R.xml.preferences_network)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_network));
-        config.index(R.xml.preferences_storage)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_storage));
-        config.index(R.xml.preferences_import_export)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_storage))
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_import_export));
-        config.index(R.xml.preferences_autodownload)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_network))
-                .addBreadcrumb(R.string.automation)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_autodownload));
-        config.index(R.xml.preferences_notifications)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_notifications));
-        config.index(R.xml.feed_settings)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.feed_settings));
-        config.index(R.xml.preferences_swipe)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_user_interface))
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_swipe));
     }
 }
