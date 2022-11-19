@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,20 +15,10 @@ import androidx.fragment.app.FragmentContainerView;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.core.event.DownloadEvent;
-import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
-import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 import de.danoeh.antennapod.databinding.HomeFragmentBinding;
 import de.danoeh.antennapod.event.FeedListUpdateEvent;
-import de.danoeh.antennapod.ui.home.sections.DownloadsSection;
-import de.danoeh.antennapod.ui.home.sections.EpisodesSurpriseSection;
-import de.danoeh.antennapod.ui.home.sections.InboxSection;
-import de.danoeh.antennapod.ui.home.sections.QueueSection;
-import de.danoeh.antennapod.ui.home.sections.SubscriptionsSection;
 import de.danoeh.antennapod.view.LiftOnScrollListener;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -91,20 +80,7 @@ public class HomeFragment extends Fragment implements Toolbar.OnMenuItemClickLis
     }
 
     private Fragment getSection(String tag) {
-        switch (tag) {
-            case QueueSection.TAG:
-                return new QueueSection();
-            case InboxSection.TAG:
-                return new InboxSection();
-            case EpisodesSurpriseSection.TAG:
-                return new EpisodesSurpriseSection();
-            case SubscriptionsSection.TAG:
-                return new SubscriptionsSection();
-            case DownloadsSection.TAG:
-                return new DownloadsSection();
-            default:
                 return null;
-        }
     }
 
     public static List<String> getHiddenSections(Context context) {
@@ -123,15 +99,7 @@ public class HomeFragment extends Fragment implements Toolbar.OnMenuItemClickLis
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        if (item.getItemId() == R.id.homesettings_items) {
-            HomeSectionsSettingsDialog.open(getContext(), (dialogInterface, i) -> populateSectionList());
-            return true;
-        } else if (item.getItemId() == R.id.refresh_item) {
-            AutoUpdateManager.runImmediate(requireContext());
-            return true;
-        } else if (item.getItemId() == R.id.action_search) {
-            return true;
-        }
+
         return super.onOptionsItemSelected(item);
     }
 
