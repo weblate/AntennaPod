@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
-import de.danoeh.antennapod.core.dialog.ConfirmationDialog;
 
 /**
  * Displays the 'statistics' screen

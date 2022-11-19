@@ -4,7 +4,6 @@ import android.os.Bundle;
 import androidx.preference.PreferenceFragmentCompat;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.PreferenceActivity;
-import de.danoeh.antennapod.dialog.SwipeActionsDialog;
 
 public class SwipePreferencesFragment extends PreferenceFragmentCompat {
     private static final String PREF_SWIPE_QUEUE = "prefSwipeQueue";

@@ -11,22 +11,6 @@ import de.danoeh.antennapod.core.R;
 public class MenuItemUtils {
 
     /**
-     * @param menu    The menu that the MenuItem belongs to
-     * @param resId   The id of the MenuItem
-     */
-    public static void updateRefreshMenuItem(Menu menu, int resId, boolean isRefreshing) {
-        // expand actionview if feeds are being downloaded, collapse otherwise
-        MenuItem refreshItem = menu.findItem(resId);
-        if (isRefreshing) {
-            if (refreshItem.getActionView() == null) {
-                refreshItem.setActionView(R.layout.refresh_action_view);
-            }
-        } else {
-            refreshItem.setActionView(null);
-        }
-    }
-
-    /**
      * When pressing a context menu item, Android calls onContextItemSelected
      * for ALL fragments in arbitrary order, not just for the fragment that the
      * context menu was created from. This assigns the listener to every menu item,
