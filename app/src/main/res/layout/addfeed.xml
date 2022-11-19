@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:title="@string/add_feed_label"
+        app:title="@string/statistics_label"
         app:navigationIcon="?homeAsUpIndicator" />
 
     <androidx.cardview.widget.CardView
@@ -35,7 +35,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:contentDescription="@string/search_podcast_hint"
+                android:contentDescription="@string/statistics_label"
                 android:scaleType="center"
                 app:srcCompat="@drawable/ic_search" />
 
@@ -53,7 +53,7 @@
                 android:layout_marginEnd="8dp"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
-                android:hint="@string/search_podcast_hint"
+                android:hint="@string/statistics_label"
                 android:background="@null" />
 
         </LinearLayout>
@@ -82,7 +82,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/advanced"
+                android:text="@string/statistics_label"
                 android:textSize="18sp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
@@ -92,7 +92,7 @@
                 android:id="@+id/addViaUrlButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/add_podcast_by_url"
+                android:text="@string/statistics_label"
                 app:drawableStartCompat="@drawable/ic_feed"
                 app:drawableLeftCompat="@drawable/ic_feed"
                 style="@style/AddPodcastTextView" />
@@ -101,7 +101,7 @@
                 android:id="@+id/addLocalFolderButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/add_local_folder"
+                android:text="@string/statistics_label"
                 app:drawableStartCompat="@drawable/ic_folder"
                 app:drawableLeftCompat="@drawable/ic_folder"
                 style="@style/AddPodcastTextView" />
@@ -110,7 +110,7 @@
                 android:id="@+id/searchItunesButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/search_itunes_label"
+                android:text="@string/statistics_label"
                 app:drawableStartCompat="@drawable/ic_search"
                 app:drawableLeftCompat="@drawable/ic_search"
                 style="@style/AddPodcastTextView" />
@@ -119,7 +119,7 @@
                 android:id="@+id/searchFyydButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/search_fyyd_label"
+                android:text="@string/statistics_label"
                 app:drawableStartCompat="@drawable/ic_search"
                 app:drawableLeftCompat="@drawable/ic_search"
                 style="@style/AddPodcastTextView" />
@@ -128,7 +128,7 @@
                 android:id="@+id/searchGPodderButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/gpodnet_search_hint"
+                android:text="@string/statistics_label"
                 app:drawableStartCompat="@drawable/ic_search"
                 app:drawableLeftCompat="@drawable/ic_search"
                 style="@style/AddPodcastTextView" />
@@ -137,7 +137,7 @@
                 android:id="@+id/searchPodcastIndexButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/search_podcastindex_label"
+                android:text="@string/statistics_label"
                 app:drawableStartCompat="@drawable/ic_search"
                 app:drawableLeftCompat="@drawable/ic_search"
                 style="@style/AddPodcastTextView" />
@@ -146,7 +146,7 @@
                 android:id="@+id/opmlImportButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/opml_add_podcast_label"
+                android:text="@string/statistics_label"
                 app:drawableStartCompat="@drawable/ic_download"
                 app:drawableLeftCompat="@drawable/ic_download"
                 style="@style/AddPodcastTextView" />

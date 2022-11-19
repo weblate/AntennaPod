@@ -13,7 +13,7 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:navigationIcon="?homeAsUpIndicator"
-        app:title="@string/search_label" />
+        app:title="@string/statistics_label" />
 
     <com.google.android.material.chip.Chip
         android:id="@+id/feed_title_chip"

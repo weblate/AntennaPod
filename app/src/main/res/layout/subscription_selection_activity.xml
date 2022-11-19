@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:layout_alignParentBottom="true"
-                android:text="@string/add_shortcut" />
+                android:text="@string/statistics_label" />
 
         </RelativeLayout>
 

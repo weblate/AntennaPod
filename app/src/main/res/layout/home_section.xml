@@ -72,7 +72,7 @@
         android:layout_alignParentRight="true"
         android:paddingVertical="0dp"
         android:layout_marginEnd="16dp"
-        tools:text="@string/discover_more"
+        tools:text="@string/statistics_label"
         style="@style/Widget.MaterialComponents.Button.TextButton" />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -33,7 +33,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/time_minutes"
+                android:text="@string/statistics_label"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp" />
 
@@ -43,7 +43,7 @@
             android:id="@+id/setSleeptimerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/set_sleeptimer_label" />
+            android:text="@string/statistics_label" />
 
     </LinearLayout>
 
@@ -68,7 +68,7 @@
             android:id="@+id/disableSleeptimerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/disable_sleeptimer_label" />
+            android:text="@string/statistics_label" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -127,19 +127,19 @@
             android:id="@+id/cbShakeToReset"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/shake_to_reset_label" />
+            android:text="@string/statistics_label" />
 
         <CheckBox
             android:id="@+id/cbVibrate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/timer_vibration_label" />
+            android:text="@string/statistics_label" />
 
         <CheckBox
             android:id="@+id/chAutoEnable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/auto_enable_label" />
+            android:text="@string/statistics_label" />
 
     </LinearLayout>
 

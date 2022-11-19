@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:navigationContentDescription="@string/toolbar_back_button_content_description"
+        app:navigationContentDescription="@string/statistics_label"
         app:navigationIcon="?homeAsUpIndicator" />
 
     <androidx.viewpager2.widget.ViewPager2

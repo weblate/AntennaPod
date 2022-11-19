@@ -131,7 +131,7 @@
                             android:layout_marginTop="16dp"
                             android:layout_marginEnd="8dp"
                             android:focusable="false"
-                            android:text="@string/subscribe_label" />
+                            android:text="@string/statistics_label" />
 
                     <CheckBox
                             android:id="@+id/autoDownloadCheckBox"
@@ -140,7 +140,7 @@
                             android:layout_gravity="left"
                             android:focusable="false"
                             android:checked="true"
-                            android:text="@string/auto_download_label"
+                            android:text="@string/statistics_label"
                             android:visibility="gone"
                             tools:visibility="visible" />
 
@@ -150,7 +150,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
                             android:focusable="false"
-                            android:text="@string/stop_preview"
+                            android:text="@string/statistics_label"
                             android:visibility="gone"
                             tools:visibility="visible" />
 

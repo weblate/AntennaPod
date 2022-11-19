@@ -13,7 +13,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="8dp"
-        android:text="@string/confirm_label"
+        android:text="@string/statistics_label"
         style="@style/Widget.MaterialComponents.Button.TextButton" />
 
     <Button
@@ -24,7 +24,7 @@
         android:layout_toLeftOf="@+id/butConfirm"
         android:layout_toStartOf="@+id/butConfirm"
         android:layout_margin="8dp"
-        android:text="@string/cancel_label"
+        android:text="@string/statistics_label"
         style="@style/Widget.MaterialComponents.Button.TextButton" />
 
     <ListView

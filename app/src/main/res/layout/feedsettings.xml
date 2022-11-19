@@ -14,8 +14,8 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         android:elevation="4dp"
-        app:title="@string/feed_settings_label"
-        app:navigationContentDescription="@string/toolbar_back_button_content_description"
+        app:title="@string/statistics_label"
+        app:navigationContentDescription="@string/statistics_label"
         app:navigationIcon="?homeAsUpIndicator" />
 
     <androidx.fragment.app.FragmentContainerView

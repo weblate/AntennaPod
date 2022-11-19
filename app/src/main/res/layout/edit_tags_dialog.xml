@@ -15,7 +15,7 @@
         android:visibility="gone"
         android:textSize="@dimen/text_size_micro"
         android:paddingBottom="16dp"
-        android:text="@string/multi_feed_common_tags_info" />
+        android:text="@string/statistics_label" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tagsRecycler"
@@ -26,7 +26,7 @@
         android:id="@+id/rootFolderCheckbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/feed_folders_include_root" />
+        android:text="@string/statistics_label" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/newTagTextInput"
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         app:endIconMode="custom"
         app:endIconDrawable="@drawable/ic_add"
-        app:endIconContentDescription="@string/add_tag"
+        app:endIconContentDescription="@string/statistics_label"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <AutoCompleteTextView

@@ -42,7 +42,7 @@
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/widget_opacity"
+                    android:text="@string/statistics_label"
                     android:textSize="16sp"
                     android:textColor="?android:attr/textColorPrimary" />
 
@@ -77,28 +77,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/playback_speed" />
+                    android:text="@string/statistics_label" />
 
                 <CheckBox
                     android:id="@+id/ckRewind"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/rewind_label" />
+                    android:text="@string/statistics_label" />
 
                 <CheckBox
                     android:id="@+id/ckFastForward"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/fast_forward_label" />
+                    android:text="@string/statistics_label" />
 
                 <CheckBox
                     android:id="@+id/ckSkip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/skip_episode_label" />
+                    android:text="@string/statistics_label" />
 
             </LinearLayout>
 
@@ -107,7 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/widget_create_button" />
+                android:text="@string/statistics_label" />
 
         </LinearLayout>
 

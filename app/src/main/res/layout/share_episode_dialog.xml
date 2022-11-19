@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/share_label"
+        android:text="@string/statistics_label"
         android:layout_marginBottom="8dp"
         style="@style/AntennaPod.TextView.Heading" />
 
@@ -24,20 +24,20 @@
             android:id="@+id/share_social_radio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/share_dialog_for_social"
+            android:text="@string/statistics_label"
             android:checked="true" />
 
         <RadioButton
             android:id="@+id/share_media_receiver_radio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/share_dialog_media_address" />
+            android:text="@string/statistics_label" />
 
         <RadioButton
             android:id="@+id/share_media_file_radio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/share_dialog_media_file_label" />
+            android:text="@string/statistics_label" />
 
     </RadioGroup>
 
@@ -50,14 +50,14 @@
         android:id="@+id/share_position_checkbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/share_playback_position_dialog_label" />
+        android:text="@string/statistics_label" />
 
     <Button
         android:id="@+id/shareButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:text="@string/share_label"
+        android:text="@string/statistics_label"
         style="@style/Widget.MaterialComponents.Button.TextButton" />
 
 </LinearLayout>

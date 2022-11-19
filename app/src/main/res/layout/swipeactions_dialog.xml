@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:checked="true"
-        android:text="@string/enable_swipeactions" />
+        android:text="@string/statistics_label" />
 
     <include
         android:id="@+id/actionLeftContainer"

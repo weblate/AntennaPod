@@ -17,7 +17,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/home_label" />
+            app:title="@string/statistics_label" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -47,7 +47,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/home_welcome_title"
+            android:text="@string/statistics_label"
             android:layout_marginBottom="8dp"
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
@@ -57,7 +57,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/home_welcome_text"
+            android:text="@string/statistics_label"
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
             android:textColor="?android:attr/textColorPrimary"

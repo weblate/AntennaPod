@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:text="@string/discover"
+            android:text="@string/statistics_label"
             android:textSize="18sp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:minWidth="0dp"
-            android:text="@string/discover_more"
+            android:text="@string/statistics_label"
             style="@style/Widget.MaterialComponents.Button.TextButton" />
 
     </LinearLayout>
@@ -61,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:text="@string/retry_label"
+                android:text="@string/statistics_label"
                 tools:background="@android:color/holo_red_light" />
 
         </LinearLayout>
@@ -73,7 +73,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorTertiary"
-        android:text="@string/discover_powered_by_itunes"
+        android:text="@string/statistics_label"
         android:textSize="12sp"
         android:layout_gravity="right|end"
         android:paddingHorizontal="4dp"

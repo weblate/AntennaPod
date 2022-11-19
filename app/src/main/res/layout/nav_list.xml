@@ -16,7 +16,7 @@
         android:fitsSystemWindows="true"
         android:layout_alignParentBottom="true"
         android:background="?attr/selectableItemBackground"
-        android:contentDescription="@string/settings_label"
+        android:contentDescription="@string/statistics_label"
         android:accessibilityTraversalBefore="@id/nav_list"
         android:orientation="horizontal"
         android:focusable="true">
@@ -45,7 +45,7 @@
             android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="@string/settings_label"
+            android:text="@string/statistics_label"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="@dimen/text_size_navdrawer"
             tools:background="@android:color/holo_green_light" />

@@ -15,7 +15,7 @@
                 android:id="@+id/deviceName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/gpodnetauth_device_name"
+                android:hint="@string/statistics_label"
                 android:lines="1"
                 android:imeOptions="actionNext|flagNoFullscreen"/>
 
@@ -26,14 +26,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|end"
-            android:text="@string/gpodnetauth_create_device"/>
+            android:text="@string/statistics_label"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/AntennaPod.TextView.Heading"
         android:layout_marginTop="16dp"
-        android:text="@string/gpodnetauth_existing_devices"/>
+        android:text="@string/statistics_label"/>
 
     <TextView
         android:id="@+id/deviceSelectError"

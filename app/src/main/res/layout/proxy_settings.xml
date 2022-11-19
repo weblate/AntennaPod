@@ -10,7 +10,7 @@
         android:id="@+id/txtvType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/proxy_type_label"
+        android:text="@string/statistics_label"
         android:textColor="?android:attr/textColorSecondary" />
 
     <Spinner
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/host_label"
+        android:text="@string/statistics_label"
         android:textColor="?android:attr/textColorSecondary" />
 
     <EditText
@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/port_label"
+        android:text="@string/statistics_label"
         android:textColor="?android:attr/textColorSecondary" />
 
     <EditText
@@ -55,28 +55,28 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:singleLine="true"
-        android:text="@string/username_label"
+        android:text="@string/statistics_label"
         android:textColor="?android:attr/textColorSecondary" />
 
     <EditText
         android:id="@+id/etUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/optional_hint" />
+        android:hint="@string/statistics_label" />
 
     <TextView
         android:id="@+id/txtvPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/password_label"
+        android:text="@string/statistics_label"
         android:textColor="?android:attr/textColorSecondary" />
 
     <EditText
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/optional_hint"
+        android:hint="@string/statistics_label"
         android:inputType="textPassword" />
 
     <com.joanzapata.iconify.widget.IconTextView

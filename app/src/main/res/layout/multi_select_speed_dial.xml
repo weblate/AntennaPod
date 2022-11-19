@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:accessibilityTraversalBefore="@android:id/list"
-            android:contentDescription="@string/apply_action"
+            android:contentDescription="@string/statistics_label"
             android:visibility="gone"
             app:sdMainFabClosedSrc="@drawable/ic_fab_edit"
             app:sdOverlayLayout="@id/fabSDOverlay" />

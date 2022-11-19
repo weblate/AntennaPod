@@ -17,7 +17,7 @@
             android:id="@+id/swipeDirectionLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/swipe_left"
+            android:text="@string/statistics_label"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:text="@string/change_setting"
+            android:text="@string/statistics_label"
             style="@style/Widget.MaterialComponents.Button.TextButton" />
 
     </RelativeLayout>

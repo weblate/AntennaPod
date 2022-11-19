@@ -27,7 +27,7 @@
                 android:layout_width="@dimen/thumbnail_length_queue_item"
                 android:layout_height="@dimen/thumbnail_length_queue_item"
                 android:layout_gravity="center_vertical"
-                android:contentDescription="@string/open_podcast"
+                android:contentDescription="@string/statistics_label"
                 android:foreground="?attr/selectableItemBackground"
                 tools:src="@tools:sample/avatars" />
 

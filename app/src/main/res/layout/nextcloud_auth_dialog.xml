@@ -18,7 +18,7 @@
             android:id="@+id/serverUrlText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/gpodnetauth_host"
+            android:hint="@string/statistics_label"
             android:inputType="textNoSuggestions"
             android:lines="1"
             android:imeOptions="actionNext|flagNoFullscreen" />
@@ -42,7 +42,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/synchronization_nextcloud_authenticate_browser" />
+            android:text="@string/statistics_label" />
 
     </LinearLayout>
 
@@ -58,6 +58,6 @@
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/gpodnetauth_login_butLabel" />
+        android:text="@string/statistics_label" />
 
 </LinearLayout>

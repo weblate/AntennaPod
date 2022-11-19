@@ -23,14 +23,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/include_terms" />
+                android:text="@string/statistics_label" />
 
             <RadioButton
                 android:id="@+id/excludeRadio"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/exclude_terms" />
+                android:text="@string/statistics_label" />
 
         </RadioGroup>
 
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             app:endIconMode="custom"
             app:endIconDrawable="@drawable/ic_add"
-            app:endIconContentDescription="@string/add_term"
+            app:endIconContentDescription="@string/statistics_label"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -75,7 +75,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/exclude_episodes_shorter_than" />
+                android:text="@string/statistics_label" />
 
             <EditText
                 android:id="@+id/episodeFilterDurationText"
@@ -90,7 +90,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/time_minutes" />
+                android:text="@string/statistics_label" />
 
         </LinearLayout>
 

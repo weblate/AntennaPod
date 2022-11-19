@@ -115,7 +115,7 @@
                     android:id="@+id/statusInbox"
                     android:layout_width="14sp"
                     android:layout_height="14sp"
-                    android:contentDescription="@string/is_inbox_label"
+                    android:contentDescription="@string/statistics_label"
                     app:srcCompat="@drawable/ic_inbox"
                     app:tint="?attr/colorAccent" />
 
@@ -123,21 +123,21 @@
                     android:id="@+id/ivIsVideo"
                     android:layout_width="14sp"
                     android:layout_height="14sp"
-                    android:contentDescription="@string/media_type_video_label"
+                    android:contentDescription="@string/statistics_label"
                     app:srcCompat="@drawable/ic_videocam" />
 
                 <ImageView
                     android:id="@+id/isFavorite"
                     android:layout_width="14sp"
                     android:layout_height="14sp"
-                    android:contentDescription="@string/is_favorite_label"
+                    android:contentDescription="@string/statistics_label"
                     app:srcCompat="@drawable/ic_star" />
 
                 <ImageView
                     android:id="@+id/ivInPlaylist"
                     android:layout_width="14sp"
                     android:layout_height="14sp"
-                    android:contentDescription="@string/in_queue_label"
+                    android:contentDescription="@string/statistics_label"
                     app:srcCompat="@drawable/ic_playlist_play" />
 
                 <TextView

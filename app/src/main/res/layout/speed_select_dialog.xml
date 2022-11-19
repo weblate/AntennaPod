@@ -11,7 +11,7 @@
             android:layout_height="wrap_content">
 
         <TextView
-                android:text="@string/playback_speed"
+                android:text="@string/statistics_label"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -31,7 +31,7 @@
     </de.danoeh.antennapod.view.PlaybackSpeedSeekBar>
 
     <TextView
-            android:text="@string/speed_presets"
+            android:text="@string/statistics_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/AntennaPod.TextView.ListItemPrimaryTitle"

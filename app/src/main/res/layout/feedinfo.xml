@@ -43,7 +43,7 @@
                 android:minHeight="?attr/actionBarSize"
                 android:theme="?attr/actionBarTheme"
                 app:layout_collapseMode="pin"
-                app:navigationContentDescription="@string/toolbar_back_button_content_description"
+                app:navigationContentDescription="@string/statistics_label"
                 app:navigationIcon="?homeAsUpIndicator" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -59,7 +59,7 @@
         android:paddingRight="16dp"
         android:paddingBottom="8dp"
         android:scrollbarStyle="outsideOverlay"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/statistics_label">
 
         <LinearLayout
             android:id="@+id/infoContainer"
@@ -75,7 +75,7 @@
                 android:textSize="18sp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp"
-                android:text="@string/url_label"
+                android:text="@string/statistics_label"
                 android:textColor="?android:attr/textColorPrimary"
                 tools:background="@android:color/holo_red_light" />
 
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp"
-                android:text="@string/support_funding_label"
+                android:text="@string/statistics_label"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 tools:background="@android:color/holo_red_light" />
@@ -118,7 +118,7 @@
                 android:textSize="18sp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp"
-                android:text="@string/description_label"
+                android:text="@string/statistics_label"
                 android:textColor="?android:attr/textColorPrimary"
                 tools:background="@android:color/holo_red_light" />
 
@@ -126,7 +126,7 @@
                 android:id="@+id/txtvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/design_time_lorem_ipsum"
+                android:text="@string/statistics_label"
                 android:textIsSelectable="true"
                 tools:background="@android:color/holo_green_dark" />
 
@@ -152,7 +152,7 @@
                 android:layout_height="wrap_content"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
-                android:text="@string/statistics_view_all"
+                android:text="@string/statistics_label"
                 style="@style/Widget.MaterialComponents.Button.TextButton" />
 
         </LinearLayout>

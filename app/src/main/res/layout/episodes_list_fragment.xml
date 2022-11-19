@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:paddingBottom="8dp"
-            android:text="@string/filtered_label"
+            android:text="@string/statistics_label"
             android:layout_marginTop="-12dp"
             android:layout_marginLeft="60dp"
             android:layout_marginStart="60dp"

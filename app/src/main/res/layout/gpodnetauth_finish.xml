@@ -16,7 +16,7 @@
         android:id="@+id/txtvDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/gpodnetauth_finish_descr"
+        android:text="@string/statistics_label"
         android:textColor="?android:attr/textColorPrimary" />
 
     <Button
@@ -24,6 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/gpodnetauth_finish_butsyncnow"/>
+        android:text="@string/statistics_label"/>
 
 </LinearLayout>

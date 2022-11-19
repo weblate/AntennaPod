@@ -23,20 +23,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/audio_effects"
+            android:text="@string/statistics_label"
             style="@style/AntennaPod.TextView.ListItemPrimaryTitle" />
 
         <CheckBox
             android:id="@+id/skipSilence"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_skip_silence_title" />
+            android:text="@string/statistics_label" />
 
         <CheckBox
             android:id="@+id/stereo_to_mono"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/stereo_to_mono" />
+            android:text="@string/statistics_label" />
 
     </LinearLayout>
 

@@ -6,13 +6,13 @@
               android:padding="16dp">
     <Button
             android:id="@+id/btn_open_bug_tracker"
-            android:text="@string/open_bug_tracker"
+            android:text="@string/statistics_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
     <Button
             android:id="@+id/btn_copy_log"
-            android:text="@string/copy_to_clipboard"
+            android:text="@string/statistics_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

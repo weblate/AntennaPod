@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textColor="@color/download_failed_red"
-                tools:text="@string/design_time_downloaded_log_failure_reason"/>
+                tools:text="@string/statistics_label"/>
 
         <TextView
                 android:id="@+id/txtvTapForDetails"
