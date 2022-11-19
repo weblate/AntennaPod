@@ -17,7 +17,6 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.core.event.DownloadEvent;
 import de.danoeh.antennapod.core.menuhandler.MenuItemUtils;
-import de.danoeh.antennapod.core.service.download.DownloadService;
 import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 import de.danoeh.antennapod.databinding.HomeFragmentBinding;
 import de.danoeh.antennapod.event.FeedListUpdateEvent;
@@ -115,8 +114,6 @@ public class HomeFragment extends Fragment implements Toolbar.OnMenuItemClickLis
     }
 
     private void refreshToolbarState() {
-        MenuItemUtils.updateRefreshMenuItem(viewBinding.toolbar.getMenu(),
-                R.id.refresh_item, DownloadService.isRunning && DownloadService.isDownloadingFeeds());
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)

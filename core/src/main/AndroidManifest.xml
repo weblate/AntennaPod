@@ -15,11 +15,6 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true">
-
-        <service
-            android:name=".service.download.DownloadService"
-            android:enabled="true" />
-
         <receiver
             android:name=".receiver.MediaButtonReceiver"
             android:exported="true">
