@@ -5,7 +5,4 @@ apply from: "../../common.gradle"
 
 dependencies {
     implementation project(":ui:i18n")
-
-    annotationProcessor "androidx.annotation:annotation:$annotationVersion"
-    implementation "com.google.android.material:material:$googleMaterialVersion"
 }
