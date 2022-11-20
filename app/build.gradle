@@ -36,6 +36,5 @@ dependencies {
     implementation project(':ui:statistics')
 
     annotationProcessor "androidx.annotation:annotation:$annotationVersion"
-    implementation "androidx.preference:preference:$preferenceVersion"
     implementation "com.google.android.material:material:$googleMaterialVersion"
 }
