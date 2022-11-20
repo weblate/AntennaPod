@@ -16,24 +16,19 @@ public class PlayButton extends AppCompatImageButton {
 
     public PlayButton(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        setIsShowPlay(false);
     }
 
     public PlayButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setIsShowPlay(true);
+        setIsShowPlay();
     }
 
-    public void setIsShowPlay(boolean showPlay) {
-        AnimatedVectorDrawableCompat drawable;
-        if (showPlay) {
-            drawable = AnimatedVectorDrawableCompat.create(
-                    getContext(), R.drawable.ic_animate_pause_play);
-        } else {
-            drawable = AnimatedVectorDrawableCompat.create(
-                    getContext(), R.drawable.ic_animate_play_pause);
-        }
+    public void setIsShowPlay() {
+        AnimatedVectorDrawableCompat drawable =
+                AnimatedVectorDrawableCompat.create(getContext(), R.drawable.ic_animate_pause_play);
         setImageDrawable(drawable);
         drawable.start();
+        int horizontalSpacing = (int) getResources().getDimension(R.dimen.additional_horizontal_spacing);
+        setPadding(horizontalSpacing, getPaddingTop(), horizontalSpacing, getPaddingBottom());
     }
 }
