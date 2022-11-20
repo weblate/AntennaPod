@@ -34,7 +34,6 @@ import com.google.android.material.snackbar.Snackbar;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.receiver.MediaButtonReceiver;
 import de.danoeh.antennapod.event.MessageEvent;
-import de.danoeh.antennapod.ui.home.HomeFragment;
 import de.danoeh.antennapod.view.LockableBottomSheetBehavior;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -196,24 +195,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadFragment(String tag, Bundle args) {
-        Log.d(TAG, "loadFragment(tag: " + tag + ", args: " + args + ")");
-        Fragment fragment;
-        switch (tag) {
-            case HomeFragment.TAG:
-                fragment = new HomeFragment();
-                break;
-            default:
-                // default to home screen
-                fragment = new HomeFragment();
-                tag = HomeFragment.TAG;
-                args = null;
-                break;
-        }
 
-        if (args != null) {
-            fragment.setArguments(args);
-        }
-        loadFragment(fragment);
     }
 
     public void loadFeedFragmentById(long feedId, Bundle args) {
