@@ -1,7 +1,7 @@
 plugins {
     id("com.android.library")
 }
-apply from: "../../common.gradle"
+apply from: "../common.gradle"
 
 dependencies {
 }
