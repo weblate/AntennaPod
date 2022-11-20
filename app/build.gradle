@@ -3,7 +3,6 @@ plugins {
     id('com.github.triplet.play') version '3.7.0' apply false
 }
 apply from: "../common.gradle"
-apply from: "../playFlavor.gradle"
 
 android {
     defaultConfig {
