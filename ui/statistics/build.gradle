@@ -5,7 +5,7 @@ apply from: "../../common.gradle"
 apply from: "../../playFlavor.gradle"
 
 dependencies {
-    implementation project(":core")
+    implementation project(":ui:i18n")
 
     annotationProcessor "androidx.annotation:annotation:$annotationVersion"
     implementation "com.google.android.material:material:$googleMaterialVersion"

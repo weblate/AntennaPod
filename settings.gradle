@@ -1,5 +1,4 @@
 include ':app'
-include ':core'
 
 include ':ui:i18n'
 include ':ui:statistics'
