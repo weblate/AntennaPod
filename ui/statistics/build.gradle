@@ -1,8 +1,0 @@
-plugins {
-    id("com.android.library")
-}
-apply from: "../../common.gradle"
-
-dependencies {
-    implementation project(":ui:i18n")
-}

@@ -30,7 +30,6 @@ android {
 
 dependencies {
     implementation project(':ui:i18n')
-    implementation project(':ui:statistics')
 
     annotationProcessor "androidx.annotation:annotation:$annotationVersion"
     implementation "com.google.android.material:material:$googleMaterialVersion"
