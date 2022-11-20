@@ -10,7 +10,7 @@
             <objectAnimator
                     android:duration="300"
                     android:propertyName="pathData"
-                    android:valueFrom="@string/svg_animatable_pause"
+                    android:valueFrom="@string/svg_animatable_play"
                     android:valueTo="@string/svg_animatable_play"
                     android:valueType="pathType"/>
         </aapt:attr>
