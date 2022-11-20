@@ -21,8 +21,6 @@ android {
 }
 
 dependencies {
-    implementation project(':event')
-    implementation project(':model')
     implementation project(':ui:i18n')
 
     annotationProcessor "androidx.annotation:annotation:$annotationVersion"

@@ -1,7 +1,5 @@
 include ':app'
 include ':core'
-include ':event'
-include ':model'
 
 include ':ui:i18n'
 include ':ui:statistics'

@@ -6,8 +6,6 @@ apply from: "../../playFlavor.gradle"
 
 dependencies {
     implementation project(":core")
-    implementation project(":event")
-    implementation project(":model")
 
     annotationProcessor "androidx.annotation:annotation:$annotationVersion"
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
