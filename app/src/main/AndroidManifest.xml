@@ -5,11 +5,11 @@
 
     <application
         android:icon="@android:drawable/sym_def_app_icon"
-        android:label="AntennaPod"
+        android:label="Unused resource demo"
         android:theme="@style/Theme.Material3.Light">
 
         <activity
-            android:name=".activity.PreferenceActivity"
+            android:name=".DemoActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />

@@ -1,11 +1,10 @@
-package de.danoeh.antennapod.activity;
+package de.danoeh.antennapod;
 
 import android.os.Bundle;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import de.danoeh.antennapod.R;
 
-public class PreferenceActivity extends AppCompatActivity {
+public class DemoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
