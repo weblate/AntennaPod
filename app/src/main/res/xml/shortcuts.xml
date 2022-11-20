@@ -2,52 +2,7 @@
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_feed"
-        android:shortcutId="queue"
-        android:shortcutShortLabel="@string/some_string">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetClass="de.danoeh.antennapod.activity.MainActivity"
-            android:targetPackage="@string/application_id">
-            <extra
-                android:name="fragment_tag"
-                android:value="QueueFragment" />
-        </intent>
-    </shortcut>
-
-    <shortcut
-        android:enabled="true"
-        android:icon="@drawable/ic_feed"
-        android:shortcutId="episodes"
-        android:shortcutShortLabel="@string/some_string">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetClass="de.danoeh.antennapod.activity.MainActivity"
-            android:targetPackage="@string/application_id">
-            <extra
-                android:name="fragment_tag"
-                android:value="EpisodesFragment" />
-        </intent>
-    </shortcut>
-
-    <shortcut
-        android:enabled="true"
-        android:icon="@drawable/ic_feed"
-        android:shortcutId="subscriptions"
-        android:shortcutShortLabel="@string/some_string">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetClass="de.danoeh.antennapod.activity.MainActivity"
-            android:targetPackage="@string/application_id">
-            <extra
-                android:name="fragment_tag"
-                android:value="SubscriptionFragment" />
-        </intent>
-    </shortcut>
-
-    <shortcut
-        android:enabled="true"
-        android:icon="@drawable/ic_feed"
+        android:icon="@android:drawable/sym_def_app_icon"
         android:shortcutId="refresh"
         android:shortcutShortLabel="@string/some_string">
         <intent
