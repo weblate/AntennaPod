@@ -3,13 +3,6 @@ plugins {
 }
 apply from: "../../common.gradle"
 
-android {
-    lint {
-        disable "Typos", "ExtraTranslation", "ImpliedQuantity",
-                "PluralsCandidate", "UnusedQuantity", "TypographyEllipsis"
-    }
-}
-
 dependencies {
     annotationProcessor "androidx.annotation:annotation:$annotationVersion"
 }
