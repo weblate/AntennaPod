@@ -3,15 +3,6 @@ package de.danoeh.antennapod.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
-
-import java.util.Arrays;
-
-import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.core.ClientConfigurator;
-import de.danoeh.antennapod.model.feed.Feed;
 
 /**
  * Receives intents from AntennaPod Single Purpose apps

@@ -32,7 +32,6 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 import de.danoeh.antennapod.R;
-import de.danoeh.antennapod.core.preferences.ThemeSwitcher;
 import de.danoeh.antennapod.core.receiver.MediaButtonReceiver;
 import de.danoeh.antennapod.event.MessageEvent;
 import de.danoeh.antennapod.ui.home.HomeFragment;
@@ -77,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        lastTheme = ThemeSwitcher.getNoTitleTheme(this);
         setTheme(lastTheme);
         if (savedInstanceState != null) {
             ensureGeneratedViewIdGreaterThan(savedInstanceState.getInt(KEY_GENERATED_VIEW_ID, 0));
@@ -300,16 +298,11 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         handleNavIntent();
 
-        if (lastTheme != ThemeSwitcher.getNoTitleTheme(this)) {
-            finish();
-            startActivity(new Intent(this, MainActivity.class));
-        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        lastTheme = ThemeSwitcher.getNoTitleTheme(this); // Don't recreate activity when a result is pending
     }
 
     @Override

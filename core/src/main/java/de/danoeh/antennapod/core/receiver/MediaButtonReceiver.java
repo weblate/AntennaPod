@@ -9,8 +9,6 @@ import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import de.danoeh.antennapod.core.ClientConfigurator;
-
 /**
  * Receives media button events.
  */
@@ -29,16 +27,7 @@ public class MediaButtonReceiver extends BroadcastReceiver {
         if (intent == null || intent.getExtras() == null) {
             return;
         }
-        KeyEvent event = (KeyEvent) intent.getExtras().get(Intent.EXTRA_KEY_EVENT);
-        if (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
-            ClientConfigurator.initialize(context);
-            Intent serviceIntent = new Intent(PLAYBACK_SERVICE_INTENT);
-            serviceIntent.setPackage(context.getPackageName());
-            serviceIntent.putExtra(EXTRA_KEYCODE, event.getKeyCode());
-            serviceIntent.putExtra(EXTRA_SOURCE, event.getSource());
-            serviceIntent.putExtra(EXTRA_HARDWAREBUTTON, event.getEventTime() > 0 || event.getDownTime() > 0);
-            ContextCompat.startForegroundService(context, serviceIntent);
-        }
+
     }
 
     public static Intent createIntent(Context context, int eventCode) {
