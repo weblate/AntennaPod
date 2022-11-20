@@ -26,7 +26,7 @@
             android:name=".activity.PreferenceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
-            android:label="@string/statistics_label">
+            android:label="@string/some_string">
             <intent-filter>
                 <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
                 <action android:name="android.intent.action.MAIN" />

@@ -42,7 +42,7 @@
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/statistics_label"
+                    android:text="@string/some_string"
                     android:textSize="16sp"
                     android:textColor="?android:attr/textColorPrimary" />
 
@@ -77,28 +77,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/statistics_label" />
+                    android:text="@string/some_string" />
 
                 <CheckBox
                     android:id="@+id/ckRewind"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/statistics_label" />
+                    android:text="@string/some_string" />
 
                 <CheckBox
                     android:id="@+id/ckFastForward"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/statistics_label" />
+                    android:text="@string/some_string" />
 
                 <CheckBox
                     android:id="@+id/ckSkip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/statistics_label" />
+                    android:text="@string/some_string" />
 
             </LinearLayout>
 
@@ -107,7 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/statistics_label" />
+                android:text="@string/some_string" />
 
         </LinearLayout>
 

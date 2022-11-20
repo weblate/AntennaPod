@@ -2,5 +2,5 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference
         android:key="prefSwipeFeed"
-        android:title="@string/feeds_label"/>
+        android:title="@string/this_string_is_used"/>
 </PreferenceScreen>

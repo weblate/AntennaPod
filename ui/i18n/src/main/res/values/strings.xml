@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="feeds_label">This string is definitely not unused!</string>
-    <string name="statistics_label">Some string</string>
+    <string name="this_string_is_used">This string is definitely not unused!</string>
+    <string name="some_string">Some string</string>
 </resources>

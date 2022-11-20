@@ -11,7 +11,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/statistics_label" />
+            android:text="@string/some_string" />
 
         <com.joanzapata.iconify.widget.IconTextView
             android:id="@+id/startedTotalLabel"
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:text="@string/statistics_label"
+            android:text="@string/some_string"
             tools:text="0 / 0" />
 
     </TableRow>
@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/statistics_label" />
+            android:text="@string/some_string" />
 
         <com.joanzapata.iconify.widget.IconTextView
             android:id="@+id/timePlayedLabel"
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:text="@string/statistics_label"
+            android:text="@string/some_string"
             tools:text="0 min" />
 
     </TableRow>
@@ -48,7 +48,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/statistics_label" />
+            android:text="@string/some_string" />
 
         <com.joanzapata.iconify.widget.IconTextView
             android:id="@+id/totalDurationLabel"
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:text="@string/statistics_label"
+            android:text="@string/some_string"
             tools:text="0 min" />
 
     </TableRow>
@@ -66,7 +66,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/statistics_label" />
+            android:text="@string/some_string" />
 
         <com.joanzapata.iconify.widget.IconTextView
             android:id="@+id/onDeviceLabel"
@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:text="@string/statistics_label"
+            android:text="@string/some_string"
             tools:text="0" />
 
     </TableRow>
@@ -84,7 +84,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/statistics_label" />
+            android:text="@string/some_string" />
 
         <com.joanzapata.iconify.widget.IconTextView
             android:id="@+id/spaceUsedLabel"
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:text="@string/statistics_label"
+            android:text="@string/some_string"
             tools:text="0 MB" />
 
     </TableRow>

@@ -4,7 +4,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_feed"
         android:shortcutId="queue"
-        android:shortcutShortLabel="@string/statistics_label">
+        android:shortcutShortLabel="@string/some_string">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="de.danoeh.antennapod.activity.MainActivity"
@@ -19,7 +19,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_feed"
         android:shortcutId="episodes"
-        android:shortcutShortLabel="@string/statistics_label">
+        android:shortcutShortLabel="@string/some_string">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="de.danoeh.antennapod.activity.MainActivity"
@@ -34,7 +34,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_feed"
         android:shortcutId="subscriptions"
-        android:shortcutShortLabel="@string/statistics_label">
+        android:shortcutShortLabel="@string/some_string">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="de.danoeh.antennapod.activity.MainActivity"
@@ -49,7 +49,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_feed"
         android:shortcutId="refresh"
-        android:shortcutShortLabel="@string/statistics_label">
+        android:shortcutShortLabel="@string/some_string">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="de.danoeh.antennapod.activity.MainActivity"
