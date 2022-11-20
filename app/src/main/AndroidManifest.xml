@@ -13,8 +13,7 @@
         android:supportsRtl="true"
         android:logo="@android:drawable/sym_def_app_icon"
         android:resizeableActivity="true"
-        android:allowAudioPlaybackCapture="true"
-        android:networkSecurityConfig="@xml/network_security_config">
+        android:allowAudioPlaybackCapture="true">
 
         <activity
             android:name=".activity.PreferenceActivity"
@@ -30,16 +29,6 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
-
-        <provider
-            android:authorities="@string/provider_authority"
-            android:name="androidx.core.content.FileProvider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
-        </provider>
 
     </application>
 
