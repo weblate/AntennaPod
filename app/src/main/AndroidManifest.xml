@@ -39,16 +39,6 @@
         </activity>
 
         <receiver
-            android:name=".core.receiver.PlayerWidget"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-                <action android:name="de.danoeh.antennapod.FORCE_WIDGET_UPDATE"/>
-                <action android:name="de.danoeh.antennapod.STOP_WIDGET_UPDATE"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver
             android:name=".receiver.ConnectivityActionReceiver"
             android:exported="true">
             <intent-filter>

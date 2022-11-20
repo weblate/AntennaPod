@@ -15,22 +15,6 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true">
-        <receiver
-            android:name=".receiver.MediaButtonReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="de.danoeh.antennapod.NOTIFY_BUTTON_RECEIVER" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".receiver.FeedUpdateReceiver"
-            android:label="@string/feed_update_receiver_name"
-            android:exported="true"
-            tools:ignore="ExportedReceiver" /> <!-- allow feeds update to be triggered by external apps -->
-
     </application>
 
     <queries>
