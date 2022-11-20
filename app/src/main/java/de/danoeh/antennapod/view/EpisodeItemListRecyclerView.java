@@ -20,17 +20,17 @@ public class EpisodeItemListRecyclerView extends RecyclerView {
     private LinearLayoutManager layoutManager;
 
     public EpisodeItemListRecyclerView(Context context) {
-        super(new ContextThemeWrapper(context, R.style.FastScrollRecyclerView));
+        super(context);
         setup();
     }
 
     public EpisodeItemListRecyclerView(Context context, @Nullable AttributeSet attrs) {
-        super(new ContextThemeWrapper(context, R.style.FastScrollRecyclerView), attrs);
+        super(context, attrs);
         setup();
     }
 
     public EpisodeItemListRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(new ContextThemeWrapper(context, R.style.FastScrollRecyclerView), attrs, defStyleAttr);
+        super(context, attrs, defStyleAttr);
         setup();
     }
 

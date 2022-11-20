@@ -34,7 +34,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:label="AntennaPod"
         android:restoreAnyVersion="true"
-        android:theme="@style/Theme.AntennaPod.Splash"
+        android:theme="@style/Theme.Material3.Light"
         android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:logo="@mipmap/ic_launcher"
