@@ -38,22 +38,6 @@
                 android:resource="@xml/shortcuts" />
         </activity>
 
-        <receiver
-            android:name=".receiver.ConnectivityActionReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".receiver.SPAReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="de.danoeh.antennapdsp.intent.SP_APPS_QUERY_FEEDS_RESPONSE"/>
-            </intent-filter>
-        </receiver>
-
         <provider
             android:authorities="@string/provider_authority"
             android:name="androidx.core.content.FileProvider"
