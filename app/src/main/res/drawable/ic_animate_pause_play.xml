@@ -15,13 +15,4 @@
                     android:valueType="pathType"/>
         </aapt:attr>
     </target>
-    <target android:name="group">
-        <aapt:attr name="android:animation">
-            <objectAnimator
-                    android:duration="@integer/fragment_transition_duration"
-                    android:propertyName="rotation"
-                    android:valueFrom="-90"
-                    android:valueTo="0"/>
-        </aapt:attr>
-    </target>
 </animated-vector>
