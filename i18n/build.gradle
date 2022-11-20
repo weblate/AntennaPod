@@ -1,7 +1,12 @@
 plugins {
     id("com.android.library")
 }
-apply from: "../common.gradle"
 
-dependencies {
+android {
+    compileSdk 31
+
+    defaultConfig {
+        minSdk 19
+        targetSdk 30
+    }
 }

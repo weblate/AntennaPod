@@ -13,12 +13,5 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://jitpack.io" }
     }
-}
-
-project.ext {
-    annotationVersion = "1.2.0"
-    preferenceVersion = "1.1.1"
-    googleMaterialVersion = "1.6.0"
 }

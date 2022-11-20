@@ -9,6 +9,6 @@ public class PreferenceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toast.makeText(this, R.string.this_string_is_used, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.this_string_is_used, Toast.LENGTH_LONG).show();
     }
 }

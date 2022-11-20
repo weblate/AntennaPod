@@ -1,12 +1,15 @@
 plugins {
     id('com.android.application')
 }
-apply from: "../common.gradle"
 
 android {
+    compileSdk 31
+
     defaultConfig {
         versionCode 2070095
         versionName "2.7.0"
+        minSdk 19
+        targetSdk 30
     }
 
     buildTypes {
@@ -31,6 +34,6 @@ android {
 dependencies {
     implementation project(':i18n')
 
-    annotationProcessor "androidx.annotation:annotation:$annotationVersion"
-    implementation "com.google.android.material:material:$googleMaterialVersion"
+    annotationProcessor "androidx.annotation:annotation:1.2.0"
+    implementation "com.google.android.material:material:1.6.0"
 }
