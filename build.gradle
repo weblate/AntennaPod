@@ -58,15 +58,3 @@ project.ext {
     runnerVersion = "1.2.0"
     rulesVersion = "1.2.0"
 }
-
-apply plugin: "checkstyle"
-checkstyle {
-    toolVersion '10.3.1'
-}
-
-task checkstyle(type: Checkstyle) {
-    classpath = files()
-    source "${project.rootDir}"
-    exclude("**/gen/**")
-    exclude("**/generated/**")
-}

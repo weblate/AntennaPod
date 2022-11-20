@@ -12,34 +12,11 @@ android {
         // "1.2.3"          -> 1020395
         versionCode 2070095
         versionName "2.7.0"
-
-        def commit = ""
-        try {
-            def hashStdOut = new ByteArrayOutputStream()
-            exec {
-                commandLine "git", "rev-parse", "--short", "HEAD"
-                standardOutput = hashStdOut
-            }
-            commit = hashStdOut.toString().trim()
-        } catch (Exception ignore) {
-        }
-        buildConfigField "String", "COMMIT_HASH", ('"' + (commit.isEmpty() ? "Unknown commit" : commit) + '"')
-
+        buildConfigField "String", "COMMIT_HASH", ('"Unknown commit"')
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [eventBusIndex: 'de.danoeh.antennapod.ApEventBusIndex']
             }
-        }
-    }
-
-    signingConfigs {
-        releaseConfig {
-            enableV1Signing true
-            enableV2Signing true
-            storeFile file(project.getProperties().getOrDefault("releaseStoreFile", "keystore"))
-            storePassword project.getProperties().getOrDefault("releaseStorePassword", "password")
-            keyAlias project.getProperties().getOrDefault("releaseKeyAlias", "alias")
-            keyPassword project.getProperties().getOrDefault("releaseKeyPassword", "password")
         }
     }
 
@@ -52,7 +29,6 @@ android {
             resValue "string", "application_id", "de.danoeh.antennapod"
             minifyEnabled true
             shrinkResources true
-            signingConfig signingConfigs.releaseConfig
         }
     }
 
@@ -65,10 +41,6 @@ android {
                 'RtlCompat', 'RtlHardcoded', 'MissingMediaBrowserServiceIntentFilter', 'VectorPath',
                 'NotifyDataSetChanged', 'RtlEnabled'
     }
-
-    androidResources {
-        additionalParameters "--no-version-vectors"
-    }
 }
 
 dependencies {
@@ -80,21 +52,3 @@ dependencies {
     implementation "androidx.preference:preference:$preferenceVersion"
     implementation "com.google.android.material:material:$googleMaterialVersion"
 }
-
-if (project.hasProperty("antennaPodPlayPublisherCredentials")) {
-    apply plugin: 'com.github.triplet.play'
-    play {
-        track.set('alpha')
-        serviceAccountCredentials.set(file(antennaPodPlayPublisherCredentials))
-    }
-}
-
-task copyLicense(type: Copy) {
-    from "../LICENSE"
-    into "src/main/assets/"
-    rename { String fileName ->
-        fileName + ".txt"
-    }
-}
-
-preBuild.dependsOn copyLicense
