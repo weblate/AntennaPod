@@ -34,7 +34,6 @@ import com.google.android.material.snackbar.Snackbar;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.preferences.ThemeSwitcher;
 import de.danoeh.antennapod.core.receiver.MediaButtonReceiver;
-import de.danoeh.antennapod.core.util.download.AutoUpdateManager;
 import de.danoeh.antennapod.event.MessageEvent;
 import de.danoeh.antennapod.ui.home.HomeFragment;
 import de.danoeh.antennapod.view.LockableBottomSheetBehavior;
@@ -367,7 +366,6 @@ public class MainActivity extends AppCompatActivity {
             Bundle args = intent.getBundleExtra(EXTRA_FRAGMENT_ARGS);
             boolean refreshOnStart = intent.getBooleanExtra(EXTRA_REFRESH_ON_START, false);
             if (refreshOnStart) {
-                AutoUpdateManager.runImmediate(this);
             }
 
             long feedId = intent.getLongExtra(EXTRA_FEED_ID, 0);

@@ -3,11 +3,6 @@ package de.danoeh.antennapod.core.event;
 import androidx.annotation.NonNull;
 
 import java.util.Arrays;
-import java.util.List;
-
-import de.danoeh.antennapod.model.feed.Feed;
-import de.danoeh.antennapod.model.feed.FeedMedia;
-import de.danoeh.antennapod.core.util.LongList;
 
 public class DownloaderUpdate {
 
