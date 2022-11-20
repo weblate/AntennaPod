@@ -8,7 +8,7 @@
     <target android:name="path">
         <aapt:attr name="android:animation">
             <objectAnimator
-                    android:duration="@integer/fragment_transition_duration"
+                    android:duration="300"
                     android:propertyName="pathData"
                     android:valueFrom="@string/svg_animatable_pause"
                     android:valueTo="@string/svg_animatable_play"
