@@ -4,43 +4,11 @@ android {
     defaultConfig {
         minSdk 19
         targetSdk 30
-
-        multiDexEnabled true
-        vectorDrawables.useSupportLibrary true
-        vectorDrawables.generatedDensities = []
-
-        testApplicationId "de.danoeh.antennapod.core.tests"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard.cfg"
-        }
-        debug {
-        }
-    }
-
-    packagingOptions {
-        resources {
-            excludes += ["META-INF/LICENSE.txt",
-                         "META-INF/NOTICE.txt",
-                         "META-INF/CHANGES",
-                         "META-INF/README.md"]
-        }
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
-    }
-
-    lint {
-        disable "GradleDependency"
-        checkDependencies true
-        warningsAsErrors true
-        abortOnError true
-        checkGeneratedSources = true
     }
 
     buildFeatures {

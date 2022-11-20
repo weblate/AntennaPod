@@ -27,7 +27,11 @@ android {
     }
 
     lint {
-        disable 'UnusedAttribute'
+        disable 'UnusedAttribute', 'GradleDependency'
+        checkDependencies true
+        warningsAsErrors true
+        abortOnError true
+        checkGeneratedSources = true
     }
 }
 
