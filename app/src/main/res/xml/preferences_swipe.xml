@@ -3,15 +3,15 @@
 
     <Preference
         android:key="prefSwipeQueue"
-        android:title="@string/queue_label"/>
+        android:title="@string/statistics_label"/>
 
     <Preference
         android:key="prefSwipeInbox"
-        android:title="@string/inbox_label"/>
+        android:title="@string/statistics_label"/>
 
     <Preference
         android:key="prefSwipeDownloads"
-        android:title="@string/downloads_label"/>
+        android:title="@string/statistics_label"/>
 
     <Preference
         android:key="prefSwipeFeed"
