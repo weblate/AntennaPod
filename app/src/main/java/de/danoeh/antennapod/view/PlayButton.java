@@ -9,8 +9,6 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import de.danoeh.antennapod.R;
 
 public class PlayButton extends AppCompatImageButton {
-    private boolean isShowPlay = true;
-    private boolean isVideoScreen = false;
 
     public PlayButton(@NonNull Context context) {
         super(context);
@@ -18,33 +16,24 @@ public class PlayButton extends AppCompatImageButton {
 
     public PlayButton(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        setIsShowPlay(false);
     }
 
     public PlayButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    public void setIsVideoScreen(boolean isVideoScreen) {
-        this.isVideoScreen = isVideoScreen;
+        setIsShowPlay(true);
     }
 
     public void setIsShowPlay(boolean showPlay) {
-        if (this.isShowPlay != showPlay) {
-            this.isShowPlay = showPlay;
-            setContentDescription(getContext().getString(showPlay ? R.string.play_label : R.string.pause_label));
-            if (isVideoScreen) {
-            } else if (!isShown()) {
-            } else if (showPlay) {
-                AnimatedVectorDrawableCompat drawable = AnimatedVectorDrawableCompat.create(
-                        getContext(), R.drawable.ic_animate_pause_play);
-                setImageDrawable(drawable);
-                drawable.start();
-            } else {
-                AnimatedVectorDrawableCompat drawable = AnimatedVectorDrawableCompat.create(
-                        getContext(), R.drawable.ic_animate_play_pause);
-                setImageDrawable(drawable);
-                drawable.start();
-            }
+        AnimatedVectorDrawableCompat drawable;
+        if (showPlay) {
+            drawable = AnimatedVectorDrawableCompat.create(
+                    getContext(), R.drawable.ic_animate_pause_play);
+        } else {
+            drawable = AnimatedVectorDrawableCompat.create(
+                    getContext(), R.drawable.ic_animate_play_pause);
         }
+        setImageDrawable(drawable);
+        drawable.start();
     }
 }
