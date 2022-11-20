@@ -26,9 +26,9 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textColorHint">@color/grey600</item>
         <item name="seek_background">@color/seek_background_light</item>
-        <item name="navigation_up">@drawable/navigation_up</item>
-        <item name="dragview_background">@drawable/ic_drag_lighttheme</item>
-        <item name="scrollbar_thumb">@drawable/scrollbar_thumb_light</item>
+        <item name="navigation_up">@drawable/ic_feed</item>
+        <item name="dragview_background">@drawable/ic_feed</item>
+        <item name="scrollbar_thumb">@drawable/ic_feed</item>
         <item name="icon_red">#CF1800</item>
         <item name="icon_yellow">#F59F00</item>
         <item name="icon_green">#008537</item>
@@ -69,9 +69,9 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textColorHint">@color/medium_gray</item>
         <item name="seek_background">@color/seek_background_dark</item>
-        <item name="navigation_up">@drawable/navigation_up_dark</item>
-        <item name="dragview_background">@drawable/ic_drag_darktheme</item>
-        <item name="scrollbar_thumb">@drawable/scrollbar_thumb_dark</item>
+        <item name="navigation_up">@drawable/ic_feed</item>
+        <item name="dragview_background">@drawable/ic_feed</item>
+        <item name="scrollbar_thumb">@drawable/ic_feed</item>
         <item name="icon_red">#CF1800</item>
         <item name="icon_yellow">#F59F00</item>
         <item name="icon_green">#008537</item>
@@ -163,7 +163,7 @@
     </style>
 
     <style name="Theme.AntennaPod.Splash" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowBackground">@drawable/ic_feed</item>
         <item name="colorPrimary">@color/icon_background_gradient_start</item>
         <item name="colorPrimaryDark">@color/icon_background_gradient_start</item>
         <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/icon_background_gradient_end</item>
@@ -209,21 +209,21 @@
 
     <style name="ProgressBarLight">
         <item name="android:indeterminateOnly">false</item>
-        <item name="android:progressDrawable">@drawable/progress_bar_horizontal_light</item>
+        <item name="android:progressDrawable">@drawable/ic_feed</item>
     </style>
 
     <style name="ProgressBarDark">
         <item name="android:indeterminateOnly">false</item>
-        <item name="android:progressDrawable">@drawable/progress_bar_horizontal_dark</item>
+        <item name="android:progressDrawable">@drawable/ic_feed</item>
     </style>
 
     <style name="FastScrollRecyclerView" parent="android:Widget">
         <item name="android:scrollbars">none</item>
         <item name="fastScrollEnabled">true</item>
         <item name="fastScrollHorizontalThumbDrawable">?attr/scrollbar_thumb</item>
-        <item name="fastScrollHorizontalTrackDrawable">@drawable/scrollbar_track</item>
+        <item name="fastScrollHorizontalTrackDrawable">@drawable/ic_feed</item>
         <item name="fastScrollVerticalThumbDrawable">?attr/scrollbar_thumb</item>
-        <item name="fastScrollVerticalTrackDrawable">@drawable/scrollbar_track</item>
+        <item name="fastScrollVerticalTrackDrawable">@drawable/ic_feed</item>
     </style>
 
     <style name="Widget.AntennaPod.ActionBar.Light" parent="Widget.Material3.Light.ActionBar.Solid">

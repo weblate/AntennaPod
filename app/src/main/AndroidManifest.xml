@@ -45,7 +45,7 @@
         <meta-data android:name="android.webkit.WebView.MetricsOptOut"
             android:value="true"/>
         <meta-data android:name="com.google.android.gms.car.notification.SmallIcon"
-            android:resource="@drawable/ic_notification"/>
+            android:resource="@drawable/ic_feed"/>
         <meta-data
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc"/>

@@ -33,9 +33,7 @@ public class PlayButton extends AppCompatImageButton {
             this.isShowPlay = showPlay;
             setContentDescription(getContext().getString(showPlay ? R.string.play_label : R.string.pause_label));
             if (isVideoScreen) {
-                setImageResource(showPlay ? R.drawable.ic_play_video_white : R.drawable.ic_pause_video_white);
             } else if (!isShown()) {
-                setImageResource(showPlay ? R.drawable.ic_play_48dp : R.drawable.ic_pause);
             } else if (showPlay) {
                 AnimatedVectorDrawableCompat drawable = AnimatedVectorDrawableCompat.create(
                         getContext(), R.drawable.ic_animate_pause_play);

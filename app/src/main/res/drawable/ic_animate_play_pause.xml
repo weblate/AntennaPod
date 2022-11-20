@@ -3,7 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:aapt="http://schemas.android.com/aapt"
-        android:drawable="@drawable/ic_animate_play"
+        android:drawable="@drawable/ic_feed"
         tools:ignore="NewApi">
     <target android:name="path">
         <aapt:attr name="android:animation">
