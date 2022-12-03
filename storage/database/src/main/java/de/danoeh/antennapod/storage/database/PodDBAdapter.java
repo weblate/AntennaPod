@@ -1,7 +1,9 @@
 package de.danoeh.antennapod.storage.database;
 
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.DatabaseUtils;
@@ -1487,6 +1489,14 @@ public class PodDBAdapter {
             }
 
             new DefaultDatabaseErrorHandler().onCorruption(db); // This deletes the database
+
+            // Force-restart
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setPackage(context.getPackageName());
+            ComponentName cn = intent.getComponent();
+            Intent mainIntent = Intent.makeRestartActivityTask(cn);
+            context.startActivity(mainIntent);
+            Runtime.getRuntime().exit(0);
         }
     }
 
