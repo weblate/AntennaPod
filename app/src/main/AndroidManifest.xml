@@ -380,40 +380,6 @@
             tools:ignore="Deprecated"
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />
-
-        <activity
-            android:name=".MainActivity"
-            android:theme="@style/Theme.MaterialComponents"
-            android:label="media session demo AntennaPod"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".PlayerActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:label="MediaPlayer AntennaPod"
-            android:theme="@style/Theme.MaterialComponents"/>
-
-        <activity
-            android:name=".PlayableFolderActivity"
-            android:theme="@style/Theme.MaterialComponents"
-            android:exported="true"/>
-
-        <service
-            android:name=".PlaybackService"
-            android:foregroundServiceType="mediaPlayback"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="androidx.media3.session.MediaSessionService"/>
-                <action android:name="android.media.browse.MediaBrowserService"/>
-            </intent-filter>
-        </service>
-
     </application>
 
 </manifest>
