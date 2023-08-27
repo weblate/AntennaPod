@@ -42,7 +42,7 @@ import de.danoeh.antennapod.event.playback.PlaybackServiceEvent;
 import de.danoeh.antennapod.event.playback.SleepTimerUpdatedEvent;
 import de.danoeh.antennapod.fragment.ChaptersFragment;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
-import de.danoeh.antennapod.core.service.playback.PlaybackService;
+import de.danoeh.antennapod.core.service.playback.PlaybackServiceOld;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.core.util.Converter;
@@ -117,8 +117,8 @@ public class VideoplayerActivity extends CastEnabledActivity implements SeekBar.
     protected void onResume() {
         super.onResume();
         switchToAudioOnly = false;
-        if (PlaybackService.isCasting()) {
-            Intent intent = PlaybackService.getPlayerActivityIntent(this);
+        if (PlaybackServiceOld.isCasting()) {
+            Intent intent = PlaybackServiceOld.getPlayerActivityIntent(this);
             if (!intent.getComponent().getClassName().equals(VideoplayerActivity.class.getName())) {
                 destroyingDueToReload = true;
                 finish();

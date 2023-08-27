@@ -105,7 +105,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Controls the MediaPlayer that plays a FeedMedia-file
  */
-public class PlaybackService extends MediaBrowserServiceCompat {
+public class PlaybackServiceOld extends MediaBrowserServiceCompat {
     /**
      * Logging tag
      */
@@ -161,8 +161,8 @@ public class PlaybackService extends MediaBrowserServiceCompat {
     private final IBinder mBinder = new LocalBinder();
 
     public class LocalBinder extends Binder {
-        public PlaybackService getService() {
-            return PlaybackService.this;
+        public PlaybackServiceOld getService() {
+            return PlaybackServiceOld.this;
         }
     }
 
@@ -864,7 +864,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
         @Override
         public void onPostPlayback(@NonNull Playable media, boolean ended, boolean skipped,
                                    boolean playingNext) {
-            PlaybackService.this.onPostPlayback(media, ended, skipped, playingNext);
+            PlaybackServiceOld.this.onPostPlayback(media, ended, skipped, playingNext);
         }
 
         @Override
@@ -896,7 +896,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
 
         @Override
         public Playable getNextInQueue(Playable currentMedia) {
-            return PlaybackService.this.getNextInQueue(currentMedia);
+            return PlaybackServiceOld.this.getNextInQueue(currentMedia);
         }
 
         @Nullable
@@ -908,7 +908,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
 
         @Override
         public void onPlaybackEnded(MediaType mediaType, boolean stopPlaying) {
-            PlaybackService.this.onPlaybackEnded(mediaType, stopPlaying);
+            PlaybackServiceOld.this.onPlaybackEnded(mediaType, stopPlaying);
         }
 
         @Override
@@ -1093,7 +1093,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
                 // only mark the item as played if we're not keeping it anyways
                 DBWriter.markItemPlayed(item, FeedItem.PLAYED, ended || (skipped && smartMarkAsPlayed));
                 // don't know if it actually matters to not autodownload when smart mark as played is triggered
-                DBWriter.removeQueueItem(PlaybackService.this, ended, item);
+                DBWriter.removeQueueItem(PlaybackServiceOld.this, ended, item);
                 // Delete episode if enabled
                 FeedPreferences.AutoDeleteAction action =
                         item.getFeed().getPreferences().getCurrentAutoDelete();
@@ -1101,7 +1101,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
                         || (action == FeedPreferences.AutoDeleteAction.GLOBAL && UserPreferences.isAutoDelete());
                 if (shouldAutoDelete && (!item.isTagged(FeedItem.TAG_FAVORITE)
                         || !UserPreferences.shouldFavoriteKeepEpisode())) {
-                    DBWriter.deleteFeedMediaOfItem(PlaybackService.this, media.getId());
+                    DBWriter.deleteFeedMediaOfItem(PlaybackServiceOld.this, media.getId());
                     Log.d(TAG, "Episode Deleted");
                 }
                 notifyChildrenChanged(getString(R.string.queue_label));
@@ -1288,7 +1288,7 @@ public class PlaybackService extends MediaBrowserServiceCompat {
 
         if (stateManager.hasReceivedValidStartCommand()) {
             mediaSession.setSessionActivity(PendingIntent.getActivity(this, R.id.pending_intent_player_activity,
-                    PlaybackService.getPlayerActivityIntent(this), PendingIntent.FLAG_UPDATE_CURRENT
+                    PlaybackServiceOld.getPlayerActivityIntent(this), PendingIntent.FLAG_UPDATE_CURRENT
                             | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0)));
             try {
                 mediaSession.setMetadata(builder.build());

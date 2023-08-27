@@ -166,7 +166,7 @@ public class PlaybackServiceNotificationBuilder {
 
     private PendingIntent getPlayerActivityPendingIntent() {
         return PendingIntent.getActivity(context, R.id.pending_intent_player_activity,
-                PlaybackService.getPlayerActivityIntent(context), PendingIntent.FLAG_UPDATE_CURRENT
+                PlaybackServiceOld.getPlayerActivityIntent(context), PendingIntent.FLAG_UPDATE_CURRENT
                         | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
     }
 
@@ -229,7 +229,7 @@ public class PlaybackServiceNotificationBuilder {
     }
 
     private PendingIntent getPendingIntentForMediaAction(int keycodeValue, int requestCode) {
-        Intent intent = new Intent(context, PlaybackService.class);
+        Intent intent = new Intent(context, PlaybackServiceOld.class);
         intent.setAction("MediaCode" + keycodeValue);
         intent.putExtra(MediaButtonReceiver.EXTRA_KEYCODE, keycodeValue);
 

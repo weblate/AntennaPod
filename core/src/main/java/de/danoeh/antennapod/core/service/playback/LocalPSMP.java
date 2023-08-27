@@ -590,7 +590,7 @@ public class LocalPSMP extends PlaybackServiceMediaPlayer {
             if (isShutDown) {
                 return;
             }
-            if (!PlaybackService.isRunning) {
+            if (!PlaybackServiceOld.isRunning) {
                 abandonAudioFocus();
                 Log.d(TAG, "onAudioFocusChange: PlaybackService is no longer running");
                 return;

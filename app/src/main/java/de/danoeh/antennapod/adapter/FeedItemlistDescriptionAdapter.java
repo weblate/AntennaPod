@@ -16,7 +16,7 @@ import de.danoeh.antennapod.model.playback.MediaType;
 import de.danoeh.antennapod.core.util.NetworkUtils;
 import de.danoeh.antennapod.model.playback.RemoteMedia;
 import de.danoeh.antennapod.model.feed.FeedItem;
-import de.danoeh.antennapod.core.service.playback.PlaybackService;
+import de.danoeh.antennapod.core.service.playback.PlaybackServiceOld;
 import de.danoeh.antennapod.core.util.DateFormatter;
 import de.danoeh.antennapod.model.playback.Playable;
 import de.danoeh.antennapod.core.util.playback.PlaybackServiceStarter;
@@ -84,7 +84,7 @@ public class FeedItemlistDescriptionAdapter extends ArrayAdapter<FeedItem> {
                     .start();
 
             if (playable.getMediaType() == MediaType.VIDEO) {
-                getContext().startActivity(PlaybackService.getPlayerActivityIntent(getContext(), playable));
+                getContext().startActivity(PlaybackServiceOld.getPlayerActivityIntent(getContext(), playable));
             }
         });
         convertView.setOnClickListener(v -> {

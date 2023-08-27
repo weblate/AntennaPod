@@ -7,7 +7,7 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.playback.MediaType;
-import de.danoeh.antennapod.core.service.playback.PlaybackService;
+import de.danoeh.antennapod.core.service.playback.PlaybackServiceOld;
 import de.danoeh.antennapod.core.util.playback.PlaybackServiceStarter;
 
 public class PlayLocalActionButton extends ItemActionButton {
@@ -40,7 +40,7 @@ public class PlayLocalActionButton extends ItemActionButton {
                 .start();
 
         if (media.getMediaType() == MediaType.VIDEO) {
-            context.startActivity(PlaybackService.getPlayerActivityIntent(context, media));
+            context.startActivity(PlaybackServiceOld.getPlayerActivityIntent(context, media));
         }
     }
 }

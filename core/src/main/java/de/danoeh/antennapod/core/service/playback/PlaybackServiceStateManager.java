@@ -7,12 +7,12 @@ import androidx.core.app.ServiceCompat;
 
 class PlaybackServiceStateManager {
     private static final String TAG = "PlaybackSrvState";
-    private final PlaybackService playbackService;
+    private final PlaybackServiceOld playbackService;
 
     private volatile boolean isInForeground = false;
     private volatile boolean hasReceivedValidStartCommand = false;
 
-    PlaybackServiceStateManager(PlaybackService playbackService) {
+    PlaybackServiceStateManager(PlaybackServiceOld playbackService) {
         this.playbackService = playbackService;
     }
 

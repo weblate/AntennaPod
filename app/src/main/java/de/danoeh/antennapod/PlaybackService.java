@@ -45,7 +45,7 @@ public class PlaybackService extends MediaLibraryService {
         customCommands = new ArrayList<>();
         customCommands.add(getShuffleCommandButton(new SessionCommand(CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON, Bundle.EMPTY)));
         customCommands.add(getShuffleCommandButton(new SessionCommand(CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF, Bundle.EMPTY)));
-        initializeSessionAndPlayer();
+        //initializeSessionAndPlayer();
         setListener(new MediaSessionServiceListener());
     }
 
@@ -65,7 +65,7 @@ public class PlaybackService extends MediaLibraryService {
     @Override
     public void onDestroy() {
         //mediaLibrarySession.setSessionActivity(getBackStackedActivity());
-        mediaLibrarySession.release();
+        //mediaLibrarySession.release();
         player.release();
         clearListener();
         super.onDestroy();

@@ -13,6 +13,7 @@ import android.util.Pair;
 import android.view.SurfaceHolder;
 import androidx.annotation.NonNull;
 import de.danoeh.antennapod.core.service.playback.PlaybackServiceInterface;
+import de.danoeh.antennapod.core.service.playback.PlaybackServiceOld;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
 import de.danoeh.antennapod.model.feed.FeedMedia;
@@ -21,7 +22,6 @@ import de.danoeh.antennapod.event.playback.SpeedChangedEvent;
 import de.danoeh.antennapod.model.playback.MediaType;
 import de.danoeh.antennapod.core.feed.util.PlaybackSpeedUtils;
 import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
-import de.danoeh.antennapod.core.service.playback.PlaybackService;
 import de.danoeh.antennapod.model.playback.Playable;
 import de.danoeh.antennapod.playback.base.PlaybackServiceMediaPlayer;
 import de.danoeh.antennapod.playback.base.PlayerStatus;
@@ -41,7 +41,7 @@ public abstract class PlaybackController {
     private static final String TAG = "PlaybackController";
 
     private final Activity activity;
-    private PlaybackService playbackService;
+    private PlaybackServiceOld playbackService;
     private Playable media;
     private PlayerStatus status = PlayerStatus.STOPPED;
 
@@ -63,7 +63,7 @@ public abstract class PlaybackController {
             EventBus.getDefault().register(this);
             eventsRegistered = true;
         }
-        if (PlaybackService.isRunning) {
+        if (PlaybackServiceOld.isRunning) {
             initServiceRunning();
         } else {
             updatePlayButtonShowsPlay(true);
@@ -84,7 +84,7 @@ public abstract class PlaybackController {
         initialized = true;
 
         activity.registerReceiver(statusUpdate, new IntentFilter(
-                PlaybackService.ACTION_PLAYER_STATUS_CHANGED));
+                PlaybackServiceOld.ACTION_PLAYER_STATUS_CHANGED));
         activity.registerReceiver(notificationReceiver, new IntentFilter(
                 PlaybackServiceInterface.ACTION_PLAYER_NOTIFICATION));
 
@@ -147,17 +147,17 @@ public abstract class PlaybackController {
      */
     private void bindToService() {
         Log.d(TAG, "Trying to connect to service");
-        if (!PlaybackService.isRunning) {
+        if (!PlaybackServiceOld.isRunning) {
             throw new IllegalStateException("Trying to bind but service is not running");
         }
-        boolean bound = activity.bindService(new Intent(activity, PlaybackService.class), mConnection, 0);
+        boolean bound = activity.bindService(new Intent(activity, PlaybackServiceOld.class), mConnection, 0);
         Log.d(TAG, "Result for service binding: " + bound);
     }
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            if(service instanceof PlaybackService.LocalBinder) {
-                playbackService = ((PlaybackService.LocalBinder) service).getService();
+            if(service instanceof PlaybackServiceOld.LocalBinder) {
+                playbackService = ((PlaybackServiceOld.LocalBinder) service).getService();
                 if (!released) {
                     queryService();
                     Log.d(TAG, "Connection to Service established");
@@ -187,7 +187,7 @@ public abstract class PlaybackController {
                 handleStatus();
             } else {
                 Log.w(TAG, "Couldn't receive status update: playbackService was null");
-                if (PlaybackService.isRunning) {
+                if (PlaybackServiceOld.isRunning) {
                     bindToService();
                 } else {
                     status = PlayerStatus.STOPPED;
@@ -209,7 +209,7 @@ public abstract class PlaybackController {
             }
             switch (type) {
                 case PlaybackServiceInterface.NOTIFICATION_TYPE_RELOAD:
-                    if (playbackService == null && PlaybackService.isRunning) {
+                    if (playbackService == null && PlaybackServiceOld.isRunning) {
                         bindToService();
                         return;
                     }
@@ -440,10 +440,10 @@ public abstract class PlaybackController {
     }
 
     public boolean isPlayingVideoLocally() {
-        if (PlaybackService.isCasting()) {
+        if (PlaybackServiceOld.isCasting()) {
             return false;
         } else if (playbackService != null) {
-            return PlaybackService.getCurrentMediaType() == MediaType.VIDEO;
+            return PlaybackServiceOld.getCurrentMediaType() == MediaType.VIDEO;
         } else {
             return getMedia() != null && getMedia().getMediaType() == MediaType.VIDEO;
         }
