@@ -391,11 +391,11 @@ public class DBWriter {
      * @param markAsUnplayed      true if the items should be marked as unplayed when enqueueing
      * @param itemIds             IDs of the FeedItem objects that should be added to the queue.
      */
-    public static Future<?> addQueueItem(final Context context, final boolean performAutoDownload,
+    public static Future<List<FeedItem>> addQueueItem(final Context context, final boolean performAutoDownload,
                                          final boolean markAsUnplayed, final long... itemIds) {
         return dbExec.submit(() -> {
             if (itemIds.length < 1) {
-                return;
+                return DBReader.getQueue();
             }
 
             final PodDBAdapter adapter = PodDBAdapter.getInstance();
@@ -442,6 +442,7 @@ public class DBWriter {
             if (performAutoDownload) {
                 DBTasks.autodownloadUndownloadedItems(context);
             }
+            return queue;
         });
     }
 

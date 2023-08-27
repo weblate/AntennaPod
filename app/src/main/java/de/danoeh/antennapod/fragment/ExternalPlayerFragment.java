@@ -11,7 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
@@ -41,7 +40,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Fragment which is supposed to be displayed outside of the MediaplayerActivity.
  */
-public class ExternalPlayerFragment extends Fragment {
+public class ExternalPlayerFragment extends Fragment implements Player.Listener {
     public static final String TAG = "ExternalPlayerFragment";
 
     private ImageView imgvCover;
@@ -55,11 +54,6 @@ public class ExternalPlayerFragment extends Fragment {
 
     public ExternalPlayerFragment() {
         super();
-    }
-
-    @Override
-    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -112,12 +106,7 @@ public class ExternalPlayerFragment extends Fragment {
             } catch (ExecutionException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            mediaController.addListener(new Player.Listener() {
-                @Override
-                public void onIsPlayingChanged(boolean isPlaying) {
-                    butPlay.setIsShowPlay(!isPlaying);
-                }
-            });
+            mediaController.addListener(this);
             butPlay.setIsShowPlay(!mediaController.isPlaying());
             loadMediaInfo();
         }, MoreExecutors.directExecutor());
@@ -154,8 +143,8 @@ public class ExternalPlayerFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onIsPlayingChanged(boolean isPlaying) {
+        butPlay.setIsShowPlay(!isPlaying);
     }
 
     private void loadMediaInfo() {
@@ -171,10 +160,15 @@ public class ExternalPlayerFragment extends Fragment {
                         () -> ((MainActivity) getActivity()).setPlayerVisible(false));
     }
 
+    @Override
+    public void onMediaMetadataChanged(MediaMetadata mediaMetadata) {
+        updateUi(mediaMetadata);
+    }
+
     private void updateUi(MediaMetadata mediaMetadata) {
         ((MainActivity) getActivity()).setPlayerVisible(true);
         txtvTitle.setText(mediaMetadata.title);
-        feedName.setText(mediaMetadata.albumArtist);
+        feedName.setText(mediaMetadata.albumTitle);
         onPositionObserverUpdate(new PlaybackPositionEvent(
                 (int) mediaController.getCurrentPosition(), (int) mediaController.getDuration()));
 
