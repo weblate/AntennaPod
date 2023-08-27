@@ -66,7 +66,7 @@ public class PlaybackService extends MediaLibraryService {
     public void onDestroy() {
         //mediaLibrarySession.setSessionActivity(getBackStackedActivity());
         //mediaLibrarySession.release();
-        player.release();
+        //player.release();
         clearListener();
         super.onDestroy();
     }

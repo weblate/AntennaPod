@@ -1,8 +1,12 @@
 package de.danoeh.antennapod.core.service.playback;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.media3.common.ForwardingPlayer;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
@@ -20,6 +24,8 @@ import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.DBWriter;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
+import de.danoeh.antennapod.ui.appstartintent.MainActivityStarter;
+import de.danoeh.antennapod.ui.appstartintent.VideoPlayerActivityStarter;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -27,16 +33,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EasyPlaybackService extends MediaLibraryService
-        implements MediaLibraryService.MediaLibrarySession.Callback {
+        implements MediaLibraryService.MediaLibrarySession.Callback, Player.Listener {
     private MediaLibrarySession session;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Player player = new ExoPlayer.Builder(getApplicationContext())
+        Player player = new ForwardingPlayer(new ExoPlayer.Builder(getApplicationContext())
                 .setRenderersFactory(new DefaultRenderersFactory(this).setExtensionRendererMode(
                         DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER))
-                .build();
+                .build()) {
+            @Override
+            @NonNull
+            public Commands getAvailableCommands() {
+                return super.getAvailableCommands().buildUpon()
+                        .add(ExoPlayer.COMMAND_SEEK_FORWARD)
+                        .add(ExoPlayer.COMMAND_SEEK_BACK)
+                        .build();
+            }
+        };
+        player.addListener(this);
         session = new MediaLibrarySession.Builder(this, player, this).build();
         DefaultMediaNotificationProvider notificationProvider = new DefaultMediaNotificationProvider(this);
         notificationProvider.setSmallIcon(R.drawable.ic_notification);
@@ -131,5 +147,19 @@ public class EasyPlaybackService extends MediaLibraryService
     @Override
     public MediaLibrarySession onGetSession(@NonNull MediaSession.ControllerInfo controllerInfo) {
         return session;
+    }
+
+    @Override
+    public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+        Intent playerActivityIntent;
+        if (mediaItem != null && mediaItem.mediaMetadata.mediaType != null
+                && mediaItem.mediaMetadata.mediaType == MediaMetadata.MEDIA_TYPE_VIDEO) {
+            playerActivityIntent = new VideoPlayerActivityStarter(this).getIntent();
+        } else {
+            playerActivityIntent = new MainActivityStarter(this).withOpenPlayer().getIntent();
+        }
+        session.setSessionActivity(PendingIntent.getActivity(this, R.id.pending_intent_player_activity,
+                playerActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT
+                        | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0)));
     }
 }
