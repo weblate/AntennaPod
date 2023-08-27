@@ -23,9 +23,12 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
+import de.danoeh.antennapod.core.preferences.PlaybackPreferences;
 import de.danoeh.antennapod.core.service.playback.EasyPlaybackService;
+import de.danoeh.antennapod.core.service.playback.MediaMetadataConverter;
 import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
 import de.danoeh.antennapod.event.playback.PlaybackServiceEvent;
+import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.view.PlayButton;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -123,6 +126,15 @@ public class ExternalPlayerFragment extends Fragment implements Player.Listener 
         MediaController.releaseFuture(mediacontrollerFuture);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "Fragment is about to be destroyed");
+        if (disposable != null) {
+            disposable.dispose();
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPositionObserverUpdate(PlaybackPositionEvent event) {
         progressBar.setProgress((int) ((double) mediaController.getCurrentPosition() / mediaController.getDuration() * 100));
@@ -141,17 +153,11 @@ public class ExternalPlayerFragment extends Fragment implements Player.Listener 
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "Fragment is about to be destroyed");
-        if (disposable != null) {
-            disposable.dispose();
-        }
-    }
-
-    @Override
     public void onIsPlayingChanged(boolean isPlaying) {
         butPlay.setIsShowPlay(!isPlaying);
+        if (isPlaying) {
+            loadingProgressBar.setVisibility(View.GONE);
+        }
     }
 
     private void loadMediaInfo() {
@@ -159,7 +165,12 @@ public class ExternalPlayerFragment extends Fragment implements Player.Listener 
         if (disposable != null) {
             disposable.dispose();
         }
-        disposable = Maybe.fromCallable(() -> mediaController.getMediaMetadata())
+        if (!MediaMetadata.EMPTY.equals(mediaController.getMediaMetadata())) {
+            updateUi(mediaController.getMediaMetadata());
+            return;
+        }
+        disposable = Maybe.fromCallable(() -> MediaMetadataConverter.createMediaMetadata(
+            ((FeedMedia) PlaybackPreferences.createInstanceFromPreferences(getContext())).getItem()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::updateUi,

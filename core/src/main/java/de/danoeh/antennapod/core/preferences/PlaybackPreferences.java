@@ -156,6 +156,14 @@ public class PlaybackPreferences implements SharedPreferences.OnSharedPreference
         editor.apply();
     }
 
+    public static void writeMediaPlaying(long mediaId) {
+        Log.d(TAG, "Writing playback preferences");
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong(PREF_CURRENTLY_PLAYING_MEDIA_TYPE, FeedMedia.PLAYABLE_TYPE_FEEDMEDIA);
+        editor.putLong(PREF_CURRENTLY_PLAYING_FEEDMEDIA_ID, mediaId);
+        editor.apply();
+    }
+
     public static void writePlayerStatus(PlayerStatus playerStatus) {
         Log.d(TAG, "Writing player status playback preferences");
 
