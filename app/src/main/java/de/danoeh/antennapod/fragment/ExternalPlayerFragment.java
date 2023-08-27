@@ -50,6 +50,7 @@ public class ExternalPlayerFragment extends Fragment implements Player.Listener 
     private ProgressBar progressBar;
     private Disposable disposable;
     private MediaController mediaController;
+    private ProgressBar loadingProgressBar;
     ListenableFuture<MediaController> mediacontrollerFuture;
 
     public ExternalPlayerFragment() {
@@ -65,6 +66,7 @@ public class ExternalPlayerFragment extends Fragment implements Player.Listener 
         butPlay = root.findViewById(R.id.butPlay);
         feedName = root.findViewById(R.id.txtvAuthor);
         progressBar = root.findViewById(R.id.episodeProgress);
+        loadingProgressBar = root.findViewById(R.id.progLoading);
 
         root.findViewById(R.id.fragmentLayout).setOnClickListener(v -> {
             Log.d(TAG, "layoutInfo was clicked");
@@ -131,6 +133,11 @@ public class ExternalPlayerFragment extends Fragment implements Player.Listener 
         if (event.action == PlaybackServiceEvent.Action.SERVICE_SHUT_DOWN) {
             ((MainActivity) getActivity()).setPlayerVisible(false);
         }
+    }
+
+    @Override
+    public void onIsLoadingChanged(boolean isLoading) {
+        loadingProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
     }
 
     @Override

@@ -55,16 +55,29 @@
 
         </LinearLayout>
 
-        <de.danoeh.antennapod.view.PlayButton
-            android:id="@+id/butPlay"
+        <FrameLayout
             android:layout_width="52dp"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/pause_label"
-            android:background="?attr/selectableItemBackground"
-            android:scaleType="fitCenter"
-            android:padding="8dp"
-            app:srcCompat="@drawable/ic_play_48dp"
-            tools:src="@drawable/ic_play_48dp" />
+            android:layout_height="match_parent">
+
+            <de.danoeh.antennapod.view.PlayButton
+                android:id="@+id/butPlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/pause_label"
+                android:background="?attr/selectableItemBackground"
+                android:scaleType="fitCenter"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_play_48dp"
+                tools:src="@drawable/ic_play_48dp" />
+
+            <ProgressBar
+                android:id="@+id/progLoading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                style="?android:attr/progressBarStyle" />
+
+        </FrameLayout>
 
     </LinearLayout>
 
