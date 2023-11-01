@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 
+import de.danoeh.antennapod.ui.home.sections.EchoSection;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -101,6 +102,7 @@ public class HomeFragment extends Fragment implements Toolbar.OnMenuItemClickLis
                 addSection(new AllowNotificationsSection());
             }
         }
+        addSection(new EchoSection());
 
         List<String> hiddenSections = getHiddenSections(getContext());
         String[] sectionTags = getResources().getStringArray(R.array.home_section_tags);
