@@ -81,11 +81,7 @@ public class EchoActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        try {
-            progressUpdateThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        progressUpdateThread.interrupt();
         progressUpdateThread = null;
     }
 
