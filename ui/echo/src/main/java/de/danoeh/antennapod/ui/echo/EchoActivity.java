@@ -1,10 +1,12 @@
 package de.danoeh.antennapod.ui.echo;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ShareCompat;
@@ -24,21 +26,33 @@ public class EchoActivity extends AppCompatActivity {
 
     private EchoActivityBinding viewBinding;
     private int currentScreen = -1;
+    private boolean progressPaused = false;
     private float progress = 0;
     private Drawable currentDrawable;
     private EchoProgress echoProgress;
     private Thread progressUpdateThread;
+    long timeTouchDown;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         super.onCreate(savedInstanceState);
         viewBinding = EchoActivityBinding.inflate(getLayoutInflater());
-        viewBinding.echoImage.setOnClickListener(v -> {
-            int newScreen = (currentScreen + 1) % NUM_SCREENS;
-            progress = newScreen;
-            echoProgress.setProgress(progress);
-            loadScreen(newScreen);
+        viewBinding.echoImage.setOnTouchListener((v, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                progressPaused = true;
+                timeTouchDown = System.currentTimeMillis();
+            } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                progressPaused = false;
+                if (timeTouchDown + 500 > System.currentTimeMillis()) {
+                    int newScreen = (currentScreen + 1) % NUM_SCREENS;
+                    progress = newScreen;
+                    echoProgress.setProgress(progress);
+                    loadScreen(newScreen);
+                }
+            }
+            return true;
         });
         viewBinding.shareButton.setOnClickListener(v -> share());
         echoProgress = new EchoProgress(NUM_SCREENS);
@@ -111,12 +125,11 @@ public class EchoActivity extends AppCompatActivity {
         @Override
         public void run() {
             while (!isInterrupted()) {
-                progress += 1.0 / 100;
-                if (progress > NUM_SCREENS) {
-                    progress -= NUM_SCREENS;
+                if (!progressPaused && progress < NUM_SCREENS - 0.001f) {
+                    progress = Math.min(NUM_SCREENS - 0.001f, progress + 1.0f / 100);
+                    echoProgress.setProgress(progress);
+                    loadScreen((int) progress);
                 }
-                echoProgress.setProgress(progress);
-                loadScreen((int) progress);
                 try {
                     Thread.sleep(TIME_PER_SCREEN / 100);
                 } catch (InterruptedException e) {
