@@ -10,6 +10,15 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/statistics_label" />
 
+    <TextView
+        android:id="@+id/echoText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:layout_margin="32dp" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,11 +36,12 @@
 
         <ImageView
             android:id="@+id/shareButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
-            android:layout_margin="16dp"
+            android:layout_margin="32dp"
             android:padding="8dp"
             android:contentDescription="@string/share_label"
             android:background="?attr/selectableItemBackgroundBorderless"

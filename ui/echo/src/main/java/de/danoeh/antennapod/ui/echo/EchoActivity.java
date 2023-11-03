@@ -6,7 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.KeyEvent;
+import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ShareCompat;
@@ -14,15 +16,16 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.WindowCompat;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.echo.databinding.EchoActivityBinding;
-import de.danoeh.antennapod.ui.echo.screens.IntroScreen;
-import de.danoeh.antennapod.ui.echo.screens.PlayedEpisodesScreen;
-import de.danoeh.antennapod.ui.echo.screens.PlayedHoursScreen;
+import de.danoeh.antennapod.ui.echo.screens.BubbleScreen;
+import de.danoeh.antennapod.ui.echo.screens.FinalShareScreen;
+import de.danoeh.antennapod.ui.echo.screens.RotatingSquaresScreen;
+import de.danoeh.antennapod.ui.echo.screens.WaveformScreen;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
 public class EchoActivity extends AppCompatActivity {
-    private static final int NUM_SCREENS = 3;
+    private static final int NUM_SCREENS = 4;
 
     private EchoActivityBinding viewBinding;
     private int currentScreen = -1;
@@ -99,24 +102,35 @@ public class EchoActivity extends AppCompatActivity {
         progressUpdateThread = null;
     }
 
+    @SuppressWarnings("deprecation")
     private void loadScreen(int screen) {
         if (screen == currentScreen) {
             return;
         }
         currentScreen = screen;
-        switch (currentScreen) {
-            case 0:
-                currentDrawable = new IntroScreen();
-                break;
-            case 1:
-                currentDrawable = new PlayedHoursScreen();
-                break;
-            case 2:
-                currentDrawable = new PlayedEpisodesScreen();
-                break;
-            default: // Keep
-        }
-        runOnUiThread(() -> viewBinding.echoImage.setImageDrawable(currentDrawable));
+        runOnUiThread(() -> {
+            switch (currentScreen) {
+                case 0:
+                    currentDrawable = new BubbleScreen();
+                    viewBinding.echoText.setText(Html.fromHtml("Your year<br /><font size='+5'>2023</font><br />in AntennaPod.<br />- Generated locally on your device -"));
+                    break;
+                case 1:
+                    currentDrawable = new WaveformScreen();
+                    viewBinding.echoText.setText(Html.fromHtml("You played<br /><font size='+5'>4242</font><br />hours of podcasts."));
+                    break;
+                case 2:
+                    currentDrawable = new RotatingSquaresScreen();
+                    viewBinding.echoText.setText(Html.fromHtml("You played<br /><font size='+5'>42 / 53</font><br/>of the episodes released this year."));
+                    break;
+                case 3:
+                    currentDrawable = new FinalShareScreen();
+                    viewBinding.echoText.setText("");
+                    break;
+                default: // Keep
+            }
+            viewBinding.shareButton.setVisibility(currentScreen == 3 ? View.VISIBLE : View.GONE);
+            viewBinding.echoImage.setImageDrawable(currentDrawable);
+        });
     }
 
     private class ProgressUpdateThread extends Thread {

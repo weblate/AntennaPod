@@ -14,7 +14,6 @@ import java.util.ArrayList;
 public abstract class BaseScreen extends Drawable {
     private final Paint paintBackground;
     protected final Paint paintParticles;
-    private final Paint paintTextCredits;
     protected final ArrayList<Particle> particles = new ArrayList<>();
 
     public BaseScreen() {
@@ -24,11 +23,6 @@ public abstract class BaseScreen extends Drawable {
         paintParticles.setFlags(Paint.ANTI_ALIAS_FLAG);
         paintParticles.setStyle(Paint.Style.FILL);
         paintParticles.setAlpha(35);
-        paintTextCredits = new Paint();
-        paintTextCredits.setColor(0xffffffff);
-        paintTextCredits.setFlags(Paint.ANTI_ALIAS_FLAG);
-        paintTextCredits.setStyle(Paint.Style.FILL);
-        paintTextCredits.setAlpha(200);
     }
 
     @Override
@@ -49,18 +43,13 @@ public abstract class BaseScreen extends Drawable {
 
         drawInner(canvas, innerBoxX, innerBoxY, innerBoxSize);
 
-        paintTextCredits.setTextSize(innerBoxSize / 30);
-        paintTextCredits.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText("#AntennaPodEcho", innerBoxX, innerBoxY + innerBoxSize, paintTextCredits);
-        paintTextCredits.setTextAlign(Paint.Align.RIGHT);
-        canvas.drawText("antennapod.org/s/echo", innerBoxX + innerBoxSize, innerBoxY + innerBoxSize, paintTextCredits);
-
         invalidateSelf();
     }
 
-    protected abstract void particleTick(Particle p);
+    protected void drawInner(Canvas canvas, float innerBoxX, float innerBoxY, float innerBoxSize) {
+    }
 
-    protected abstract void drawInner(Canvas canvas, float innerBoxX, float innerBoxY, float innerBoxSize);
+    protected abstract void particleTick(Particle p);
 
     protected abstract void drawParticle(@NonNull Canvas canvas, Particle p,
                                          float innerBoxX, float innerBoxY, float innerBoxSize);
