@@ -102,6 +102,10 @@ public class EchoActivity extends AppCompatActivity {
         progressUpdateThread = null;
     }
 
+    private String big(String text) {
+        return "<big><big><big>" + text + "</big></big></big>";
+    }
+
     @SuppressWarnings("deprecation")
     private void loadScreen(int screen) {
         if (screen == currentScreen) {
@@ -112,15 +116,15 @@ public class EchoActivity extends AppCompatActivity {
             switch (currentScreen) {
                 case 0:
                     currentDrawable = new BubbleScreen();
-                    viewBinding.echoText.setText(Html.fromHtml("Your year<br /><font size='+5'>2023</font><br />in AntennaPod.<br />- Generated locally on your device -"));
+                    viewBinding.echoText.setText(Html.fromHtml("Your year<br /><br />" + big("2023") + "<br /><br />in AntennaPod.<br />- Generated locally on your device -"));
                     break;
                 case 1:
                     currentDrawable = new WaveformScreen();
-                    viewBinding.echoText.setText(Html.fromHtml("You played<br /><font size='+5'>4242</font><br />hours of podcasts."));
+                    viewBinding.echoText.setText(Html.fromHtml("You played<br /><br />" + big("4242") + "<br /><br />hours of podcasts."));
                     break;
                 case 2:
                     currentDrawable = new RotatingSquaresScreen();
-                    viewBinding.echoText.setText(Html.fromHtml("You played<br /><font size='+5'>42 / 53</font><br/>of the episodes released this year."));
+                    viewBinding.echoText.setText(Html.fromHtml("You played<br /><br />" + big("42 / 53") + "<br /><br />of the episodes released this year."));
                     break;
                 case 3:
                     currentDrawable = new FinalShareScreen();
