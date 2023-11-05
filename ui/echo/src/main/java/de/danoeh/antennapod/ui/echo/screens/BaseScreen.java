@@ -46,6 +46,10 @@ public abstract class BaseScreen extends Drawable {
 
         drawInner(canvas, innerBoxX, innerBoxY, innerBoxSize);
 
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException ignored) {
+        }
         invalidateSelf();
     }
 

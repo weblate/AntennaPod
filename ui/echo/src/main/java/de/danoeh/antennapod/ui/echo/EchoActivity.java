@@ -104,7 +104,7 @@ public class EchoActivity extends AppCompatActivity {
     }
 
     private String big(String text) {
-        return "<big><big><big>" + text + "</big></big></big>";
+        return "<big><big><big><big>" + text + "</big></big></big></big>";
     }
 
     @SuppressWarnings("deprecation")
