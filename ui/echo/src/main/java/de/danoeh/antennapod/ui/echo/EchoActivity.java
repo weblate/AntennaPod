@@ -22,9 +22,13 @@ import de.danoeh.antennapod.ui.echo.screens.FinalShareScreen;
 import de.danoeh.antennapod.ui.echo.screens.RotatingSquaresScreen;
 import de.danoeh.antennapod.ui.echo.screens.StripesScreen;
 import de.danoeh.antennapod.ui.echo.screens.WaveformScreen;
+import io.reactivex.Flowable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.concurrent.TimeUnit;
 
 public class EchoActivity extends AppCompatActivity {
     private static final int NUM_SCREENS = 5;
@@ -35,8 +39,9 @@ public class EchoActivity extends AppCompatActivity {
     private float progress = 0;
     private Drawable currentDrawable;
     private EchoProgress echoProgress;
-    private Thread progressUpdateThread;
-    long timeTouchDown;
+    private Disposable redrawTimer;
+    private long timeTouchDown;
+    private long lastFrame;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -93,15 +98,30 @@ public class EchoActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        progressUpdateThread = new ProgressUpdateThread();
-        progressUpdateThread.start();
+
+        redrawTimer = Flowable.timer(10, TimeUnit.MILLISECONDS)
+                .observeOn(Schedulers.io())
+                .repeat()
+                .subscribe(i -> {
+                    if (!progressPaused && progress < NUM_SCREENS - 0.001f) {
+                        long timePassed = System.currentTimeMillis() - lastFrame;
+                        lastFrame = System.currentTimeMillis();
+                        if (timePassed > 500) {
+                            timePassed = 0;
+                        }
+                        progress = Math.min(NUM_SCREENS - 0.001f, progress + timePassed / 5000.0f);
+                        echoProgress.setProgress(progress);
+                        viewBinding.echoProgressImage.postInvalidate();
+                        loadScreen((int) progress);
+                    }
+                    viewBinding.echoImage.postInvalidate();
+                });
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        progressUpdateThread.interrupt();
-        progressUpdateThread = null;
+        redrawTimer.dispose();
     }
 
     private String big(String text) {
@@ -144,25 +164,5 @@ public class EchoActivity extends AppCompatActivity {
             viewBinding.echoImage.setContentDescription(viewBinding.echoText.getText());
             viewBinding.echoImage.setImageDrawable(currentDrawable);
         });
-    }
-
-    private class ProgressUpdateThread extends Thread {
-        private static final int TIME_PER_SCREEN = 5000;
-
-        @Override
-        public void run() {
-            while (!isInterrupted()) {
-                if (!progressPaused && progress < NUM_SCREENS - 0.001f) {
-                    progress = Math.min(NUM_SCREENS - 0.001f, progress + 1.0f / 100);
-                    echoProgress.setProgress(progress);
-                    loadScreen((int) progress);
-                }
-                try {
-                    Thread.sleep(TIME_PER_SCREEN / 100);
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
-        }
     }
 }

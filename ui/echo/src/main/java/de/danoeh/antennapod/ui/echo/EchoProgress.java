@@ -25,7 +25,6 @@ public class EchoProgress extends Drawable {
 
     public void setProgress(float progress) {
         this.progress = progress;
-        invalidateSelf();
     }
 
     @Override

@@ -33,8 +33,11 @@ public abstract class BaseScreen extends Drawable {
         paintBackground.setShader(new LinearGradient(0, 0, 0, height, 0xff364ff3, 0xff16d0ff, Shader.TileMode.CLAMP));
         canvas.drawRect(0, 0, width, height, paintBackground);
 
-        final long timeSinceLastFrame = lastFrame == 0 ? 0 : (System.currentTimeMillis() - lastFrame);
+        long timeSinceLastFrame = System.currentTimeMillis() - lastFrame;
         lastFrame = System.currentTimeMillis();
+        if (timeSinceLastFrame > 500) {
+            timeSinceLastFrame = 0;
+        }
         final float innerBoxSize = 0.9f * Math.min(width, height);
         final float innerBoxX = (width - innerBoxSize) / 2;
         final float innerBoxY = (height - innerBoxSize) / 2;
@@ -45,12 +48,6 @@ public abstract class BaseScreen extends Drawable {
         }
 
         drawInner(canvas, innerBoxX, innerBoxY, innerBoxSize);
-
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException ignored) {
-        }
-        invalidateSelf();
     }
 
     protected void drawInner(Canvas canvas, float innerBoxX, float innerBoxY, float innerBoxSize) {
