@@ -19,6 +19,7 @@ public class EchoSection extends Fragment {
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         HomeSectionEchoBinding viewBinding = HomeSectionEchoBinding.inflate(inflater);
         viewBinding.echoButton.setOnClickListener(v -> startActivity(new Intent(getContext(), EchoActivity.class)));
+        viewBinding.closeButton.setOnClickListener(v -> { });
         return viewBinding.getRoot();
     }
 }

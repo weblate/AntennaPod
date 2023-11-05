@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,7 +9,8 @@
         android:id="@+id/echoImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/statistics_label" />
+        android:accessibilityLiveRegion="polite"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/echoText"
@@ -16,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:textAlignment="center"
+        android:importantForAccessibility="no"
         android:textColor="#ffffff"
         android:textSize="18sp"
         android:layout_margin="32dp" />
@@ -30,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="4dp"
             android:layout_margin="16dp"
-            android:contentDescription="@string/statistics_label"
+            android:importantForAccessibility="no"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true" />

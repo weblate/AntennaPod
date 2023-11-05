@@ -134,11 +134,14 @@ public class EchoActivity extends AppCompatActivity {
                     break;
                 case 4:
                     currentDrawable = new FinalShareScreen(AppCompatResources.getDrawable(this, R.drawable.echo));
-                    viewBinding.echoText.setText("");
+                    viewBinding.echoText.setText(Html.fromHtml("Final screen"));
                     break;
                 default: // Keep
             }
-            viewBinding.shareButton.setVisibility((currentScreen == NUM_SCREENS - 1) ? View.VISIBLE : View.GONE);
+            boolean isLastScreen = currentScreen == NUM_SCREENS - 1;
+            viewBinding.shareButton.setVisibility(isLastScreen ? View.VISIBLE : View.GONE);
+            viewBinding.echoText.setVisibility(isLastScreen ? View.GONE : View.VISIBLE);
+            viewBinding.echoImage.setContentDescription(viewBinding.echoText.getText());
             viewBinding.echoImage.setImageDrawable(currentDrawable);
         });
     }
