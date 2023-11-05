@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.view.WindowCompat;
@@ -132,8 +133,8 @@ public class EchoActivity extends AppCompatActivity {
                     viewBinding.echoText.setText(Html.fromHtml("Time between release and listening"));
                     break;
                 case 4:
-                    currentDrawable = new FinalShareScreen();
-                    viewBinding.echoText.setText(Html.fromHtml("Hours, top5 podcasts"));
+                    currentDrawable = new FinalShareScreen(AppCompatResources.getDrawable(this, R.drawable.echo));
+                    viewBinding.echoText.setText("");
                     break;
                 default: // Keep
             }
