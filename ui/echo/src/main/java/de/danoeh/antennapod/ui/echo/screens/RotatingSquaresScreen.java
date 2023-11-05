@@ -6,8 +6,10 @@ import androidx.annotation.NonNull;
 public class RotatingSquaresScreen extends BaseScreen {
     public RotatingSquaresScreen() {
         for (int i = 0; i < 16; i++) {
-            particles.add(new Particle(0.33 * (i % 4) - 0.05 + 0.2 * Math.random(),
-                    0.33 * (float) (i / 4) - 0.05 + 0.2 * Math.random(), Math.random()));
+            particles.add(new Particle(
+                    0.3 * (float) (i % 4) + 0.05 + 0.1 * Math.random() - 0.05,
+                    0.2 * (float) (i / 4) + 0.20 + 0.1 * Math.random() - 0.05,
+                    Math.random(), 0.0001 * Math.random() + 0.00005));
         }
     }
 
@@ -18,16 +20,16 @@ public class RotatingSquaresScreen extends BaseScreen {
         float y = (float) (p.positionY * getBounds().height());
         float size = innerBoxSize / 6;
         canvas.save();
-        canvas.rotate((float) (360 * p.speed), x, y);
+        canvas.rotate((float) (360 * p.positionZ), x, y);
         canvas.drawRect(x - size, y - size, x + size, y + size, paintParticles);
         canvas.restore();
     }
 
     @Override
     protected void particleTick(Particle p, long timeSinceLastFrame) {
-        p.speed += 0.0001 * timeSinceLastFrame;
-        if (p.speed > 1) {
-            p.speed -= 1;
+        p.positionZ += p.speed * timeSinceLastFrame;
+        if (p.positionZ > 1) {
+            p.positionZ -= 1;
         }
     }
 }

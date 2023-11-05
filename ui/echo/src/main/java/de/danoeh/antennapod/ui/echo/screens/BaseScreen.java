@@ -77,12 +77,18 @@ public abstract class BaseScreen extends Drawable {
     protected static class Particle {
         double positionX;
         double positionY;
+        double positionZ;
         double speed;
 
-        public Particle(double positionX, double positionY, double speed) {
+        public Particle(double positionX, double positionY, double positionZ, double speed) {
             this.positionX = positionX;
             this.positionY = positionY;
+            this.positionZ = positionZ;
             this.speed = speed;
+        }
+
+        public Particle(double positionX, double positionY, double speed) {
+            this(positionX, positionY, 0, speed);
         }
     }
 }
