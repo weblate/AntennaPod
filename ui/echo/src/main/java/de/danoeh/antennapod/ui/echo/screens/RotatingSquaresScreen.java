@@ -24,8 +24,8 @@ public class RotatingSquaresScreen extends BaseScreen {
     }
 
     @Override
-    protected void particleTick(Particle p) {
-        p.speed += 0.001;
+    protected void particleTick(Particle p, long timeSinceLastFrame) {
+        p.speed += 0.0001 * timeSinceLastFrame;
         if (p.speed > 1) {
             p.speed -= 1;
         }

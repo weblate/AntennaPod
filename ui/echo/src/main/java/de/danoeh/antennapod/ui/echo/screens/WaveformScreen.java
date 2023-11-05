@@ -23,17 +23,17 @@ public class WaveformScreen extends BaseScreen {
     }
 
     @Override
-    protected void particleTick(Particle p) {
-        p.positionX += 0.001;
+    protected void particleTick(Particle p, long timeSinceLastFrame) {
+        p.positionX += 0.0001 * timeSinceLastFrame;
         if (p.positionY <= 0.2 || p.positionY >= 1) {
             p.speed = -p.speed;
-            p.positionY -= p.speed;
+            p.positionY -= p.speed * timeSinceLastFrame;
         }
-        p.positionY -= p.speed;
+        p.positionY -= p.speed * timeSinceLastFrame;
         if (p.positionX > 1.05f) {
             p.positionX -= 1.1;
             p.positionY = 0.2 + 0.8 * Math.random();
-            p.speed = 0.008 * Math.random() - 0.004;
+            p.speed = 0.0008 * Math.random() - 0.0004;
         }
     }
 }

@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import androidx.annotation.NonNull;
 
 public class BubbleScreen extends BaseScreen {
-    protected static final double PARTICLE_SPEED = 0.0005;
+    protected static final double PARTICLE_SPEED = 0.00005;
     protected static final int NUM_PARTICLES = 20;
 
     public BubbleScreen() {
@@ -23,8 +23,8 @@ public class BubbleScreen extends BaseScreen {
     }
 
     @Override
-    protected void particleTick(Particle p) {
-        p.positionY -= p.speed;
+    protected void particleTick(Particle p, long timeSinceLastFrame) {
+        p.positionY -= p.speed * timeSinceLastFrame;
         if (p.positionY < -0.5) {
             p.positionX = Math.random();
             p.positionY = 1.5f;

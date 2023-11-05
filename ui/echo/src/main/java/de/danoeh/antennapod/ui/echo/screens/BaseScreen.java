@@ -15,6 +15,7 @@ public abstract class BaseScreen extends Drawable {
     private final Paint paintBackground;
     protected final Paint paintParticles;
     protected final ArrayList<Particle> particles = new ArrayList<>();
+    private long lastFrame = 0;
 
     public BaseScreen() {
         paintBackground = new Paint();
@@ -32,13 +33,15 @@ public abstract class BaseScreen extends Drawable {
         paintBackground.setShader(new LinearGradient(0, 0, 0, height, 0xff364ff3, 0xff16d0ff, Shader.TileMode.CLAMP));
         canvas.drawRect(0, 0, width, height, paintBackground);
 
+        final long timeSinceLastFrame = lastFrame == 0 ? 0 : (System.currentTimeMillis() - lastFrame);
+        lastFrame = System.currentTimeMillis();
         final float innerBoxSize = 0.9f * Math.min(width, height);
         final float innerBoxX = (width - innerBoxSize) / 2;
         final float innerBoxY = (height - innerBoxSize) / 2;
 
         for (Particle p : particles) {
             drawParticle(canvas, p, innerBoxX, innerBoxY, innerBoxSize);
-            particleTick(p);
+            particleTick(p, timeSinceLastFrame);
         }
 
         drawInner(canvas, innerBoxX, innerBoxY, innerBoxSize);
@@ -49,7 +52,7 @@ public abstract class BaseScreen extends Drawable {
     protected void drawInner(Canvas canvas, float innerBoxX, float innerBoxY, float innerBoxSize) {
     }
 
-    protected abstract void particleTick(Particle p);
+    protected abstract void particleTick(Particle p, long timeSinceLastFrame);
 
     protected abstract void drawParticle(@NonNull Canvas canvas, Particle p,
                                          float innerBoxX, float innerBoxY, float innerBoxSize);
