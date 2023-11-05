@@ -19,13 +19,14 @@ import de.danoeh.antennapod.ui.echo.databinding.EchoActivityBinding;
 import de.danoeh.antennapod.ui.echo.screens.BubbleScreen;
 import de.danoeh.antennapod.ui.echo.screens.FinalShareScreen;
 import de.danoeh.antennapod.ui.echo.screens.RotatingSquaresScreen;
+import de.danoeh.antennapod.ui.echo.screens.StripesScreen;
 import de.danoeh.antennapod.ui.echo.screens.WaveformScreen;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
 public class EchoActivity extends AppCompatActivity {
-    private static final int NUM_SCREENS = 4;
+    private static final int NUM_SCREENS = 5;
 
     private EchoActivityBinding viewBinding;
     private int currentScreen = -1;
@@ -124,15 +125,19 @@ public class EchoActivity extends AppCompatActivity {
                     break;
                 case 2:
                     currentDrawable = new RotatingSquaresScreen();
-                    viewBinding.echoText.setText(Html.fromHtml("You played<br /><br />" + big("42 / 53") + "<br /><br />of the episodes released this year."));
+                    viewBinding.echoText.setText(Html.fromHtml("You played<br /><br />" + big("42 / 53") + "<br /><br />of the episodes released this year. Hoarder vs not"));
                     break;
                 case 3:
+                    currentDrawable = new StripesScreen();
+                    viewBinding.echoText.setText(Html.fromHtml("Time between release and listening"));
+                    break;
+                case 4:
                     currentDrawable = new FinalShareScreen();
-                    viewBinding.echoText.setText("");
+                    viewBinding.echoText.setText(Html.fromHtml("Hours, top5 podcasts"));
                     break;
                 default: // Keep
             }
-            viewBinding.shareButton.setVisibility(currentScreen == 3 ? View.VISIBLE : View.GONE);
+            viewBinding.shareButton.setVisibility((currentScreen == NUM_SCREENS - 1) ? View.VISIBLE : View.GONE);
             viewBinding.echoImage.setImageDrawable(currentDrawable);
         });
     }
