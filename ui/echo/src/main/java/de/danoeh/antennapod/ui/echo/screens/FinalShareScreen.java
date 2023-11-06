@@ -23,13 +23,17 @@ public class FinalShareScreen extends BubbleScreen {
     }
 
     protected void drawInner(Canvas canvas, float innerBoxX, float innerBoxY, float innerBoxSize) {
-        paintTextMain.setTextSize(innerBoxSize / 20);
+        paintTextMain.setTextSize(innerBoxSize / 18);
         paintTextMain.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText("In 2023, you played 100 hours of podcasts", innerBoxX, innerBoxY, paintTextMain);
+        canvas.drawText("Your favorite podcasts 2023", innerBoxX, innerBoxY, paintTextMain);
 
+        float coverSize = innerBoxSize / 3;
+        canvas.drawRect(innerBoxX, innerBoxY + 0.1f * innerBoxSize, innerBoxX + coverSize, innerBoxY + 0.1f * innerBoxSize + coverSize, paintParticles);
+
+        float lineHeight = 1.3f * (innerBoxSize / 18);
         for (int i = 0; i < 5; i++) {
-            canvas.drawText("10 hours: Podcast " + i, innerBoxX,
-                    innerBoxY + 0.25f * innerBoxSize + 0.6f * (innerBoxSize / 5) * i, paintTextMain);
+            canvas.drawText((i + 1) + ". Lorem ipsum", innerBoxX,
+                    innerBoxY + 0.55f * innerBoxSize + lineHeight * i, paintTextMain);
         }
 
         float fontSize = innerBoxSize / 30;

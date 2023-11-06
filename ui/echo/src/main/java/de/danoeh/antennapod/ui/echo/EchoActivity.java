@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.KeyEvent;
 import android.view.View;
 import androidx.annotation.Nullable;
@@ -17,6 +16,8 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.WindowCompat;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.echo.databinding.EchoActivityBinding;
+import de.danoeh.antennapod.ui.echo.databinding.EchoBaseBinding;
+import de.danoeh.antennapod.ui.echo.databinding.EchoSubscriptionsBinding;
 import de.danoeh.antennapod.ui.echo.screens.BubbleScreen;
 import de.danoeh.antennapod.ui.echo.screens.FinalShareScreen;
 import de.danoeh.antennapod.ui.echo.screens.RotatingSquaresScreen;
@@ -31,7 +32,7 @@ import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
 
 public class EchoActivity extends AppCompatActivity {
-    private static final int NUM_SCREENS = 5;
+    private static final int NUM_SCREENS = 7;
 
     private EchoActivityBinding viewBinding;
     private int currentScreen = -1;
@@ -49,6 +50,7 @@ public class EchoActivity extends AppCompatActivity {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         super.onCreate(savedInstanceState);
         viewBinding = EchoActivityBinding.inflate(getLayoutInflater());
+        viewBinding.closeButton.setOnClickListener(v -> finish());
         viewBinding.echoImage.setOnTouchListener((v, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 progressPaused = true;
@@ -64,7 +66,6 @@ public class EchoActivity extends AppCompatActivity {
             }
             return true;
         });
-        viewBinding.shareButton.setOnClickListener(v -> share());
         echoProgress = new EchoProgress(NUM_SCREENS);
         viewBinding.echoProgressImage.setImageDrawable(echoProgress);
         setContentView(viewBinding.getRoot());
@@ -109,7 +110,7 @@ public class EchoActivity extends AppCompatActivity {
                         if (timePassed > 500) {
                             timePassed = 0;
                         }
-                        progress = Math.min(NUM_SCREENS - 0.001f, progress + timePassed / 5000.0f);
+                        progress = Math.min(NUM_SCREENS - 0.001f, progress + timePassed / 10000.0f);
                         echoProgress.setProgress(progress);
                         viewBinding.echoProgressImage.postInvalidate();
                         loadScreen((int) progress);
@@ -124,44 +125,76 @@ public class EchoActivity extends AppCompatActivity {
         redrawTimer.dispose();
     }
 
-    private String big(String text) {
-        return "<big><big><big><big>" + text + "</big></big></big></big>";
-    }
-
-    @SuppressWarnings("deprecation")
     private void loadScreen(int screen) {
         if (screen == currentScreen) {
             return;
         }
         currentScreen = screen;
         runOnUiThread(() -> {
+            viewBinding.screenContainer.removeAllViews();
             switch (currentScreen) {
                 case 0:
+                    EchoBaseBinding introBinding = EchoBaseBinding.inflate(getLayoutInflater());
+                    introBinding.aboveLabel.setText("your year");
+                    introBinding.largeLabel.setText("2023");
+                    introBinding.belowLabel.setText("in podcasts");
+                    introBinding.smallLabel.setText("generated privately on your device");
+                    introBinding.echoLogo.setVisibility(View.VISIBLE);
+                    viewBinding.screenContainer.addView(introBinding.getRoot());
                     currentDrawable = new BubbleScreen();
-                    viewBinding.echoText.setText(Html.fromHtml("Your year<br /><br />" + big("2023") + "<br /><br />in AntennaPod.<br />- Generated locally on your device -"));
                     break;
                 case 1:
+                    EchoBaseBinding hoursPlayedBinding = EchoBaseBinding.inflate(getLayoutInflater());
+                    hoursPlayedBinding.aboveLabel.setText("This year you played");
+                    hoursPlayedBinding.largeLabel.setText("323");
+                    hoursPlayedBinding.belowLabel.setText("hours of episodes");
+                    hoursPlayedBinding.smallLabel.setText("from 71 different podcasts");
+                    viewBinding.screenContainer.addView(hoursPlayedBinding.getRoot());
                     currentDrawable = new WaveformScreen();
-                    viewBinding.echoText.setText(Html.fromHtml("You played<br /><br />" + big("4242") + "<br /><br />hours of podcasts."));
                     break;
                 case 2:
-                    currentDrawable = new RotatingSquaresScreen();
-                    viewBinding.echoText.setText(Html.fromHtml("You played<br /><br />" + big("42 / 53") + "<br /><br />of the episodes released this year. Hoarder vs not"));
+                    EchoBaseBinding queueBinding = EchoBaseBinding.inflate(getLayoutInflater());
+                    queueBinding.aboveLabel.setText("And you still have quite a bit to go this year:");
+                    queueBinding.largeLabel.setText("33");
+                    queueBinding.belowLabel.setText("hours waiting in your queue");
+                    queueBinding.smallLabel.setText("from 50 episodes. That's about 14 hours each day until 2024 starts. You can start the year clean if you skip a few episodes.");
+                    viewBinding.screenContainer.addView(queueBinding.getRoot());
+                    currentDrawable = new StripesScreen();
                     break;
                 case 3:
-                    currentDrawable = new StripesScreen();
-                    viewBinding.echoText.setText(Html.fromHtml("Time between release and listening"));
+                    EchoBaseBinding listenedAfterBinding = EchoBaseBinding.inflate(getLayoutInflater());
+                    listenedAfterBinding.aboveLabel.setText("We've run some analysis on when episodes are released, and when you last listened to them. Our conclusion?");
+                    listenedAfterBinding.largeLabel.setText("\uD83E\uDDD8");
+                    listenedAfterBinding.belowLabel.setText("You're easy going");
+                    listenedAfterBinding.smallLabel.setText("On average, you last listened to an episode 2 days, 7 hours and 43 minutes after it was released.");
+                    viewBinding.screenContainer.addView(listenedAfterBinding.getRoot());
+                    currentDrawable = new RotatingSquaresScreen();
                     break;
                 case 4:
+                    EchoBaseBinding hoarderBinding = EchoBaseBinding.inflate(getLayoutInflater());
+                    hoarderBinding.aboveLabel.setText("We've also been wondering: do you listen to the podcasts that you subscribe to?");
+                    hoarderBinding.largeLabel.setText("\uD83D\uDDC4\uFE0F️");
+                    hoarderBinding.belowLabel.setText("Looking at the numbers, we think you're a hoarder");
+                    hoarderBinding.smallLabel.setText("Numbers don't lie, they say. And with only 62 of your 131 active subscriptions having been played, we're probably right.");
+                    viewBinding.screenContainer.addView(hoarderBinding.getRoot());
+                    currentDrawable = new StripesScreen();
+                    break;
+                case 5:
+                    EchoBaseBinding thanksBinding = EchoBaseBinding.inflate(getLayoutInflater());
+                    thanksBinding.largeLabel.setText("Thanks!️");
+                    thanksBinding.belowLabel.setText("Whether you're moved over from another app, or started your podcast adventure with us: we're glad to have you!");
+                    thanksBinding.smallLabel.setText("Now, let's take a look at your favorite podcasts...");
+                    viewBinding.screenContainer.addView(thanksBinding.getRoot());
+                    currentDrawable = new RotatingSquaresScreen();
+                    break;
+                case 6:
+                    EchoSubscriptionsBinding subscriptionsBinding = EchoSubscriptionsBinding.inflate(getLayoutInflater());
+                    subscriptionsBinding.shareButton.setOnClickListener(v -> share());
+                    viewBinding.screenContainer.addView(subscriptionsBinding.getRoot());
                     currentDrawable = new FinalShareScreen(AppCompatResources.getDrawable(this, R.drawable.echo));
-                    viewBinding.echoText.setText(Html.fromHtml("Final screen"));
                     break;
                 default: // Keep
             }
-            boolean isLastScreen = currentScreen == NUM_SCREENS - 1;
-            viewBinding.shareButton.setVisibility(isLastScreen ? View.VISIBLE : View.GONE);
-            viewBinding.echoText.setVisibility(isLastScreen ? View.GONE : View.VISIBLE);
-            viewBinding.echoImage.setContentDescription(viewBinding.echoText.getText());
             viewBinding.echoImage.setImageDrawable(currentDrawable);
         });
     }
