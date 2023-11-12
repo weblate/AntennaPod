@@ -29,6 +29,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class EchoActivity extends AppCompatActivity {
@@ -135,27 +136,28 @@ public class EchoActivity extends AppCompatActivity {
             switch (currentScreen) {
                 case 0:
                     EchoBaseBinding introBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    introBinding.aboveLabel.setText("your year");
-                    introBinding.largeLabel.setText("2023");
-                    introBinding.belowLabel.setText("in podcasts");
-                    introBinding.smallLabel.setText("generated privately on your device");
+                    introBinding.aboveLabel.setText(R.string.echo_intro_your_year);
+                    introBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", 2023));
+                    introBinding.belowLabel.setText(R.string.echo_intro_in_podcasts);
+                    introBinding.smallLabel.setText(R.string.echo_intro_locally);
                     introBinding.echoLogo.setVisibility(View.VISIBLE);
                     viewBinding.screenContainer.addView(introBinding.getRoot());
                     currentDrawable = new BubbleScreen();
                     break;
                 case 1:
                     EchoBaseBinding hoursPlayedBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    hoursPlayedBinding.aboveLabel.setText("This year you played");
-                    hoursPlayedBinding.largeLabel.setText("323");
-                    hoursPlayedBinding.belowLabel.setText("hours of episodes");
-                    hoursPlayedBinding.smallLabel.setText("from 71 different podcasts");
+                    hoursPlayedBinding.aboveLabel.setText(R.string.echo_hours_this_year);
+                    hoursPlayedBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", 323));
+                    hoursPlayedBinding.belowLabel.setText(R.string.echo_hours_episodes);
+                    hoursPlayedBinding.smallLabel.setText(getResources()
+                            .getQuantityString(R.plurals.echo_hours_podcasts, 71, 71));
                     viewBinding.screenContainer.addView(hoursPlayedBinding.getRoot());
                     currentDrawable = new WaveformScreen();
                     break;
                 case 2:
                     EchoBaseBinding queueBinding = EchoBaseBinding.inflate(getLayoutInflater());
                     queueBinding.aboveLabel.setText("And you still have quite a bit to go this year:");
-                    queueBinding.largeLabel.setText("33");
+                    queueBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", 33));
                     queueBinding.belowLabel.setText("hours waiting in your queue");
                     queueBinding.smallLabel.setText("from 50 episodes. That's about 14 hours each day until 2024 starts. You can start the year clean if you skip a few episodes.");
                     viewBinding.screenContainer.addView(queueBinding.getRoot());
