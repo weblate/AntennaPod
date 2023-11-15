@@ -156,43 +156,46 @@ public class EchoActivity extends AppCompatActivity {
                     break;
                 case 2:
                     EchoBaseBinding queueBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    queueBinding.aboveLabel.setText("And you still have quite a bit to go this year:");
+                    queueBinding.aboveLabel.setText(R.string.echo_queue_title_many);
                     queueBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", 33));
-                    queueBinding.belowLabel.setText("hours waiting in your queue");
-                    queueBinding.smallLabel.setText("from 50 episodes. That's about 14 hours each day until 2024 starts. You can start the year clean if you skip a few episodes.");
+                    queueBinding.belowLabel.setText(R.string.echo_queue_hours_waiting);
+                    String hours = getResources().getQuantityString(R.plurals.time_hours_quantified, 1, 1);
+                    queueBinding.smallLabel.setText(getResources()
+                            .getQuantityString(R.plurals.echo_queue_episodes, 50, 50, hours));
                     viewBinding.screenContainer.addView(queueBinding.getRoot());
                     currentDrawable = new StripesScreen();
                     break;
                 case 3:
                     EchoBaseBinding listenedAfterBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    listenedAfterBinding.aboveLabel.setText("We've run some analysis on when episodes are released, and when you last listened to them. Our conclusion?");
-                    listenedAfterBinding.largeLabel.setText("\uD83E\uDDD8");
-                    listenedAfterBinding.belowLabel.setText("You're easy going");
-                    listenedAfterBinding.smallLabel.setText("On average, you last listened to an episode 2 days, 7 hours and 43 minutes after it was released.");
+                    listenedAfterBinding.aboveLabel.setText(R.string.echo_listened_after_title);
+                    listenedAfterBinding.largeLabel.setText(R.string.echo_listened_after_emoji_yoga);
+                    listenedAfterBinding.belowLabel.setText(R.string.echo_listened_after_comment_easy);
+                    listenedAfterBinding.smallLabel.setText(getString(R.string.echo_listened_after_time,
+                            "2 days, 7 hours and 43 minutes"));
                     viewBinding.screenContainer.addView(listenedAfterBinding.getRoot());
                     currentDrawable = new RotatingSquaresScreen();
                     break;
                 case 4:
                     EchoBaseBinding hoarderBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    hoarderBinding.aboveLabel.setText("We've also been wondering: do you listen to the podcasts that you subscribe to?");
-                    hoarderBinding.largeLabel.setText("\uD83D\uDDC4\uFE0F️");
-                    hoarderBinding.belowLabel.setText("Looking at the numbers, we think you're a hoarder");
-                    hoarderBinding.smallLabel.setText("Numbers don't lie, they say. And with only 62 of your 131 active subscriptions having been played, we're probably right.");
+                    hoarderBinding.aboveLabel.setText(R.string.echo_hoarder_title);
+                    hoarderBinding.largeLabel.setText(R.string.echo_hoarder_emoji_cabinet);
+                    hoarderBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_hoarder);
+                    hoarderBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_hoarder, 62, 131));
                     viewBinding.screenContainer.addView(hoarderBinding.getRoot());
                     currentDrawable = new StripesScreen();
                     break;
                 case 5:
                     EchoBaseBinding thanksBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    thanksBinding.largeLabel.setText("Thanks!️");
-                    thanksBinding.belowLabel.setText("Whether you're moved over from another app, or started your podcast adventure with us: we're glad to have you!");
-                    thanksBinding.smallLabel.setText("Now, let's take a look at your favorite podcasts...");
+                    thanksBinding.largeLabel.setText(R.string.echo_thanks);
+                    thanksBinding.belowLabel.setText(R.string.echo_thanks_we_are_glad);
+                    thanksBinding.smallLabel.setText(R.string.echo_thanks_now_favorite);
                     viewBinding.screenContainer.addView(thanksBinding.getRoot());
                     currentDrawable = new RotatingSquaresScreen();
                     break;
                 case 6:
-                    EchoSubscriptionsBinding subscriptionsBinding = EchoSubscriptionsBinding.inflate(getLayoutInflater());
-                    subscriptionsBinding.shareButton.setOnClickListener(v -> share());
-                    viewBinding.screenContainer.addView(subscriptionsBinding.getRoot());
+                    EchoSubscriptionsBinding subsBinding = EchoSubscriptionsBinding.inflate(getLayoutInflater());
+                    subsBinding.shareButton.setOnClickListener(v -> share());
+                    viewBinding.screenContainer.addView(subsBinding.getRoot());
                     currentDrawable = new FinalShareScreen(AppCompatResources.getDrawable(this, R.drawable.echo));
                     break;
                 default: // Keep

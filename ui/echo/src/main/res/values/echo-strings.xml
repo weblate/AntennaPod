@@ -13,4 +13,31 @@
         <item quantity="one">from %1$d podcast</item>
         <item quantity="other">from %1$d different podcasts</item>
     </plurals>
+
+    <string name="echo_queue_title_many">And you still have quite a bit to go this year:</string>
+    <string name="echo_queue_title_clean">And you\'re ready to make a clean start of the year:</string>
+    <string name="echo_queue_hours_waiting">hours waiting in your queue"</string>
+    <plurals name="echo_queue_episodes">
+        <item quantity="one">from %1$d episode. That\'s about %2$s each day until 2024 starts. You can start the year clean if you skip a few episodes.</item>
+        <item quantity="other">from %1$d episodes. That\'s about %2$s each day until 2024 starts. You can start the year clean if you skip a few episodes.</item>
+    </plurals>
+
+    <string name="echo_listened_after_title">We\'ve run some analysis on when episodes are released, and when you last listened to them. Our conclusion?</string>
+    <string name="echo_listened_after_emoji_yoga" translatable="false">\uD83E\uDDD8</string>
+    <string name="echo_listened_after_comment_easy">You\'re easy going</string>
+    <string name="echo_listened_after_time">On average, you last listened to an episode %1$s after it was released.</string>
+    <string name="echo_listened_after_emoji_run" translatable="false">\uD83C\uDFC3</string>
+    <string name="echo_listened_after_comment_addict">You\'re a podcast addict</string>
+
+    <string name="echo_hoarder_title">We\'ve also been wondering: do you listen to the podcasts that you subscribe to?</string>
+    <string name="echo_hoarder_subtitle_hoarder">Looking at the numbers, we think you\'re a hoarder</string>
+    <string name="echo_hoarder_emoji_cabinet" translatable="false">\uD83D\uDDC4\uFE0F</string>
+    <string name="echo_hoarder_comment_hoarder">Numbers don\'t lie, they say. And with only %1$d of your %2$d active subscriptions having been played, we\'re probably right.</string>
+    <string name="echo_hoarder_subtitle_check">Check. No hoarding here</string>
+    <string name="echo_hoarder_emoji_check" translatable="false">\u2705</string>
+    <string name="echo_hoarder_comment_check">You\'ve played episodes from %1$d of your %2$d active subscriptions. We bet you keep your desk clean, too!</string>
+
+    <string name="echo_thanks">Thanks!</string>
+    <string name="echo_thanks_we_are_glad">Whether you\'re moved over from another app, or started your podcast adventure with us: we\'re glad to have you!</string>
+    <string name="echo_thanks_now_favorite">Now, let\'s take a look at your favorite podcasts…</string>
 </resources>
