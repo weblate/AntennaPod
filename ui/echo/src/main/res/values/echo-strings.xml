@@ -18,8 +18,8 @@
     <string name="echo_queue_title_clean">And you\'re ready to make a clean start of the year:</string>
     <string name="echo_queue_hours_waiting">hours waiting in your queue"</string>
     <plurals name="echo_queue_episodes">
-        <item quantity="one">from %1$d episode. That\'s about %2$s each day until 2024 starts. You can start the year clean if you skip a few episodes.</item>
-        <item quantity="other">from %1$d episodes. That\'s about %2$s each day until 2024 starts. You can start the year clean if you skip a few episodes.</item>
+        <item quantity="one">from %1$d episode. That\'s about %2$f hours each day until 2024 starts. You can start the year clean if you skip a few episodes.</item>
+        <item quantity="other">from %1$d episodes. That\'s about %2$f hours each day until 2024 starts. You can start the year clean if you skip a few episodes.</item>
     </plurals>
 
     <string name="echo_listened_after_title">We\'ve run some analysis on when episodes are released, and when you last listened to them. Our conclusion?</string>

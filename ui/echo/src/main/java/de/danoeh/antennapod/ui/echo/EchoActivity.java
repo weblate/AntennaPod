@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import androidx.annotation.Nullable;
@@ -14,6 +15,10 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.view.WindowCompat;
+import de.danoeh.antennapod.core.feed.util.PlaybackSpeedUtils;
+import de.danoeh.antennapod.core.storage.DBReader;
+import de.danoeh.antennapod.core.storage.StatisticsItem;
+import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.echo.databinding.EchoActivityBinding;
 import de.danoeh.antennapod.ui.echo.databinding.EchoBaseBinding;
@@ -24,15 +29,21 @@ import de.danoeh.antennapod.ui.echo.screens.RotatingSquaresScreen;
 import de.danoeh.antennapod.ui.echo.screens.StripesScreen;
 import de.danoeh.antennapod.ui.echo.screens.WaveformScreen;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class EchoActivity extends AppCompatActivity {
+    private static final String TAG = "EchoActivity";
     private static final int NUM_SCREENS = 7;
 
     private EchoActivityBinding viewBinding;
@@ -44,6 +55,12 @@ public class EchoActivity extends AppCompatActivity {
     private Disposable redrawTimer;
     private long timeTouchDown;
     private long lastFrame;
+    private Disposable disposable;
+
+    private long totalTime = 0;
+    private int playedPodcasts = 0;
+    private int queueNumEpisodes = 0;
+    private long queueTimeLeft = 0;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -71,6 +88,7 @@ public class EchoActivity extends AppCompatActivity {
         viewBinding.echoProgressImage.setImageDrawable(echoProgress);
         setContentView(viewBinding.getRoot());
         loadScreen(0);
+        loadStatistics();
     }
 
     private void share() {
@@ -126,6 +144,14 @@ public class EchoActivity extends AppCompatActivity {
         redrawTimer.dispose();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (disposable != null) {
+            disposable.dispose();
+        }
+    }
+
     private void loadScreen(int screen) {
         if (screen == currentScreen) {
             return;
@@ -147,21 +173,21 @@ public class EchoActivity extends AppCompatActivity {
                 case 1:
                     EchoBaseBinding hoursPlayedBinding = EchoBaseBinding.inflate(getLayoutInflater());
                     hoursPlayedBinding.aboveLabel.setText(R.string.echo_hours_this_year);
-                    hoursPlayedBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", 323));
+                    hoursPlayedBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", totalTime / 3600));
                     hoursPlayedBinding.belowLabel.setText(R.string.echo_hours_episodes);
                     hoursPlayedBinding.smallLabel.setText(getResources()
-                            .getQuantityString(R.plurals.echo_hours_podcasts, 71, 71));
+                            .getQuantityString(R.plurals.echo_hours_podcasts, playedPodcasts, playedPodcasts));
                     viewBinding.screenContainer.addView(hoursPlayedBinding.getRoot());
                     currentDrawable = new WaveformScreen();
                     break;
                 case 2:
                     EchoBaseBinding queueBinding = EchoBaseBinding.inflate(getLayoutInflater());
                     queueBinding.aboveLabel.setText(R.string.echo_queue_title_many);
-                    queueBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", 33));
+                    queueBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", queueTimeLeft / 3600));
                     queueBinding.belowLabel.setText(R.string.echo_queue_hours_waiting);
-                    String hours = getResources().getQuantityString(R.plurals.time_hours_quantified, 1, 1);
-                    queueBinding.smallLabel.setText(getResources()
-                            .getQuantityString(R.plurals.echo_queue_episodes, 50, 50, hours));
+                    queueBinding.smallLabel.setText(getResources().getQuantityString(
+                            R.plurals.echo_queue_episodes, queueNumEpisodes, queueNumEpisodes,
+                            (double) (queueTimeLeft / 3600) / 356));
                     viewBinding.screenContainer.addView(queueBinding.getRoot());
                     currentDrawable = new StripesScreen();
                     break;
@@ -202,5 +228,56 @@ public class EchoActivity extends AppCompatActivity {
             }
             viewBinding.echoImage.setImageDrawable(currentDrawable);
         });
+    }
+
+    private void loadStatistics() {
+        if (disposable != null) {
+            disposable.dispose();
+        }
+        Calendar dateFrom = Calendar.getInstance();
+        dateFrom.set(Calendar.HOUR_OF_DAY, 0);
+        dateFrom.set(Calendar.MINUTE, 0);
+        dateFrom.set(Calendar.SECOND, 0);
+        dateFrom.set(Calendar.MILLISECOND, 0);
+        dateFrom.set(Calendar.DAY_OF_MONTH, 1);
+        dateFrom.set(Calendar.MONTH, 0);
+        dateFrom.set(Calendar.YEAR, 2023);
+        long timeFilterFrom = dateFrom.getTimeInMillis();
+        long timeFilterTo = Long.MAX_VALUE;
+        disposable = Observable.fromCallable(
+                () -> {
+                    DBReader.StatisticsResult statisticsData = DBReader.getStatistics(
+                            false, timeFilterFrom, timeFilterTo);
+                    Collections.sort(statisticsData.feedTime, (item1, item2) ->
+                            Long.compare(item2.timePlayed, item1.timePlayed));
+
+                    totalTime = 0;
+                    playedPodcasts = 0;
+                    for (StatisticsItem item : statisticsData.feedTime) {
+                        totalTime += item.timePlayed;
+                        if (item.timePlayed > 0) {
+                            playedPodcasts++;
+                        }
+                    }
+
+                    List<FeedItem> queue = DBReader.getQueue();
+                    queueNumEpisodes = queue.size();
+                    queueTimeLeft = 0;
+                    for (FeedItem item : queue) {
+                        float playbackSpeed = 1;
+                        if (UserPreferences.timeRespectsSpeed()) {
+                            playbackSpeed = PlaybackSpeedUtils.getCurrentPlaybackSpeed(item.getMedia());
+                        }
+                        if (item.getMedia() != null) {
+                            long itemTimeLeft = item.getMedia().getDuration() - item.getMedia().getPosition();
+                            queueTimeLeft += itemTimeLeft / playbackSpeed;
+                        }
+                    }
+                    queueTimeLeft /= 1000;
+                    return statisticsData;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> { }, error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 }
