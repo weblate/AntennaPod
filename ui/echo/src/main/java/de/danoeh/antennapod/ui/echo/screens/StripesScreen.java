@@ -23,8 +23,9 @@ public class StripesScreen extends BaseScreen {
                                 float innerBoxX, float innerBoxY, float innerBoxSize) {
         float width = getBounds().width();
         float height = getBounds().height();
+        float strokeWidth = 0.05f * getBounds().width();
         float x = (float) (width * p.positionX);
-        canvas.drawLine(x, 0, x + width, height, paintParticles);
+        canvas.drawLine(x, -strokeWidth, x + width, height + strokeWidth, paintParticles);
     }
 
     @Override
