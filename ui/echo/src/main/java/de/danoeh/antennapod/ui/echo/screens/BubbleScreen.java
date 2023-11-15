@@ -19,7 +19,8 @@ public class BubbleScreen extends BaseScreen {
                                 float innerBoxX, float innerBoxY, float innerBoxSize) {
         float width = getBounds().width();
         float height = getBounds().height();
-        canvas.drawCircle((float) (width * p.positionX), (float) (p.positionY * height), width / 5, paintParticles);
+        canvas.drawCircle((float) (width * p.positionX), (float) (p.positionY * height),
+                innerBoxSize / 5, paintParticles);
     }
 
     @Override

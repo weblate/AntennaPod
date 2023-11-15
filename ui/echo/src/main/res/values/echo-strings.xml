@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingTranslation">
 
-    <string name="echo_intro_your_year">your year</string>
+    <string name="echo_intro_your_year">Your year</string>
     <string name="echo_intro_in_podcasts">in podcasts</string>
     <string name="echo_intro_locally">generated privately on your device</string>
 
-    <string name="echo_hours_this_year">this year you played</string>
+    <string name="echo_hours_this_year">This year you played</string>
     <string name="echo_hours_episodes">hours of episodes</string>
     <plurals name="echo_hours_podcasts">
         <item quantity="one">from %1$d podcast</item>
