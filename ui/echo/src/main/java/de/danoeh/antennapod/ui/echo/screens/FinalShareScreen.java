@@ -46,8 +46,9 @@ public class FinalShareScreen extends BubbleScreen {
     }
 
     protected void drawInner(Canvas canvas, float innerBoxX, float innerBoxY, float innerBoxSize) {
-        paintTextHeading.setTextSize(innerBoxSize / 14);
-        canvas.drawText(heading, innerBoxX, innerBoxY, paintTextHeading);
+        float headingSize = innerBoxSize / 14;
+        paintTextHeading.setTextSize(headingSize);
+        canvas.drawText(heading, innerBoxX, innerBoxY + headingSize, paintTextHeading);
 
         paintTextMain.setTextSize(innerBoxSize / 18);
         float lineHeight = 1.3f * (innerBoxSize / 18);
@@ -61,8 +62,8 @@ public class FinalShareScreen extends BubbleScreen {
             } else {
                 coverSize = 0.13f * innerBoxSize;
             }
-            Rect logo1Pos = new Rect((int) coverX, (int) (innerBoxY + 0.42f * innerBoxSize - coverSize),
-                    (int) (coverX + coverSize), (int) (innerBoxY + 0.42f * innerBoxSize));
+            Rect logo1Pos = new Rect((int) coverX, (int) (innerBoxY + 0.45f * innerBoxSize - coverSize),
+                    (int) (coverX + coverSize), (int) (innerBoxY + 0.45f * innerBoxSize));
             canvas.drawRect(logo1Pos, paintCoverBorder);
             logo1Pos.inset((int) (0.003f * innerBoxSize), (int) (0.003f * innerBoxSize));
             favoritePods.get(i).second.setBounds(logo1Pos);
