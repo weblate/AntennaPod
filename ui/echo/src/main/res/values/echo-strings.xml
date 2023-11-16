@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingTranslation">
 
+    <string name="echo_share">My year 2023 in podcasts. #AntennaPodEcho antennapod.org/s/echo</string>
     <string name="echo_intro_your_year">Your year</string>
     <string name="echo_intro_in_podcasts">in podcasts</string>
     <string name="echo_intro_locally">generated privately on your device</string>

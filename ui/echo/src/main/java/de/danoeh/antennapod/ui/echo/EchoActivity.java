@@ -108,6 +108,7 @@ public class EchoActivity extends AppCompatActivity {
             new ShareCompat.IntentBuilder(this)
                     .setType("image/png")
                     .addStream(fileUri)
+                    .setText(getString(R.string.echo_share))
                     .setChooserTitle(R.string.share_file_label)
                     .startChooser();
         } catch (Exception e) {
