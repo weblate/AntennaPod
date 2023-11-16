@@ -2,14 +2,26 @@ package de.danoeh.antennapod.ui.echo.screens;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.util.Pair;
+
+import java.util.ArrayList;
 
 public class FinalShareScreen extends BubbleScreen {
     private final Paint paintTextCredits;
     private final Paint paintTextMain;
+    private final Paint paintTextHeading;
+    private final Paint paintCoverBorder;
+    private final String heading;
     private final Drawable logo;
+    private final ArrayList<Pair<String, Drawable>> favoritePods;
 
-    public FinalShareScreen(Drawable logo) {
+    public FinalShareScreen(String heading, Drawable logo, ArrayList<Pair<String, Drawable>> favoritePods) {
+        this.heading = heading;
+        this.logo = logo;
+        this.favoritePods = favoritePods;
         paintTextCredits = new Paint();
         paintTextCredits.setColor(0xffffffff);
         paintTextCredits.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -19,20 +31,45 @@ public class FinalShareScreen extends BubbleScreen {
         paintTextMain.setColor(0xffffffff);
         paintTextMain.setFlags(Paint.ANTI_ALIAS_FLAG);
         paintTextMain.setStyle(Paint.Style.FILL);
-        this.logo = logo;
+        paintTextMain.setTextAlign(Paint.Align.LEFT);
+        paintTextHeading = new Paint();
+        paintTextHeading.setColor(0xffffffff);
+        paintTextHeading.setFlags(Paint.ANTI_ALIAS_FLAG);
+        paintTextHeading.setStyle(Paint.Style.FILL);
+        paintTextHeading.setTypeface(Typeface.create(paintTextHeading.getTypeface(), Typeface.BOLD));
+        paintTextHeading.setTextAlign(Paint.Align.LEFT);
+        paintCoverBorder = new Paint();
+        paintCoverBorder.setColor(0xffffffff);
+        paintCoverBorder.setFlags(Paint.ANTI_ALIAS_FLAG);
+        paintCoverBorder.setStyle(Paint.Style.FILL);
+        paintCoverBorder.setAlpha(70);
     }
 
     protected void drawInner(Canvas canvas, float innerBoxX, float innerBoxY, float innerBoxSize) {
+        paintTextHeading.setTextSize(innerBoxSize / 14);
+        canvas.drawText(heading, innerBoxX, innerBoxY, paintTextHeading);
+
         paintTextMain.setTextSize(innerBoxSize / 18);
-        paintTextMain.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText("Your favorite podcasts 2023", innerBoxX, innerBoxY, paintTextMain);
-
-        float coverSize = innerBoxSize / 3;
-        canvas.drawRect(innerBoxX, innerBoxY + 0.1f * innerBoxSize, innerBoxX + coverSize, innerBoxY + 0.1f * innerBoxSize + coverSize, paintParticles);
-
         float lineHeight = 1.3f * (innerBoxSize / 18);
-        for (int i = 0; i < 5; i++) {
-            canvas.drawText((i + 1) + ". Lorem ipsum", innerBoxX,
+        float coverX = innerBoxX;
+        for (int i = 0; i < favoritePods.size(); i++) {
+            float coverSize;
+            if (i == 0) {
+                coverSize = 0.3f * innerBoxSize;
+            } else if (i == 1) {
+                coverSize = 0.22f * innerBoxSize;
+            } else {
+                coverSize = 0.13f * innerBoxSize;
+            }
+            Rect logo1Pos = new Rect((int) coverX, (int) (innerBoxY + 0.42f * innerBoxSize - coverSize),
+                    (int) (coverX + coverSize), (int) (innerBoxY + 0.42f * innerBoxSize));
+            canvas.drawRect(logo1Pos, paintCoverBorder);
+            logo1Pos.inset((int) (0.003f * innerBoxSize), (int) (0.003f * innerBoxSize));
+            favoritePods.get(i).second.setBounds(logo1Pos);
+            favoritePods.get(i).second.draw(canvas);
+            coverX += coverSize + 0.02f * innerBoxSize;
+
+            canvas.drawText((i + 1) + ". " + favoritePods.get(i).first, innerBoxX,
                     innerBoxY + 0.55f * innerBoxSize + lineHeight * i, paintTextMain);
         }
 

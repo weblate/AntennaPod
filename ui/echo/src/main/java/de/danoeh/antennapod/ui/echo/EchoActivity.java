@@ -3,10 +3,12 @@ package de.danoeh.antennapod.ui.echo;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import androidx.annotation.Nullable;
@@ -15,6 +17,8 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.view.WindowCompat;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import de.danoeh.antennapod.core.feed.util.PlaybackSpeedUtils;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.StatisticsItem;
@@ -36,6 +40,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -61,6 +66,7 @@ public class EchoActivity extends AppCompatActivity {
     private int playedPodcasts = 0;
     private int queueNumEpisodes = 0;
     private long queueTimeLeft = 0;
+    private final ArrayList<Pair<String, Drawable>> favoritePods = new ArrayList<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -223,7 +229,8 @@ public class EchoActivity extends AppCompatActivity {
                     EchoSubscriptionsBinding subsBinding = EchoSubscriptionsBinding.inflate(getLayoutInflater());
                     subsBinding.shareButton.setOnClickListener(v -> share());
                     viewBinding.screenContainer.addView(subsBinding.getRoot());
-                    currentDrawable = new FinalShareScreen(AppCompatResources.getDrawable(this, R.drawable.echo));
+                    currentDrawable = new FinalShareScreen(getString(R.string.echo_share_heading),
+                            AppCompatResources.getDrawable(this, R.drawable.echo), favoritePods);
                     break;
                 default: // Keep
             }
@@ -251,6 +258,17 @@ public class EchoActivity extends AppCompatActivity {
                             false, timeFilterFrom, timeFilterTo);
                     Collections.sort(statisticsData.feedTime, (item1, item2) ->
                             Long.compare(item2.timePlayed, item1.timePlayed));
+
+                    favoritePods.clear();
+                    for (int i = 0; i < 5 && i < statisticsData.feedTime.size(); i++) {
+                        BitmapDrawable cover = new BitmapDrawable(getResources(), Glide.with(this)
+                                .asBitmap()
+                                .load(statisticsData.feedTime.get(i).feed.getImageUrl())
+                                .apply(new RequestOptions().fitCenter())
+                                .submit(500, 500)
+                                .get(1, TimeUnit.SECONDS));
+                        favoritePods.add(new Pair<>(statisticsData.feedTime.get(i).feed.getTitle(), cover));
+                    }
 
                     totalTime = 0;
                     playedPodcasts = 0;

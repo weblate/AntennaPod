@@ -38,7 +38,8 @@ public abstract class BaseScreen extends Drawable {
         if (timeSinceLastFrame > 500) {
             timeSinceLastFrame = 0;
         }
-        final float innerBoxSize = 0.9f * Math.min(width, 0.7f * height);
+        final float innerBoxSize = (Math.abs(width - height) < 0.001f) // Square share version
+                ? width : (0.9f * Math.min(width, 0.7f * height));
         final float innerBoxX = (width - innerBoxSize) / 2;
         final float innerBoxY = (height - innerBoxSize) / 2;
 
