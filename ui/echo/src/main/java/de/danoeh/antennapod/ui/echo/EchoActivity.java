@@ -189,12 +189,23 @@ public class EchoActivity extends AppCompatActivity {
                     break;
                 case 2:
                     EchoBaseBinding queueBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    queueBinding.aboveLabel.setText(R.string.echo_queue_title_many);
                     queueBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", queueTimeLeft / 3600));
                     queueBinding.belowLabel.setText(R.string.echo_queue_hours_waiting);
-                    queueBinding.smallLabel.setText(getResources().getQuantityString(
-                            R.plurals.echo_queue_episodes, queueNumEpisodes, queueNumEpisodes,
-                            (double) (queueTimeLeft / 3600) / 356));
+                    int daysUntil2024 = 31 - Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + 1;
+                    double hoursPerDay = (double) (queueTimeLeft / 3600) / daysUntil2024;
+                    if (hoursPerDay < 1) {
+                        queueBinding.aboveLabel.setText(R.string.echo_queue_title_clean);
+                        queueBinding.smallLabel.setText(getResources().getQuantityString(
+                                R.plurals.echo_queue_episodes_clean, queueNumEpisodes, queueNumEpisodes, hoursPerDay));
+                    } else if (hoursPerDay <= 24) {
+                        queueBinding.aboveLabel.setText(R.string.echo_queue_title_many);
+                        queueBinding.smallLabel.setText(getResources().getQuantityString(
+                                R.plurals.echo_queue_episodes_normal, queueNumEpisodes, queueNumEpisodes, hoursPerDay));
+                    } else {
+                        queueBinding.aboveLabel.setText(R.string.echo_queue_title_many);
+                        queueBinding.smallLabel.setText(getResources().getQuantityString(
+                                R.plurals.echo_queue_episodes_much, queueNumEpisodes, queueNumEpisodes, hoursPerDay));
+                    }
                     viewBinding.screenContainer.addView(queueBinding.getRoot());
                     currentDrawable = new StripesScreen();
                     break;
@@ -204,7 +215,7 @@ public class EchoActivity extends AppCompatActivity {
                     listenedAfterBinding.largeLabel.setText(R.string.echo_listened_after_emoji_yoga);
                     listenedAfterBinding.belowLabel.setText(R.string.echo_listened_after_comment_easy);
                     listenedAfterBinding.smallLabel.setText(getString(R.string.echo_listened_after_time,
-                            "2 days, 7 hours and 43 minutes"));
+                        "2 days, 7 hours and 43 minutes"));
                     viewBinding.screenContainer.addView(listenedAfterBinding.getRoot());
                     currentDrawable = new RotatingSquaresScreen();
                     break;
@@ -261,12 +272,17 @@ public class EchoActivity extends AppCompatActivity {
 
                     favoritePods.clear();
                     for (int i = 0; i < 5 && i < statisticsData.feedTime.size(); i++) {
-                        BitmapDrawable cover = new BitmapDrawable(getResources(), Glide.with(this)
-                                .asBitmap()
-                                .load(statisticsData.feedTime.get(i).feed.getImageUrl())
-                                .apply(new RequestOptions().fitCenter())
-                                .submit(500, 500)
-                                .get(1, TimeUnit.SECONDS));
+                        BitmapDrawable cover = new BitmapDrawable(getResources(), (Bitmap) null);
+                        try {
+                            cover = new BitmapDrawable(getResources(), Glide.with(this)
+                                    .asBitmap()
+                                    .load(statisticsData.feedTime.get(i).feed.getImageUrl())
+                                    .apply(new RequestOptions().fitCenter())
+                                    .submit(500, 500)
+                                    .get(1, TimeUnit.SECONDS));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         favoritePods.add(new Pair<>(statisticsData.feedTime.get(i).feed.getTitle(), cover));
                     }
 

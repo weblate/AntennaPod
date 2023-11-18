@@ -15,12 +15,20 @@
         <item quantity="other">from %1$d different podcasts</item>
     </plurals>
 
-    <string name="echo_queue_title_many">And you still have quite a bit to go this year:</string>
     <string name="echo_queue_title_clean">And you\'re ready to make a clean start of the year:</string>
+    <string name="echo_queue_title_many">And you still have quite a bit to go this year:</string>
     <string name="echo_queue_hours_waiting">hours waiting in your queue"</string>
-    <plurals name="echo_queue_episodes">
-        <item quantity="one">from %1$d episode. That\'s about %2$f hours each day until 2024 starts. You can start the year clean if you skip a few episodes.</item>
-        <item quantity="other">from %1$d episodes. That\'s about %2$f hours each day until 2024 starts. You can start the year clean if you skip a few episodes.</item>
+    <plurals name="echo_queue_episodes_clean">
+        <item quantity="one">from %1$d episode. That\'s about %2$.2f hours each day until 2024 starts.</item>
+        <item quantity="other">from %1$d episodes. That\'s about %2$.2f hours each day until 2024 starts.</item>
+    </plurals>
+    <plurals name="echo_queue_episodes_normal">
+        <item quantity="one">from %1$d episode. That\'s about %2$.2f hours each day until 2024 starts. You can start the year clean if you skip a few episodes.</item>
+        <item quantity="other">from %1$d episodes. That\'s about %2$.2f hours each day until 2024 starts. You can start the year clean if you skip a few episodes.</item>
+    </plurals>
+    <plurals name="echo_queue_episodes_much">
+        <item quantity="one">from %1$d episode. That\'s about %2$.2f hours each day until 2024 starts. Wait, what?</item>
+        <item quantity="other">from %1$d episodes. That\'s about %2$.2f hours each day until 2024 starts. Wait, what?</item>
     </plurals>
 
     <string name="echo_listened_after_title">We\'ve run some analysis on when episodes are released, and when you last listened to them. Our conclusion?</string>
