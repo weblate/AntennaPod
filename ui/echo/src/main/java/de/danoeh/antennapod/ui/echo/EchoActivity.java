@@ -22,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions;
 import de.danoeh.antennapod.core.feed.util.PlaybackSpeedUtils;
 import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.StatisticsItem;
+import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.echo.databinding.EchoActivityBinding;
@@ -66,6 +67,7 @@ public class EchoActivity extends AppCompatActivity {
     private int playedPodcasts = 0;
     private int queueNumEpisodes = 0;
     private long queueTimeLeft = 0;
+    private long timeBetweenReleaseAndPlay = 0;
     private final ArrayList<Pair<String, Drawable>> favoritePods = new ArrayList<>();
 
     @SuppressLint("ClickableViewAccessibility")
@@ -212,10 +214,15 @@ public class EchoActivity extends AppCompatActivity {
                 case 3:
                     EchoBaseBinding listenedAfterBinding = EchoBaseBinding.inflate(getLayoutInflater());
                     listenedAfterBinding.aboveLabel.setText(R.string.echo_listened_after_title);
-                    listenedAfterBinding.largeLabel.setText(R.string.echo_listened_after_emoji_yoga);
-                    listenedAfterBinding.belowLabel.setText(R.string.echo_listened_after_comment_easy);
+                    if (timeBetweenReleaseAndPlay <= 1000L * 3600 * 24 * 5) {
+                        listenedAfterBinding.largeLabel.setText(R.string.echo_listened_after_emoji_run);
+                        listenedAfterBinding.belowLabel.setText(R.string.echo_listened_after_comment_addict);
+                    } else {
+                        listenedAfterBinding.largeLabel.setText(R.string.echo_listened_after_emoji_yoga);
+                        listenedAfterBinding.belowLabel.setText(R.string.echo_listened_after_comment_easy);
+                    }
                     listenedAfterBinding.smallLabel.setText(getString(R.string.echo_listened_after_time,
-                        "2 days, 7 hours and 43 minutes"));
+                        Converter.getDurationStringLocalized(this, timeBetweenReleaseAndPlay)));
                     viewBinding.screenContainer.addView(listenedAfterBinding.getRoot());
                     currentDrawable = new RotatingSquaresScreen();
                     break;
@@ -309,6 +316,8 @@ public class EchoActivity extends AppCompatActivity {
                         }
                     }
                     queueTimeLeft /= 1000;
+
+                    timeBetweenReleaseAndPlay = DBReader.getTimeBetweenReleaseAndPlayback(timeFilterFrom, timeFilterTo);
                     return statisticsData;
                 })
                 .subscribeOn(Schedulers.io())

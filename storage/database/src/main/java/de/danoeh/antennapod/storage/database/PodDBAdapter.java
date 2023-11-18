@@ -1237,6 +1237,17 @@ public class PodDBAdapter {
         return db.rawQuery(query, null);
     }
 
+    public final Cursor getTimeBetweenReleaseAndPlayback(long timeFilterFrom, long timeFilterTo) {
+        final String query = "SELECT CAST(AVG(" + TABLE_NAME_FEED_MEDIA + "." + KEY_LAST_PLAYED_TIME
+                + " - " + TABLE_NAME_FEED_ITEMS + "." + KEY_PUBDATE + ") AS INT)"
+                + " FROM " + TABLE_NAME_FEED_ITEMS
+                + JOIN_FEED_ITEM_AND_MEDIA
+                + " WHERE " + TABLE_NAME_FEED_MEDIA + "." + KEY_LAST_PLAYED_TIME + ">=" + timeFilterFrom
+                        + " AND " + TABLE_NAME_FEED_ITEMS + "." + KEY_PUBDATE + ">=" + timeFilterFrom
+                        + " AND " + TABLE_NAME_FEED_MEDIA + "." + KEY_LAST_PLAYED_TIME + "<" + timeFilterTo;
+        return db.rawQuery(query, null);
+    }
+
     public int getQueueSize() {
         final String query = String.format("SELECT COUNT(%s) FROM %s", KEY_ID, TABLE_NAME_QUEUE);
         Cursor c = db.rawQuery(query, null);

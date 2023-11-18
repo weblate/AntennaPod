@@ -621,6 +621,10 @@
         <item quantity="one">1 hour</item>
         <item quantity="other">%d hours</item>
     </plurals>
+    <plurals name="time_days_quantified">
+        <item quantity="one">1 day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
     <string name="auto_enable_label">Automatically activate the sleep timer when pressing play</string>
     <string name="auto_enable_label_with_times">Automatically activate the sleep timer when pressing play between %s and %s</string>
     <string name="auto_enable_change_times">Change time range</string>
