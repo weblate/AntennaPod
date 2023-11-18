@@ -64,6 +64,7 @@ public class EchoActivity extends AppCompatActivity {
     private Disposable disposable;
 
     private long totalTime = 0;
+    private int totalPodcasts = 0;
     private int playedPodcasts = 0;
     private int queueNumEpisodes = 0;
     private long queueTimeLeft = 0;
@@ -229,9 +230,17 @@ public class EchoActivity extends AppCompatActivity {
                 case 4:
                     EchoBaseBinding hoarderBinding = EchoBaseBinding.inflate(getLayoutInflater());
                     hoarderBinding.aboveLabel.setText(R.string.echo_hoarder_title);
-                    hoarderBinding.largeLabel.setText(R.string.echo_hoarder_emoji_cabinet);
-                    hoarderBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_hoarder);
-                    hoarderBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_hoarder, 62, 131));
+                    if ((double) playedPodcasts / totalPodcasts >= 0.5) {
+                        hoarderBinding.largeLabel.setText(R.string.echo_hoarder_emoji_check);
+                        hoarderBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_check);
+                        hoarderBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_check,
+                                playedPodcasts, totalPodcasts));
+                    } else {
+                        hoarderBinding.largeLabel.setText(R.string.echo_hoarder_emoji_cabinet);
+                        hoarderBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_hoarder);
+                        hoarderBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_hoarder,
+                                playedPodcasts, totalPodcasts));
+                    }
                     viewBinding.screenContainer.addView(hoarderBinding.getRoot());
                     currentDrawable = new StripesScreen();
                     break;
@@ -293,8 +302,9 @@ public class EchoActivity extends AppCompatActivity {
                         favoritePods.add(new Pair<>(statisticsData.feedTime.get(i).feed.getTitle(), cover));
                     }
 
-                    totalTime = 0;
+                    totalPodcasts = statisticsData.feedTime.size();
                     playedPodcasts = 0;
+                    totalTime = 0;
                     for (StatisticsItem item : statisticsData.feedTime) {
                         totalTime += item.timePlayed;
                         if (item.timePlayed > 0) {
