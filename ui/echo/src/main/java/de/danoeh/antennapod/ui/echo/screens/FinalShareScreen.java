@@ -13,7 +13,6 @@ import de.danoeh.antennapod.ui.echo.R;
 import java.util.ArrayList;
 
 public class FinalShareScreen extends BubbleScreen {
-    private final Paint paintTextCredits;
     private final Paint paintTextMain;
     private final Paint paintTextHeading;
     private final Paint paintCoverBorder;
@@ -29,11 +28,6 @@ public class FinalShareScreen extends BubbleScreen {
         this.favoritePods = favoritePods;
         typefaceNormal = ResourcesCompat.getFont(context, R.font.sarabun_regular);
         typefaceBold = ResourcesCompat.getFont(context, R.font.sarabun_semi_bold);
-        paintTextCredits = new Paint();
-        paintTextCredits.setColor(0xffffffff);
-        paintTextCredits.setFlags(Paint.ANTI_ALIAS_FLAG);
-        paintTextCredits.setStyle(Paint.Style.FILL);
-        paintTextCredits.setAlpha(200);
         paintTextMain = new Paint();
         paintTextMain.setColor(0xffffffff);
         paintTextMain.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -86,15 +80,8 @@ public class FinalShareScreen extends BubbleScreen {
             paintTextMain.setTypeface(typefaceNormal);
         }
 
-        float fontSize = innerBoxSize / 30;
-        paintTextCredits.setTextSize(fontSize);
-        paintTextCredits.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText("#AntennaPodEcho", innerBoxX, innerBoxY + innerBoxSize - fontSize, paintTextCredits);
-        canvas.drawText("antennapod.org/s/echo", innerBoxX, innerBoxY + innerBoxSize, paintTextCredits);
-
-        int height = (int) (2 * fontSize);
-        int width = (int) (2 * fontSize * (1.0 * logo.getIntrinsicWidth()) / logo.getIntrinsicHeight());
-        logo.setBounds((int) (innerBoxX + innerBoxSize - width), (int) (innerBoxY + innerBoxSize - height),
+        double ratio = (1.0 * logo.getIntrinsicHeight()) / logo.getIntrinsicWidth();
+        logo.setBounds((int) innerBoxX, (int) (innerBoxY + innerBoxSize - innerBoxSize * ratio),
                 (int) (innerBoxX + innerBoxSize), (int) (innerBoxY + innerBoxSize));
         logo.draw(canvas);
     }
