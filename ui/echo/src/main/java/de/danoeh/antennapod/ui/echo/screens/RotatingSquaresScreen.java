@@ -9,7 +9,7 @@ public class RotatingSquaresScreen extends BaseScreen {
             particles.add(new Particle(
                     0.3 * (float) (i % 4) + 0.05 + 0.1 * Math.random() - 0.05,
                     0.2 * (float) (i / 4) + 0.20 + 0.1 * Math.random() - 0.05,
-                    Math.random(), 0.0001 * Math.random() + 0.00005));
+                    Math.random(), 0.00001 * (2 * Math.random() + 2)));
         }
     }
 

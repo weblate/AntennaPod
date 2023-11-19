@@ -1,6 +1,9 @@
 package de.danoeh.antennapod.ui.echo;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -11,6 +14,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -41,9 +45,11 @@ import io.reactivex.schedulers.Schedulers;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -69,6 +75,7 @@ public class EchoActivity extends AppCompatActivity {
     private int queueNumEpisodes = 0;
     private long queueTimeLeft = 0;
     private long timeBetweenReleaseAndPlay = 0;
+    private long oldestDate = 0;
     private final ArrayList<Pair<String, Drawable>> favoritePods = new ArrayList<>();
 
     @SuppressLint("ClickableViewAccessibility")
@@ -133,18 +140,22 @@ public class EchoActivity extends AppCompatActivity {
                 .observeOn(Schedulers.io())
                 .repeat()
                 .subscribe(i -> {
-                    if (!progressPaused && progress < NUM_SCREENS - 0.001f) {
-                        long timePassed = System.currentTimeMillis() - lastFrame;
-                        lastFrame = System.currentTimeMillis();
-                        if (timePassed > 500) {
-                            timePassed = 0;
-                        }
-                        progress = Math.min(NUM_SCREENS - 0.001f, progress + timePassed / 10000.0f);
-                        echoProgress.setProgress(progress);
-                        viewBinding.echoProgressImage.postInvalidate();
-                        loadScreen((int) progress);
+                    if (progressPaused) {
+                        return;
                     }
                     viewBinding.echoImage.postInvalidate();
+                    if (progress >= NUM_SCREENS - 0.001f) {
+                        return;
+                    }
+                    long timePassed = System.currentTimeMillis() - lastFrame;
+                    lastFrame = System.currentTimeMillis();
+                    if (timePassed > 500) {
+                        timePassed = 0;
+                    }
+                    progress = Math.min(NUM_SCREENS - 0.001f, progress + timePassed / 10000.0f);
+                    echoProgress.setProgress(progress);
+                    viewBinding.echoProgressImage.postInvalidate();
+                    loadScreen((int) progress);
                 });
     }
 
@@ -173,7 +184,7 @@ public class EchoActivity extends AppCompatActivity {
                 case 0:
                     EchoBaseBinding introBinding = EchoBaseBinding.inflate(getLayoutInflater());
                     introBinding.aboveLabel.setText(R.string.echo_intro_your_year);
-                    introBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", 2023));
+                    introBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", 2023));
                     introBinding.belowLabel.setText(R.string.echo_intro_in_podcasts);
                     introBinding.smallLabel.setText(R.string.echo_intro_locally);
                     introBinding.echoLogo.setVisibility(View.VISIBLE);
@@ -183,31 +194,29 @@ public class EchoActivity extends AppCompatActivity {
                 case 1:
                     EchoBaseBinding hoursPlayedBinding = EchoBaseBinding.inflate(getLayoutInflater());
                     hoursPlayedBinding.aboveLabel.setText(R.string.echo_hours_this_year);
-                    hoursPlayedBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", totalTime / 3600));
-                    hoursPlayedBinding.belowLabel.setText(R.string.echo_hours_episodes);
-                    hoursPlayedBinding.smallLabel.setText(getResources()
+                    hoursPlayedBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", totalTime / 3600));
+                    hoursPlayedBinding.belowLabel.setText(getResources()
                             .getQuantityString(R.plurals.echo_hours_podcasts, playedPodcasts, playedPodcasts));
+                    hoursPlayedBinding.smallLabel.setText("");
                     viewBinding.screenContainer.addView(hoursPlayedBinding.getRoot());
                     currentDrawable = new WaveformScreen();
                     break;
                 case 2:
                     EchoBaseBinding queueBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    queueBinding.largeLabel.setText(String.format(Locale.getDefault(), "%d", queueTimeLeft / 3600));
-                    queueBinding.belowLabel.setText(R.string.echo_queue_hours_waiting);
+                    queueBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", queueTimeLeft / 3600));
+                    queueBinding.belowLabel.setText(getResources().getQuantityString(
+                            R.plurals.echo_queue_hours_waiting, queueNumEpisodes, queueNumEpisodes));
                     int daysUntil2024 = 31 - Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + 1;
                     double hoursPerDay = (double) (queueTimeLeft / 3600) / daysUntil2024;
-                    if (hoursPerDay < 1) {
+                    if (hoursPerDay < 1.5) {
                         queueBinding.aboveLabel.setText(R.string.echo_queue_title_clean);
-                        queueBinding.smallLabel.setText(getResources().getQuantityString(
-                                R.plurals.echo_queue_episodes_clean, queueNumEpisodes, queueNumEpisodes, hoursPerDay));
+                        queueBinding.smallLabel.setText(getString(R.string.echo_queue_hours_clean, hoursPerDay));
                     } else if (hoursPerDay <= 24) {
                         queueBinding.aboveLabel.setText(R.string.echo_queue_title_many);
-                        queueBinding.smallLabel.setText(getResources().getQuantityString(
-                                R.plurals.echo_queue_episodes_normal, queueNumEpisodes, queueNumEpisodes, hoursPerDay));
+                        queueBinding.smallLabel.setText(getString(R.string.echo_queue_hours_normal, hoursPerDay));
                     } else {
                         queueBinding.aboveLabel.setText(R.string.echo_queue_title_many);
-                        queueBinding.smallLabel.setText(getResources().getQuantityString(
-                                R.plurals.echo_queue_episodes_much, queueNumEpisodes, queueNumEpisodes, hoursPerDay));
+                        queueBinding.smallLabel.setText(getString(R.string.echo_queue_hours_much, hoursPerDay));
                     }
                     viewBinding.screenContainer.addView(queueBinding.getRoot());
                     currentDrawable = new StripesScreen();
@@ -215,7 +224,7 @@ public class EchoActivity extends AppCompatActivity {
                 case 3:
                     EchoBaseBinding listenedAfterBinding = EchoBaseBinding.inflate(getLayoutInflater());
                     listenedAfterBinding.aboveLabel.setText(R.string.echo_listened_after_title);
-                    if (timeBetweenReleaseAndPlay <= 1000L * 3600 * 24 * 5) {
+                    if (timeBetweenReleaseAndPlay <= 1000L * 3600 * 24 * 2.5) {
                         listenedAfterBinding.largeLabel.setText(R.string.echo_listened_after_emoji_run);
                         listenedAfterBinding.belowLabel.setText(R.string.echo_listened_after_comment_addict);
                     } else {
@@ -223,31 +232,40 @@ public class EchoActivity extends AppCompatActivity {
                         listenedAfterBinding.belowLabel.setText(R.string.echo_listened_after_comment_easy);
                     }
                     listenedAfterBinding.smallLabel.setText(getString(R.string.echo_listened_after_time,
-                        Converter.getDurationStringLocalized(this, timeBetweenReleaseAndPlay)));
+                        Converter.getDurationStringLocalized(
+                                getLocalizedResources(this, getEchoLanguage()), timeBetweenReleaseAndPlay)));
                     viewBinding.screenContainer.addView(listenedAfterBinding.getRoot());
                     currentDrawable = new RotatingSquaresScreen();
                     break;
                 case 4:
                     EchoBaseBinding hoarderBinding = EchoBaseBinding.inflate(getLayoutInflater());
                     hoarderBinding.aboveLabel.setText(R.string.echo_hoarder_title);
-                    if ((double) playedPodcasts / totalPodcasts >= 0.5) {
+                    int percentagePlayed = (int) (100.0 * playedPodcasts / totalPodcasts);
+                    if (percentagePlayed >= 75) {
                         hoarderBinding.largeLabel.setText(R.string.echo_hoarder_emoji_check);
                         hoarderBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_check);
                         hoarderBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_check,
-                                playedPodcasts, totalPodcasts));
+                                percentagePlayed, totalPodcasts));
                     } else {
                         hoarderBinding.largeLabel.setText(R.string.echo_hoarder_emoji_cabinet);
                         hoarderBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_hoarder);
                         hoarderBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_hoarder,
-                                playedPodcasts, totalPodcasts));
+                                percentagePlayed, totalPodcasts));
                     }
                     viewBinding.screenContainer.addView(hoarderBinding.getRoot());
                     currentDrawable = new StripesScreen();
                     break;
                 case 5:
                     EchoBaseBinding thanksBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    thanksBinding.largeLabel.setText(R.string.echo_thanks);
-                    thanksBinding.belowLabel.setText(R.string.echo_thanks_we_are_glad);
+                    if (oldestDate < jan1()) {
+                        thanksBinding.largeLabel.setText(R.string.echo_thanks_old);
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", getEchoLanguage());
+                        String dateFrom = dateFormat.format(new Date(oldestDate));
+                        thanksBinding.belowLabel.setText(getString(R.string.echo_thanks_we_are_glad_old, dateFrom));
+                    } else {
+                        thanksBinding.largeLabel.setText(R.string.echo_thanks_new);
+                        thanksBinding.belowLabel.setText(R.string.echo_thanks_we_are_glad_new);
+                    }
                     thanksBinding.smallLabel.setText(R.string.echo_thanks_now_favorite);
                     viewBinding.screenContainer.addView(thanksBinding.getRoot());
                     currentDrawable = new RotatingSquaresScreen();
@@ -265,19 +283,42 @@ public class EchoActivity extends AppCompatActivity {
         });
     }
 
+    private Locale getEchoLanguage() {
+        boolean hasTranslation = !getString(R.string.echo_listened_after_title)
+                .equals(getLocalizedResources(this, Locale.US).getString(R.string.echo_listened_after_title));
+        if (hasTranslation) {
+            return Locale.getDefault();
+        } else {
+            return Locale.US;
+        }
+    }
+
+    @NonNull
+    Resources getLocalizedResources(Context context, Locale desiredLocale) {
+        Configuration conf = context.getResources().getConfiguration();
+        conf = new Configuration(conf);
+        conf.setLocale(desiredLocale);
+        Context localizedContext = context.createConfigurationContext(conf);
+        return localizedContext.getResources();
+    }
+
+    private long jan1() {
+        Calendar date = Calendar.getInstance();
+        date.set(Calendar.HOUR_OF_DAY, 0);
+        date.set(Calendar.MINUTE, 0);
+        date.set(Calendar.SECOND, 0);
+        date.set(Calendar.MILLISECOND, 0);
+        date.set(Calendar.DAY_OF_MONTH, 1);
+        date.set(Calendar.MONTH, 0);
+        date.set(Calendar.YEAR, 2023);
+        return date.getTimeInMillis();
+    }
+
     private void loadStatistics() {
         if (disposable != null) {
             disposable.dispose();
         }
-        Calendar dateFrom = Calendar.getInstance();
-        dateFrom.set(Calendar.HOUR_OF_DAY, 0);
-        dateFrom.set(Calendar.MINUTE, 0);
-        dateFrom.set(Calendar.SECOND, 0);
-        dateFrom.set(Calendar.MILLISECOND, 0);
-        dateFrom.set(Calendar.DAY_OF_MONTH, 1);
-        dateFrom.set(Calendar.MONTH, 0);
-        dateFrom.set(Calendar.YEAR, 2023);
-        long timeFilterFrom = dateFrom.getTimeInMillis();
+        long timeFilterFrom = jan1();
         long timeFilterTo = Long.MAX_VALUE;
         disposable = Observable.fromCallable(
                 () -> {
@@ -328,6 +369,7 @@ public class EchoActivity extends AppCompatActivity {
                     queueTimeLeft /= 1000;
 
                     timeBetweenReleaseAndPlay = DBReader.getTimeBetweenReleaseAndPlayback(timeFilterFrom, timeFilterTo);
+                    oldestDate = statisticsData.oldestDate;
                     return statisticsData;
                 })
                 .subscribeOn(Schedulers.io())

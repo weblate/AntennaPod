@@ -2,6 +2,7 @@ package de.danoeh.antennapod.core.util;
 
 import android.content.Context;
 
+import android.content.res.Resources;
 import java.util.Locale;
 
 import de.danoeh.antennapod.core.R;
@@ -82,21 +83,28 @@ public final class Converter {
      * Converts milliseconds to a localized string containing hours and minutes.
      */
     public static String getDurationStringLocalized(Context context, long duration) {
+        return getDurationStringLocalized(context.getResources(), duration);
+    }
+
+    public static String getDurationStringLocalized(Resources resources, long duration) {
         String result = "";
         int h = (int) (duration / HOURS_MIL);
         int d = h / 24;
         if (d > 0) {
-            String days = context.getResources().getQuantityString(R.plurals.time_days_quantified, d, d);
+            String days = resources.getQuantityString(R.plurals.time_days_quantified, d, d);
+            days = days.replace(" ", "\u00A0");
             result += days + " ";
             h -= d * 24;
         }
         int rest = (int) (duration - (d * 24 + h) * HOURS_MIL);
         int m = rest / MINUTES_MIL;
         if (h > 0) {
-            String hours = context.getResources().getQuantityString(R.plurals.time_hours_quantified, h, h);
+            String hours = resources.getQuantityString(R.plurals.time_hours_quantified, h, h);
+            hours = hours.replace(" ", "\u00A0");
             result += hours + " ";
         }
-        String minutes = context.getResources().getQuantityString(R.plurals.time_minutes_quantified, m, m);
+        String minutes = resources.getQuantityString(R.plurals.time_minutes_quantified, m, m);
+        minutes = minutes.replace(" ", "\u00A0");
         result += minutes;
         return result;
     }

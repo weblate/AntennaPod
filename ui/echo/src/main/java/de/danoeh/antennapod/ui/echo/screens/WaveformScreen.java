@@ -18,8 +18,8 @@ public class WaveformScreen extends BaseScreen {
         float width = getBounds().width();
         float height = getBounds().height();
         float x = (float) (width * p.positionX);
-        canvas.drawRect(x, 0.8f * height, x + (1.1f * width) / NUM_PARTICLES,
-                (float) (0.8f * height - 0.2f * p.positionY * height), paintParticles);
+        canvas.drawRect(x, height, x + (1.1f * width) / NUM_PARTICLES,
+                (float) (0.95f * height - 0.3f * p.positionY * height), paintParticles);
     }
 
     @Override

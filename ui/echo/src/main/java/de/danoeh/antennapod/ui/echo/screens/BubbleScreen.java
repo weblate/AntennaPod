@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import androidx.annotation.NonNull;
 
 public class BubbleScreen extends BaseScreen {
-    protected static final double PARTICLE_SPEED = 0.00005;
+    protected static final double PARTICLE_SPEED = 0.00002;
     protected static final int NUM_PARTICLES = 20;
 
     public BubbleScreen() {

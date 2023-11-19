@@ -30,7 +30,7 @@ public class StripesScreen extends BaseScreen {
 
     @Override
     protected void particleTick(Particle p, long timeSinceLastFrame) {
-        p.positionX += 0.0001 * timeSinceLastFrame;
+        p.positionX += 0.00005 * timeSinceLastFrame;
         if (p.positionX > 1f) {
             p.positionX -= 2f;
         }
