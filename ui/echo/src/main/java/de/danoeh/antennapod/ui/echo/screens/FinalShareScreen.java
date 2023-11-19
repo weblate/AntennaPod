@@ -1,12 +1,15 @@
 package de.danoeh.antennapod.ui.echo.screens;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.Pair;
-
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.res.ResourcesCompat;
+import de.danoeh.antennapod.ui.echo.R;
 import java.util.ArrayList;
 
 public class FinalShareScreen extends BubbleScreen {
@@ -17,11 +20,15 @@ public class FinalShareScreen extends BubbleScreen {
     private final String heading;
     private final Drawable logo;
     private final ArrayList<Pair<String, Drawable>> favoritePods;
+    private final Typeface typefaceNormal;
+    private final Typeface typefaceBold;
 
-    public FinalShareScreen(String heading, Drawable logo, ArrayList<Pair<String, Drawable>> favoritePods) {
-        this.heading = heading;
-        this.logo = logo;
+    public FinalShareScreen(Context context, ArrayList<Pair<String, Drawable>> favoritePods) {
+        this.heading = context.getString(R.string.echo_share_heading);
+        this.logo = AppCompatResources.getDrawable(context, R.drawable.echo);
         this.favoritePods = favoritePods;
+        typefaceNormal = ResourcesCompat.getFont(context, R.font.sarabun_regular);
+        typefaceBold = ResourcesCompat.getFont(context, R.font.sarabun_semi_bold);
         paintTextCredits = new Paint();
         paintTextCredits.setColor(0xffffffff);
         paintTextCredits.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -36,8 +43,8 @@ public class FinalShareScreen extends BubbleScreen {
         paintTextHeading.setColor(0xffffffff);
         paintTextHeading.setFlags(Paint.ANTI_ALIAS_FLAG);
         paintTextHeading.setStyle(Paint.Style.FILL);
-        paintTextHeading.setTypeface(Typeface.create(paintTextHeading.getTypeface(), Typeface.BOLD));
         paintTextHeading.setTextAlign(Paint.Align.LEFT);
+        paintTextHeading.setTypeface(typefaceBold);
         paintCoverBorder = new Paint();
         paintCoverBorder.setColor(0xffffffff);
         paintCoverBorder.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -50,9 +57,10 @@ public class FinalShareScreen extends BubbleScreen {
         paintTextHeading.setTextSize(headingSize);
         canvas.drawText(heading, innerBoxX, innerBoxY + headingSize, paintTextHeading);
 
-        paintTextMain.setTextSize(innerBoxSize / 18);
-        float lineHeight = 1.3f * (innerBoxSize / 18);
+        float fontSizePods = innerBoxSize / 18; // First one only
+        paintTextMain.setTypeface(typefaceBold);
         float coverX = innerBoxX;
+        float textY = innerBoxY + 0.55f * innerBoxSize;
         for (int i = 0; i < favoritePods.size(); i++) {
             float coverSize;
             if (i == 0) {
@@ -70,8 +78,12 @@ public class FinalShareScreen extends BubbleScreen {
             favoritePods.get(i).second.draw(canvas);
             coverX += coverSize + 0.02f * innerBoxSize;
 
-            canvas.drawText((i + 1) + ". " + favoritePods.get(i).first, innerBoxX,
-                    innerBoxY + 0.55f * innerBoxSize + lineHeight * i, paintTextMain);
+            paintTextMain.setTextSize(fontSizePods);
+            canvas.drawText((i + 1) + ".", innerBoxX, textY, paintTextMain);
+            canvas.drawText(favoritePods.get(i).first, innerBoxX + 0.055f * innerBoxSize, textY, paintTextMain);
+            fontSizePods = innerBoxSize / 24; // Starting with second text is smaller
+            textY += 1.3f * fontSizePods;
+            paintTextMain.setTypeface(typefaceNormal);
         }
 
         float fontSize = innerBoxSize / 30;

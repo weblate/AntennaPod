@@ -274,8 +274,7 @@ public class EchoActivity extends AppCompatActivity {
                     EchoSubscriptionsBinding subsBinding = EchoSubscriptionsBinding.inflate(getLayoutInflater());
                     subsBinding.shareButton.setOnClickListener(v -> share());
                     viewBinding.screenContainer.addView(subsBinding.getRoot());
-                    currentDrawable = new FinalShareScreen(getString(R.string.echo_share_heading),
-                            AppCompatResources.getDrawable(this, R.drawable.echo), favoritePods);
+                    currentDrawable = new FinalShareScreen(this, favoritePods);
                     break;
                 default: // Keep
             }
