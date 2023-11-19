@@ -72,7 +72,8 @@ public class FinalShareScreen extends BubbleScreen {
                     innerBoxX + coverX * innerBoxSize + coverSize,
                     innerBoxY + (coverY + 0.12f) * innerBoxSize + coverSize);
             logo1Pos.inset((int) (0.01f * innerBoxSize), (int) (0.01f * innerBoxSize));
-            canvas.drawRoundRect(logo1Pos, coverSize / 8, coverSize / 8, paintCoverBorder);
+            float radius = (i == 0) ? (coverSize / 16) : (coverSize / 8);
+            canvas.drawRoundRect(logo1Pos, radius, radius, paintCoverBorder);
             logo1Pos.inset((int) (0.003f * innerBoxSize), (int) (0.003f * innerBoxSize));
             Rect pos = new Rect();
             logo1Pos.round(pos);

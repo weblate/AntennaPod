@@ -23,7 +23,7 @@ public abstract class BaseScreen extends Drawable {
         paintParticles.setColor(0xffffffff);
         paintParticles.setFlags(Paint.ANTI_ALIAS_FLAG);
         paintParticles.setStyle(Paint.Style.FILL);
-        paintParticles.setAlpha(35);
+        paintParticles.setAlpha(25);
     }
 
     @Override

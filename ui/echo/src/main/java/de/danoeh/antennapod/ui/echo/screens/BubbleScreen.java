@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 
 public class BubbleScreen extends BaseScreen {
     protected static final double PARTICLE_SPEED = 0.00002;
-    protected static final int NUM_PARTICLES = 20;
+    protected static final int NUM_PARTICLES = 15;
 
     public BubbleScreen() {
         for (int i = 0; i < NUM_PARTICLES; i++) {

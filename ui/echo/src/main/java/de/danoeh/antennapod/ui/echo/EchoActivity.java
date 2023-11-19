@@ -332,12 +332,13 @@ public class EchoActivity extends AppCompatActivity {
                         BitmapDrawable cover = new BitmapDrawable(getResources(), (Bitmap) null);
                         try {
                             final int size = 500;
+                            final int radius = (i == 0) ? (size / 16) : (size / 8);
                             cover = new BitmapDrawable(getResources(), Glide.with(this)
                                     .asBitmap()
                                     .load(statisticsData.feedTime.get(i).feed.getImageUrl())
                                     .apply(new RequestOptions()
                                             .fitCenter()
-                                            .transform(new RoundedCorners(size / 8)))
+                                            .transform(new RoundedCorners(radius)))
                                     .submit(size, size)
                                     .get(1, TimeUnit.SECONDS));
                         } catch (Exception e) {
