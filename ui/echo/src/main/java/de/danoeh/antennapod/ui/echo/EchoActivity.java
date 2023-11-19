@@ -22,6 +22,7 @@ import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.view.WindowCompat;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import de.danoeh.antennapod.core.feed.util.PlaybackSpeedUtils;
 import de.danoeh.antennapod.core.storage.DBReader;
@@ -330,11 +331,14 @@ public class EchoActivity extends AppCompatActivity {
                     for (int i = 0; i < 5 && i < statisticsData.feedTime.size(); i++) {
                         BitmapDrawable cover = new BitmapDrawable(getResources(), (Bitmap) null);
                         try {
+                            final int size = 500;
                             cover = new BitmapDrawable(getResources(), Glide.with(this)
                                     .asBitmap()
                                     .load(statisticsData.feedTime.get(i).feed.getImageUrl())
-                                    .apply(new RequestOptions().fitCenter())
-                                    .submit(500, 500)
+                                    .apply(new RequestOptions()
+                                            .fitCenter()
+                                            .transform(new RoundedCorners(size / 8)))
+                                    .submit(size, size)
                                     .get(1, TimeUnit.SECONDS));
                         } catch (Exception e) {
                             e.printStackTrace();

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.Pair;
@@ -66,14 +67,16 @@ public class FinalShareScreen extends BubbleScreen {
             float coverSize = (i == 0) ? (0.4f * innerBoxSize) : (0.2f * innerBoxSize);
             float coverX = COVER_POSITIONS[i][0];
             float coverY = COVER_POSITIONS[i][1];
-            Rect logo1Pos = new Rect((int) (innerBoxX + coverX * innerBoxSize),
-                    (int) (innerBoxY + (coverY + 0.12f) * innerBoxSize),
-                    (int) (innerBoxX + coverX * innerBoxSize + coverSize),
-                    (int) (innerBoxY + (coverY + 0.12f) * innerBoxSize + coverSize));
+            RectF logo1Pos = new RectF(innerBoxX + coverX * innerBoxSize,
+                    innerBoxY + (coverY + 0.12f) * innerBoxSize,
+                    innerBoxX + coverX * innerBoxSize + coverSize,
+                    innerBoxY + (coverY + 0.12f) * innerBoxSize + coverSize);
             logo1Pos.inset((int) (0.01f * innerBoxSize), (int) (0.01f * innerBoxSize));
-            canvas.drawRect(logo1Pos, paintCoverBorder);
+            canvas.drawRoundRect(logo1Pos, coverSize / 8, coverSize / 8, paintCoverBorder);
             logo1Pos.inset((int) (0.003f * innerBoxSize), (int) (0.003f * innerBoxSize));
-            favoritePods.get(i).second.setBounds(logo1Pos);
+            Rect pos = new Rect();
+            logo1Pos.round(pos);
+            favoritePods.get(i).second.setBounds(pos);
             favoritePods.get(i).second.draw(canvas);
 
             paintTextMain.setTextSize(fontSizePods);
