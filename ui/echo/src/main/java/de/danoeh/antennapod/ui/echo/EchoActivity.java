@@ -17,7 +17,6 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.view.WindowCompat;
@@ -31,8 +30,6 @@ import de.danoeh.antennapod.core.util.Converter;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.echo.databinding.EchoActivityBinding;
-import de.danoeh.antennapod.ui.echo.databinding.EchoBaseBinding;
-import de.danoeh.antennapod.ui.echo.databinding.EchoSubscriptionsBinding;
 import de.danoeh.antennapod.ui.echo.screens.BubbleScreen;
 import de.danoeh.antennapod.ui.echo.screens.FinalShareScreen;
 import de.danoeh.antennapod.ui.echo.screens.RotatingSquaresScreen;
@@ -86,6 +83,7 @@ public class EchoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         viewBinding = EchoActivityBinding.inflate(getLayoutInflater());
         viewBinding.closeButton.setOnClickListener(v -> finish());
+        viewBinding.shareButton.setOnClickListener(v -> share());
         viewBinding.echoImage.setOnTouchListener((v, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 progressPaused = true;
@@ -180,101 +178,92 @@ public class EchoActivity extends AppCompatActivity {
         }
         currentScreen = screen;
         runOnUiThread(() -> {
-            viewBinding.screenContainer.removeAllViews();
+            viewBinding.echoLogo.setVisibility(currentScreen == 0 ? View.VISIBLE : View.GONE);
+            viewBinding.shareButton.setVisibility(currentScreen == 6 ? View.VISIBLE : View.GONE);
+
             switch (currentScreen) {
                 case 0:
-                    EchoBaseBinding introBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    introBinding.aboveLabel.setText(R.string.echo_intro_your_year);
-                    introBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", 2023));
-                    introBinding.belowLabel.setText(R.string.echo_intro_in_podcasts);
-                    introBinding.smallLabel.setText(R.string.echo_intro_locally);
-                    introBinding.echoLogo.setVisibility(View.VISIBLE);
-                    viewBinding.screenContainer.addView(introBinding.getRoot());
+                    viewBinding.aboveLabel.setText(R.string.echo_intro_your_year);
+                    viewBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", 2023));
+                    viewBinding.belowLabel.setText(R.string.echo_intro_in_podcasts);
+                    viewBinding.smallLabel.setText(R.string.echo_intro_locally);
                     currentDrawable = new BubbleScreen();
                     break;
                 case 1:
-                    EchoBaseBinding hoursPlayedBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    hoursPlayedBinding.aboveLabel.setText(R.string.echo_hours_this_year);
-                    hoursPlayedBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", totalTime / 3600));
-                    hoursPlayedBinding.belowLabel.setText(getResources()
+                    viewBinding.aboveLabel.setText(R.string.echo_hours_this_year);
+                    viewBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", totalTime / 3600));
+                    viewBinding.belowLabel.setText(getResources()
                             .getQuantityString(R.plurals.echo_hours_podcasts, playedPodcasts, playedPodcasts));
-                    hoursPlayedBinding.smallLabel.setText("");
-                    viewBinding.screenContainer.addView(hoursPlayedBinding.getRoot());
+                    viewBinding.smallLabel.setText("");
                     currentDrawable = new WaveformScreen();
                     break;
                 case 2:
-                    EchoBaseBinding queueBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    queueBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", queueTimeLeft / 3600));
-                    queueBinding.belowLabel.setText(getResources().getQuantityString(
+                    viewBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", queueTimeLeft / 3600));
+                    viewBinding.belowLabel.setText(getResources().getQuantityString(
                             R.plurals.echo_queue_hours_waiting, queueNumEpisodes, queueNumEpisodes));
                     int daysUntil2024 = 31 - Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + 1;
                     double hoursPerDay = (double) (queueTimeLeft / 3600) / daysUntil2024;
                     if (hoursPerDay < 1.5) {
-                        queueBinding.aboveLabel.setText(R.string.echo_queue_title_clean);
-                        queueBinding.smallLabel.setText(getString(R.string.echo_queue_hours_clean, hoursPerDay));
+                        viewBinding.aboveLabel.setText(R.string.echo_queue_title_clean);
+                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_clean, hoursPerDay));
                     } else if (hoursPerDay <= 24) {
-                        queueBinding.aboveLabel.setText(R.string.echo_queue_title_many);
-                        queueBinding.smallLabel.setText(getString(R.string.echo_queue_hours_normal, hoursPerDay));
+                        viewBinding.aboveLabel.setText(R.string.echo_queue_title_many);
+                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_normal, hoursPerDay));
                     } else {
-                        queueBinding.aboveLabel.setText(R.string.echo_queue_title_many);
-                        queueBinding.smallLabel.setText(getString(R.string.echo_queue_hours_much, hoursPerDay));
+                        viewBinding.aboveLabel.setText(R.string.echo_queue_title_many);
+                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_much, hoursPerDay));
                     }
-                    viewBinding.screenContainer.addView(queueBinding.getRoot());
                     currentDrawable = new StripesScreen();
                     break;
                 case 3:
-                    EchoBaseBinding listenedAfterBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    listenedAfterBinding.aboveLabel.setText(R.string.echo_listened_after_title);
+                    viewBinding.aboveLabel.setText(R.string.echo_listened_after_title);
                     if (timeBetweenReleaseAndPlay <= 1000L * 3600 * 24 * 2.5) {
-                        listenedAfterBinding.largeLabel.setText(R.string.echo_listened_after_emoji_run);
-                        listenedAfterBinding.belowLabel.setText(R.string.echo_listened_after_comment_addict);
+                        viewBinding.largeLabel.setText(R.string.echo_listened_after_emoji_run);
+                        viewBinding.belowLabel.setText(R.string.echo_listened_after_comment_addict);
                     } else {
-                        listenedAfterBinding.largeLabel.setText(R.string.echo_listened_after_emoji_yoga);
-                        listenedAfterBinding.belowLabel.setText(R.string.echo_listened_after_comment_easy);
+                        viewBinding.largeLabel.setText(R.string.echo_listened_after_emoji_yoga);
+                        viewBinding.belowLabel.setText(R.string.echo_listened_after_comment_easy);
                     }
-                    listenedAfterBinding.smallLabel.setText(getString(R.string.echo_listened_after_time,
-                        Converter.getDurationStringLocalized(
+                    viewBinding.smallLabel.setText(getString(R.string.echo_listened_after_time,
+                            Converter.getDurationStringLocalized(
                                 getLocalizedResources(this, getEchoLanguage()), timeBetweenReleaseAndPlay)));
-                    viewBinding.screenContainer.addView(listenedAfterBinding.getRoot());
                     currentDrawable = new RotatingSquaresScreen();
                     break;
                 case 4:
-                    EchoBaseBinding hoarderBinding = EchoBaseBinding.inflate(getLayoutInflater());
-                    hoarderBinding.aboveLabel.setText(R.string.echo_hoarder_title);
+                    viewBinding.aboveLabel.setText(R.string.echo_hoarder_title);
                     int percentagePlayed = (int) (100.0 * playedPodcasts / totalPodcasts);
                     if (percentagePlayed >= 75) {
-                        hoarderBinding.largeLabel.setText(R.string.echo_hoarder_emoji_check);
-                        hoarderBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_check);
-                        hoarderBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_check,
+                        viewBinding.largeLabel.setText(R.string.echo_hoarder_emoji_check);
+                        viewBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_check);
+                        viewBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_check,
                                 percentagePlayed, totalPodcasts));
                     } else {
-                        hoarderBinding.largeLabel.setText(R.string.echo_hoarder_emoji_cabinet);
-                        hoarderBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_hoarder);
-                        hoarderBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_hoarder,
+                        viewBinding.largeLabel.setText(R.string.echo_hoarder_emoji_cabinet);
+                        viewBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_hoarder);
+                        viewBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_hoarder,
                                 percentagePlayed, totalPodcasts));
                     }
-                    viewBinding.screenContainer.addView(hoarderBinding.getRoot());
                     currentDrawable = new StripesScreen();
                     break;
                 case 5:
-                    EchoBaseBinding thanksBinding = EchoBaseBinding.inflate(getLayoutInflater());
+                    viewBinding.aboveLabel.setText("");
                     if (oldestDate < jan1()) {
-                        thanksBinding.largeLabel.setText(R.string.echo_thanks_old);
+                        viewBinding.largeLabel.setText(R.string.echo_thanks_old);
                         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", getEchoLanguage());
                         String dateFrom = dateFormat.format(new Date(oldestDate));
-                        thanksBinding.belowLabel.setText(getString(R.string.echo_thanks_we_are_glad_old, dateFrom));
+                        viewBinding.belowLabel.setText(getString(R.string.echo_thanks_we_are_glad_old, dateFrom));
                     } else {
-                        thanksBinding.largeLabel.setText(R.string.echo_thanks_new);
-                        thanksBinding.belowLabel.setText(R.string.echo_thanks_we_are_glad_new);
+                        viewBinding.largeLabel.setText(R.string.echo_thanks_new);
+                        viewBinding.belowLabel.setText(R.string.echo_thanks_we_are_glad_new);
                     }
-                    thanksBinding.smallLabel.setText(R.string.echo_thanks_now_favorite);
-                    viewBinding.screenContainer.addView(thanksBinding.getRoot());
+                    viewBinding.smallLabel.setText(R.string.echo_thanks_now_favorite);
                     currentDrawable = new RotatingSquaresScreen();
                     break;
                 case 6:
-                    EchoSubscriptionsBinding subsBinding = EchoSubscriptionsBinding.inflate(getLayoutInflater());
-                    subsBinding.shareButton.setOnClickListener(v -> share());
-                    viewBinding.screenContainer.addView(subsBinding.getRoot());
+                    viewBinding.aboveLabel.setText("");
+                    viewBinding.largeLabel.setText("");
+                    viewBinding.belowLabel.setText("");
+                    viewBinding.smallLabel.setText("");
                     currentDrawable = new FinalShareScreen(this, favoritePods);
                     break;
                 default: // Keep
