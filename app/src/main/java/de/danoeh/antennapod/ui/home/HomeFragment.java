@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment implements Toolbar.OnMenuItemClickLis
     public static final String PREF_NAME = "PrefHomeFragment";
     public static final String PREF_HIDDEN_SECTIONS = "PrefHomeSectionsString";
     public static final String PREF_DISABLE_NOTIFICATION_PERMISSION_NAG = "DisableNotificationPermissionNag";
+    public static final String PREF_HIDE_ECHO = "HideEcho";
 
     private static final String KEY_UP_ARROW = "up_arrow";
     private boolean displayUpArrow;
@@ -95,14 +96,17 @@ public class HomeFragment extends Fragment implements Toolbar.OnMenuItemClickLis
     private void populateSectionList() {
         viewBinding.homeContainer.removeAllViews();
 
+        SharedPreferences prefs = getContext().getSharedPreferences(HomeFragment.PREF_NAME, Context.MODE_PRIVATE);
         if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            SharedPreferences prefs = getContext().getSharedPreferences(HomeFragment.PREF_NAME, Context.MODE_PRIVATE);
             if (!prefs.getBoolean(HomeFragment.PREF_DISABLE_NOTIFICATION_PERMISSION_NAG, false)) {
                 addSection(new AllowNotificationsSection());
             }
         }
-        addSection(new EchoSection());
+        //if (Calendar.getInstance().get(Calendar.MONTH) == Calendar.DECEMBER
+        //        && prefs.getInt(PREF_HIDE_ECHO, 0) != 2023) {
+            addSection(new EchoSection());
+        //}
 
         List<String> hiddenSections = getHiddenSections(getContext());
         String[] sectionTags = getResources().getStringArray(R.array.home_section_tags);
