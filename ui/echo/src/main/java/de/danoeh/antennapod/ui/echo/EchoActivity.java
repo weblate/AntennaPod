@@ -232,15 +232,20 @@ public class EchoActivity extends AppCompatActivity {
                 case 4:
                     viewBinding.aboveLabel.setText(R.string.echo_hoarder_title);
                     int percentagePlayed = (int) (100.0 * playedPodcasts / totalPodcasts);
-                    if (percentagePlayed >= 75) {
-                        viewBinding.largeLabel.setText(R.string.echo_hoarder_emoji_check);
-                        viewBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_check);
-                        viewBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_check,
-                                percentagePlayed, totalPodcasts));
-                    } else {
+                    if (percentagePlayed < 25) {
                         viewBinding.largeLabel.setText(R.string.echo_hoarder_emoji_cabinet);
                         viewBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_hoarder);
                         viewBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_hoarder,
+                                percentagePlayed, totalPodcasts));
+                    } else if (percentagePlayed < 75) {
+                        viewBinding.largeLabel.setText(R.string.echo_hoarder_emoji_check);
+                        viewBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_medium);
+                        viewBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_medium,
+                                percentagePlayed, totalPodcasts));
+                    } else {
+                        viewBinding.largeLabel.setText(R.string.echo_hoarder_emoji_clean);
+                        viewBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_clean);
+                        viewBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_clean,
                                 percentagePlayed, totalPodcasts));
                     }
                     currentDrawable = new StripesScreen();
