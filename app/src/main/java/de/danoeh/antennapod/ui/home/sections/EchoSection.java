@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.databinding.HomeSectionEchoBinding;
 import de.danoeh.antennapod.ui.echo.EchoActivity;
@@ -21,6 +22,7 @@ public class EchoSection extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         HomeSectionEchoBinding viewBinding = HomeSectionEchoBinding.inflate(inflater);
+        viewBinding.titleLabel.setText(getString(R.string.antennapod_echo_year, 2023));
         viewBinding.echoButton.setOnClickListener(v -> startActivity(new Intent(getContext(), EchoActivity.class)));
         viewBinding.closeButton.setOnClickListener(v -> {
             getContext().getSharedPreferences(HomeFragment.PREF_NAME, Context.MODE_PRIVATE)

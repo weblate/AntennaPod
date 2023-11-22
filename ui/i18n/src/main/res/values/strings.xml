@@ -28,6 +28,7 @@
     <string name="notification_pref_fragment">Notifications</string>
     <string name="recently_played_episodes">Recently played episodes</string>
     <string name="antennapod_echo" translatable="false">AntennaPod Echo</string>
+    <string name="antennapod_echo_year" translatable="false">AntennaPod Echo %d</string>
 
     <!-- Google Assistant -->
     <string name="app_action_not_found">\"%1$s\" not found</string>

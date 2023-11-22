@@ -68,10 +68,12 @@ public class EchoActivity extends AppCompatActivity {
     private Disposable disposable;
 
     private long totalTime = 0;
-    private int totalPodcasts = 0;
+    private int totalActivePodcasts = 0;
     private int playedPodcasts = 0;
+    private int playedActivePodcasts = 0;
+    private String randomUnplayedActivePodcast = "";
     private int queueNumEpisodes = 0;
-    private long queueTimeLeft = 0;
+    private long queueSecondsLeft = 0;
     private long timeBetweenReleaseAndPlay = 0;
     private long oldestDate = 0;
     private final ArrayList<Pair<String, Drawable>> favoritePods = new ArrayList<>();
@@ -91,7 +93,12 @@ public class EchoActivity extends AppCompatActivity {
             } else if (event.getAction() == KeyEvent.ACTION_UP) {
                 progressPaused = false;
                 if (timeTouchDown + 500 > System.currentTimeMillis()) {
-                    int newScreen = (currentScreen + 1) % NUM_SCREENS;
+                    int newScreen;
+                    if (event.getX() < 0.5f * viewBinding.echoImage.getMeasuredWidth()) {
+                        newScreen = Math.max(currentScreen - 1, 0);
+                    } else {
+                        newScreen = (currentScreen + 1) % NUM_SCREENS;
+                    }
                     progress = newScreen;
                     echoProgress.setProgress(progress);
                     loadScreen(newScreen);
@@ -123,7 +130,7 @@ public class EchoActivity extends AppCompatActivity {
             new ShareCompat.IntentBuilder(this)
                     .setType("image/png")
                     .addStream(fileUri)
-                    .setText(getString(R.string.echo_share))
+                    .setText(getString(R.string.echo_share, 2023))
                     .setChooserTitle(R.string.share_file_label)
                     .startChooser();
         } catch (Exception e) {
@@ -198,20 +205,23 @@ public class EchoActivity extends AppCompatActivity {
                     currentDrawable = new WaveformScreen();
                     break;
                 case 2:
-                    viewBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", queueTimeLeft / 3600));
+                    viewBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", queueSecondsLeft / 3600));
                     viewBinding.belowLabel.setText(getResources().getQuantityString(
                             R.plurals.echo_queue_hours_waiting, queueNumEpisodes, queueNumEpisodes));
-                    int daysUntil2024 = 31 - Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + 1;
-                    double hoursPerDay = (double) (queueTimeLeft / 3600) / daysUntil2024;
+                    int daysUntil2024 = Math.max(356 - Calendar.getInstance().get(Calendar.DAY_OF_YEAR) + 1, 1);
+                    long secondsPerDay = queueSecondsLeft / daysUntil2024;
+                    String timePerDay = Converter.getDurationStringLocalized(
+                            getLocalizedResources(this, getEchoLanguage()), secondsPerDay * 1000);
+                    double hoursPerDay = (double) (secondsPerDay / 3600);
                     if (hoursPerDay < 1.5) {
                         viewBinding.aboveLabel.setText(R.string.echo_queue_title_clean);
-                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_clean, hoursPerDay));
+                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_clean, timePerDay));
                     } else if (hoursPerDay <= 24) {
                         viewBinding.aboveLabel.setText(R.string.echo_queue_title_many);
-                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_normal, hoursPerDay));
+                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_normal, timePerDay));
                     } else {
                         viewBinding.aboveLabel.setText(R.string.echo_queue_title_many);
-                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_much, hoursPerDay));
+                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_much, timePerDay));
                     }
                     currentDrawable = new StripesScreen();
                     break;
@@ -231,22 +241,22 @@ public class EchoActivity extends AppCompatActivity {
                     break;
                 case 4:
                     viewBinding.aboveLabel.setText(R.string.echo_hoarder_title);
-                    int percentagePlayed = (int) (100.0 * playedPodcasts / totalPodcasts);
+                    int percentagePlayed = (int) (100.0 * playedActivePodcasts / totalActivePodcasts);
                     if (percentagePlayed < 25) {
                         viewBinding.largeLabel.setText(R.string.echo_hoarder_emoji_cabinet);
                         viewBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_hoarder);
                         viewBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_hoarder,
-                                percentagePlayed, totalPodcasts));
+                                percentagePlayed, totalActivePodcasts));
                     } else if (percentagePlayed < 75) {
                         viewBinding.largeLabel.setText(R.string.echo_hoarder_emoji_check);
                         viewBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_medium);
                         viewBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_medium,
-                                percentagePlayed, totalPodcasts));
+                                percentagePlayed, totalActivePodcasts, randomUnplayedActivePodcast));
                     } else {
                         viewBinding.largeLabel.setText(R.string.echo_hoarder_emoji_clean);
                         viewBinding.belowLabel.setText(R.string.echo_hoarder_subtitle_clean);
                         viewBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_clean,
-                                percentagePlayed, totalPodcasts));
+                                percentagePlayed, totalActivePodcasts));
                     }
                     currentDrawable = new StripesScreen();
                     break;
@@ -341,19 +351,33 @@ public class EchoActivity extends AppCompatActivity {
                         favoritePods.add(new Pair<>(statisticsData.feedTime.get(i).feed.getTitle(), cover));
                     }
 
-                    totalPodcasts = statisticsData.feedTime.size();
+                    totalActivePodcasts = 0;
+                    playedActivePodcasts = 0;
                     playedPodcasts = 0;
                     totalTime = 0;
+                    ArrayList<String> unplayedActive = new ArrayList<>();
                     for (StatisticsItem item : statisticsData.feedTime) {
                         totalTime += item.timePlayed;
                         if (item.timePlayed > 0) {
                             playedPodcasts++;
                         }
+                        if (item.feed.getPreferences().getKeepUpdated()) {
+                            totalActivePodcasts++;
+                            if (item.timePlayed > 0) {
+                                playedActivePodcasts++;
+                            } else {
+                                unplayedActive.add(item.feed.getTitle());
+                            }
+                        }
+                    }
+                    if (!unplayedActive.isEmpty()) {
+                        randomUnplayedActivePodcast = unplayedActive.get(
+                                (int) Math.floor(Math.random() * unplayedActive.size()));
                     }
 
                     List<FeedItem> queue = DBReader.getQueue();
                     queueNumEpisodes = queue.size();
-                    queueTimeLeft = 0;
+                    queueSecondsLeft = 0;
                     for (FeedItem item : queue) {
                         float playbackSpeed = 1;
                         if (UserPreferences.timeRespectsSpeed()) {
@@ -361,10 +385,10 @@ public class EchoActivity extends AppCompatActivity {
                         }
                         if (item.getMedia() != null) {
                             long itemTimeLeft = item.getMedia().getDuration() - item.getMedia().getPosition();
-                            queueTimeLeft += itemTimeLeft / playbackSpeed;
+                            queueSecondsLeft += itemTimeLeft / playbackSpeed;
                         }
                     }
-                    queueTimeLeft /= 1000;
+                    queueSecondsLeft /= 1000;
 
                     timeBetweenReleaseAndPlay = DBReader.getTimeBetweenReleaseAndPlayback(timeFilterFrom, timeFilterTo);
                     oldestDate = statisticsData.oldestDate;

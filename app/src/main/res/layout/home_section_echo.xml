@@ -52,11 +52,12 @@
             android:foreground="?attr/selectableItemBackground">
 
             <TextView
+                android:id="@+id/titleLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:textColor="#fff"
-                android:text="AntennaPod Echo 2023"
+                android:text="@string/antennapod_echo_year"
                 android:textFontWeight="500"
                 style="@style/TextAppearance.Material3.TitleLarge" />
 
@@ -70,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#fff"
                     android:layout_weight="1"
-                    android:text="Your top podcasts and stats about the past year. Exclusively on your phone."
+                    android:text="@string/echo_home_subtitle"
                     style="@style/TextAppearance.Material3.BodyMedium" />
 
                 <ImageView
