@@ -6,6 +6,10 @@ apply from: "../../playFlavor.gradle"
 
 android {
     namespace "de.danoeh.antennapod.ui.echo"
+
+    lint {
+        disable "AppBundleLocaleChanges"
+    }
 }
 
 dependencies {

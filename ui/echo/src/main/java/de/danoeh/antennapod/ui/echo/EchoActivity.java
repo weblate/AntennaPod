@@ -194,7 +194,7 @@ public class EchoActivity extends AppCompatActivity {
                     viewBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", 2023));
                     viewBinding.belowLabel.setText(R.string.echo_intro_in_podcasts);
                     viewBinding.smallLabel.setText(R.string.echo_intro_locally);
-                    currentDrawable = new BubbleScreen();
+                    currentDrawable = new BubbleScreen(this);
                     break;
                 case 1:
                     viewBinding.aboveLabel.setText(R.string.echo_hours_this_year);
@@ -202,7 +202,7 @@ public class EchoActivity extends AppCompatActivity {
                     viewBinding.belowLabel.setText(getResources()
                             .getQuantityString(R.plurals.echo_hours_podcasts, playedPodcasts, playedPodcasts));
                     viewBinding.smallLabel.setText("");
-                    currentDrawable = new WaveformScreen();
+                    currentDrawable = new WaveformScreen(this);
                     break;
                 case 2:
                     viewBinding.largeLabel.setText(String.format(getEchoLanguage(), "%d", queueSecondsLeft / 3600));
@@ -223,7 +223,7 @@ public class EchoActivity extends AppCompatActivity {
                         viewBinding.aboveLabel.setText(R.string.echo_queue_title_many);
                         viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_much, timePerDay));
                     }
-                    currentDrawable = new StripesScreen();
+                    currentDrawable = new StripesScreen(this);
                     break;
                 case 3:
                     viewBinding.aboveLabel.setText(R.string.echo_listened_after_title);
@@ -237,7 +237,7 @@ public class EchoActivity extends AppCompatActivity {
                     viewBinding.smallLabel.setText(getString(R.string.echo_listened_after_time,
                             Converter.getDurationStringLocalized(
                                 getLocalizedResources(this, getEchoLanguage()), timeBetweenReleaseAndPlay)));
-                    currentDrawable = new RotatingSquaresScreen();
+                    currentDrawable = new RotatingSquaresScreen(this);
                     break;
                 case 4:
                     viewBinding.aboveLabel.setText(R.string.echo_hoarder_title);
@@ -258,7 +258,7 @@ public class EchoActivity extends AppCompatActivity {
                         viewBinding.smallLabel.setText(getString(R.string.echo_hoarder_comment_clean,
                                 percentagePlayed, totalActivePodcasts));
                     }
-                    currentDrawable = new StripesScreen();
+                    currentDrawable = new StripesScreen(this);
                     break;
                 case 5:
                     viewBinding.aboveLabel.setText("");
@@ -272,7 +272,7 @@ public class EchoActivity extends AppCompatActivity {
                         viewBinding.belowLabel.setText(R.string.echo_thanks_we_are_glad_new);
                     }
                     viewBinding.smallLabel.setText(R.string.echo_thanks_now_favorite);
-                    currentDrawable = new RotatingSquaresScreen();
+                    currentDrawable = new RotatingSquaresScreen(this);
                     break;
                 case 6:
                     viewBinding.aboveLabel.setText("");

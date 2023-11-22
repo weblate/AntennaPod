@@ -1,10 +1,12 @@
 package de.danoeh.antennapod.ui.echo.screens;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import androidx.annotation.NonNull;
 
 public class RotatingSquaresScreen extends BaseScreen {
-    public RotatingSquaresScreen() {
+    public RotatingSquaresScreen(Context context) {
+        super(context);
         for (int i = 0; i < 16; i++) {
             particles.add(new Particle(
                     0.3 * (float) (i % 4) + 0.05 + 0.1 * Math.random() - 0.05,

@@ -30,6 +30,7 @@ public class FinalShareScreen extends BubbleScreen {
     private final Typeface typefaceBold;
 
     public FinalShareScreen(Context context, ArrayList<Pair<String, Drawable>> favoritePods) {
+        super(context);
         this.heading = context.getString(R.string.echo_share_heading);
         this.logo = AppCompatResources.getDrawable(context, R.drawable.echo);
         this.favoritePods = favoritePods;

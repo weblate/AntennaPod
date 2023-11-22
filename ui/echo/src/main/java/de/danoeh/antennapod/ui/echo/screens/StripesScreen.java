@@ -1,12 +1,14 @@
 package de.danoeh.antennapod.ui.echo.screens;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import androidx.annotation.NonNull;
 
 public class StripesScreen extends BaseScreen {
     protected static final int NUM_PARTICLES = 15;
 
-    public StripesScreen() {
+    public StripesScreen(Context context) {
+        super(context);
         for (int i = 0; i < NUM_PARTICLES; i++) {
             particles.add(new Particle(2f * i / NUM_PARTICLES - 1f, 0, 0));
         }

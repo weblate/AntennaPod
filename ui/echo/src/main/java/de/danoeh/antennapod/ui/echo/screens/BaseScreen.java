@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.ui.echo.screens;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.LinearGradient;
@@ -8,16 +9,22 @@ import android.graphics.PixelFormat;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
+import de.danoeh.antennapod.ui.echo.R;
 
 public abstract class BaseScreen extends Drawable {
     private final Paint paintBackground;
     protected final Paint paintParticles;
     protected final ArrayList<Particle> particles = new ArrayList<>();
+    private final int colorBackgroundFrom;
+    private final int colorBackgroundTo;
     private long lastFrame = 0;
 
-    public BaseScreen() {
+    public BaseScreen(Context context) {
+        colorBackgroundFrom = ContextCompat.getColor(context, R.color.gradient_000);
+        colorBackgroundTo = ContextCompat.getColor(context, R.color.gradient_100);
         paintBackground = new Paint();
         paintParticles = new Paint();
         paintParticles.setColor(0xffffffff);
@@ -30,7 +37,8 @@ public abstract class BaseScreen extends Drawable {
     public void draw(@NonNull Canvas canvas) {
         float width = getBounds().width();
         float height = getBounds().height();
-        paintBackground.setShader(new LinearGradient(0, 0, 0, height, 0xff364ff3, 0xff16d0ff, Shader.TileMode.CLAMP));
+        paintBackground.setShader(new LinearGradient(0, 0, 0, height,
+                colorBackgroundFrom, colorBackgroundTo, Shader.TileMode.CLAMP));
         canvas.drawRect(0, 0, width, height, paintBackground);
 
         long timeSinceLastFrame = System.currentTimeMillis() - lastFrame;
