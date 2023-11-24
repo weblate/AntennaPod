@@ -97,7 +97,12 @@ public class EchoActivity extends AppCompatActivity {
                     if (event.getX() < 0.5f * viewBinding.echoImage.getMeasuredWidth()) {
                         newScreen = Math.max(currentScreen - 1, 0);
                     } else {
-                        newScreen = (currentScreen + 1) % NUM_SCREENS;
+                        if (currentScreen == NUM_SCREENS - 1) {
+                            newScreen = currentScreen;
+                            finish();
+                        } else {
+                            newScreen = (currentScreen + 1) % NUM_SCREENS;
+                        }
                     }
                     progress = newScreen;
                     echoProgress.setProgress(progress);
@@ -215,13 +220,13 @@ public class EchoActivity extends AppCompatActivity {
                     double hoursPerDay = (double) (secondsPerDay / 3600);
                     if (hoursPerDay < 1.5) {
                         viewBinding.aboveLabel.setText(R.string.echo_queue_title_clean);
-                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_clean, timePerDay));
+                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_clean, timePerDay, 2024));
                     } else if (hoursPerDay <= 24) {
                         viewBinding.aboveLabel.setText(R.string.echo_queue_title_many);
-                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_normal, timePerDay));
+                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_normal, timePerDay, 2024));
                     } else {
                         viewBinding.aboveLabel.setText(R.string.echo_queue_title_many);
-                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_much, timePerDay));
+                        viewBinding.smallLabel.setText(getString(R.string.echo_queue_hours_much, timePerDay, 2024));
                     }
                     currentDrawable = new StripesScreen(this);
                     break;
@@ -262,13 +267,12 @@ public class EchoActivity extends AppCompatActivity {
                     break;
                 case 5:
                     viewBinding.aboveLabel.setText("");
+                    viewBinding.largeLabel.setText(R.string.echo_thanks_large);
                     if (oldestDate < jan1()) {
-                        viewBinding.largeLabel.setText(R.string.echo_thanks_old);
                         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", getEchoLanguage());
                         String dateFrom = dateFormat.format(new Date(oldestDate));
                         viewBinding.belowLabel.setText(getString(R.string.echo_thanks_we_are_glad_old, dateFrom));
                     } else {
-                        viewBinding.largeLabel.setText(R.string.echo_thanks_new);
                         viewBinding.belowLabel.setText(R.string.echo_thanks_we_are_glad_new);
                     }
                     viewBinding.smallLabel.setText(R.string.echo_thanks_now_favorite);
