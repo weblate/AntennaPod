@@ -106,7 +106,7 @@ public class EchoActivity extends AppCompatActivity {
                     }
                     progress = newScreen;
                     echoProgress.setProgress(progress);
-                    loadScreen(newScreen);
+                    loadScreen(newScreen, false);
                 }
             }
             return true;
@@ -114,7 +114,7 @@ public class EchoActivity extends AppCompatActivity {
         echoProgress = new EchoProgress(NUM_SCREENS);
         viewBinding.echoProgressImage.setImageDrawable(echoProgress);
         setContentView(viewBinding.getRoot());
-        loadScreen(0);
+        loadScreen(0, false);
         loadStatistics();
     }
 
@@ -166,7 +166,7 @@ public class EchoActivity extends AppCompatActivity {
                     progress = Math.min(NUM_SCREENS - 0.001f, progress + timePassed / 10000.0f);
                     echoProgress.setProgress(progress);
                     viewBinding.echoProgressImage.postInvalidate();
-                    loadScreen((int) progress);
+                    loadScreen((int) progress, false);
                 });
     }
 
@@ -184,8 +184,8 @@ public class EchoActivity extends AppCompatActivity {
         }
     }
 
-    private void loadScreen(int screen) {
-        if (screen == currentScreen) {
+    private void loadScreen(int screen, boolean force) {
+        if (screen == currentScreen && !force) {
             return;
         }
         currentScreen = screen;
@@ -400,6 +400,7 @@ public class EchoActivity extends AppCompatActivity {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> { }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+                .subscribe(result -> loadScreen(currentScreen, true),
+                        error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 }
