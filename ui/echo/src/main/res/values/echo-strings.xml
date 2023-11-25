@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation,PluralsCandidate">
+    <string name="echo_home_header">Review the year</string>
     <string name="echo_home_subtitle">Your top podcasts and stats from the past year. Exclusively on your phone.</string>
+
     <string name="echo_intro_your_year">Your year</string>
     <string name="echo_intro_in_podcasts">in podcasts</string>
     <string name="echo_intro_locally">generated privately on your phone</string>

@@ -20,7 +20,7 @@
             android:layout_marginVertical="8dp"
             android:accessibilityHeading="true"
             android:layout_weight="1"
-            android:text="Review the year" />
+            android:text="@string/echo_home_header" />
 
         <ImageView
             android:id="@+id/closeButton"

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="echo_home_header">Jahresrückblick</string>
     <string name="echo_home_subtitle">Deine Lieblings-Podcasts und Statistiken aus dem letzten Jahr. Exklusiv auf deinem Telefon.</string>
+
     <string name="echo_intro_your_year">Dein Podcast-Jahr</string>
     <string name="echo_intro_in_podcasts"> </string>
     <string name="echo_intro_locally">privat auf deinem Telefon generiert</string>
