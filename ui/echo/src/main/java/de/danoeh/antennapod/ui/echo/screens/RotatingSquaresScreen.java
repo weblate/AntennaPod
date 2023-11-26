@@ -16,10 +16,10 @@ public class RotatingSquaresScreen extends BaseScreen {
     }
 
     @Override
-    protected void drawParticle(@NonNull Canvas canvas, Particle p,
+    protected void drawParticle(@NonNull Canvas canvas, Particle p, float width, float height,
                                 float innerBoxX, float innerBoxY, float innerBoxSize) {
-        float x = (float) (p.positionX * getBounds().width());
-        float y = (float) (p.positionY * getBounds().height());
+        float x = (float) (p.positionX * width);
+        float y = (float) (p.positionY * height);
         float size = innerBoxSize / 6;
         canvas.save();
         canvas.rotate((float) (360 * p.positionZ), x, y);

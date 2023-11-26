@@ -12,15 +12,13 @@ public class BubbleScreen extends BaseScreen {
         super(context);
         for (int i = 0; i < NUM_PARTICLES; i++) {
             particles.add(new Particle(Math.random(), 2.0 * Math.random() - 0.5, // Could already be off-screen
-                    PARTICLE_SPEED + 2 * PARTICLE_SPEED * Math.random()));
+                    0, PARTICLE_SPEED + 2 * PARTICLE_SPEED * Math.random()));
         }
     }
 
     @Override
-    protected void drawParticle(@NonNull Canvas canvas, Particle p,
+    protected void drawParticle(@NonNull Canvas canvas, Particle p, float width, float height,
                                 float innerBoxX, float innerBoxY, float innerBoxSize) {
-        float width = getBounds().width();
-        float height = getBounds().height();
         canvas.drawCircle((float) (width * p.positionX), (float) (p.positionY * height),
                 innerBoxSize / 5, paintParticles);
     }

@@ -14,14 +14,9 @@ import de.danoeh.antennapod.ui.echo.R;
 import java.util.ArrayList;
 
 public class FinalShareScreen extends BubbleScreen {
-    private static final float[][] COVER_POSITIONS = new float[][]{
-            new float[] {0.0f, 0.0f},
-            new float[] {0.4f, 0.0f},
-            new float[] {0.4f, 0.2f},
-            new float[] {0.6f, 0.2f},
-            new float[] {0.8f, 0.2f}};
+    private static final float[][] COVER_POSITIONS = new float[][]{ new float[] {0.0f, 0.0f},
+            new float[] {0.4f, 0.0f}, new float[] {0.4f, 0.2f}, new float[] {0.6f, 0.2f}, new float[] {0.8f, 0.2f}};
     private final Paint paintTextMain;
-    private final Paint paintTextHeading;
     private final Paint paintCoverBorder;
     private final String heading;
     private final Drawable logo;
@@ -40,13 +35,6 @@ public class FinalShareScreen extends BubbleScreen {
         paintTextMain.setColor(0xffffffff);
         paintTextMain.setFlags(Paint.ANTI_ALIAS_FLAG);
         paintTextMain.setStyle(Paint.Style.FILL);
-        paintTextMain.setTextAlign(Paint.Align.LEFT);
-        paintTextHeading = new Paint();
-        paintTextHeading.setColor(0xffffffff);
-        paintTextHeading.setFlags(Paint.ANTI_ALIAS_FLAG);
-        paintTextHeading.setStyle(Paint.Style.FILL);
-        paintTextHeading.setTextAlign(Paint.Align.CENTER);
-        paintTextHeading.setTypeface(typefaceBold);
         paintCoverBorder = new Paint();
         paintCoverBorder.setColor(0xffffffff);
         paintCoverBorder.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -55,14 +43,16 @@ public class FinalShareScreen extends BubbleScreen {
     }
 
     protected void drawInner(Canvas canvas, float innerBoxX, float innerBoxY, float innerBoxSize) {
-        float headingSize = innerBoxSize / 14;
-        paintTextHeading.setTextSize(headingSize);
-        canvas.drawText(heading, innerBoxX + 0.5f * innerBoxSize, innerBoxY + headingSize, paintTextHeading);
-        paintTextHeading.setTextSize(0.12f * innerBoxSize);
-        canvas.drawText("2023", innerBoxX + 0.8f * innerBoxSize, innerBoxY + 0.25f * innerBoxSize, paintTextHeading);
-
-        float fontSizePods = innerBoxSize / 18; // First one only
+        paintTextMain.setTextAlign(Paint.Align.CENTER);
         paintTextMain.setTypeface(typefaceBold);
+        float headingSize = innerBoxSize / 14;
+        paintTextMain.setTextSize(headingSize);
+        canvas.drawText(heading, innerBoxX + 0.5f * innerBoxSize, innerBoxY + headingSize, paintTextMain);
+        paintTextMain.setTextSize(0.12f * innerBoxSize);
+        canvas.drawText("2023", innerBoxX + 0.8f * innerBoxSize, innerBoxY + 0.25f * innerBoxSize, paintTextMain);
+
+        paintTextMain.setTextAlign(Paint.Align.LEFT);
+        float fontSizePods = innerBoxSize / 18; // First one only
         float textY = innerBoxY + 0.62f * innerBoxSize;
         for (int i = 0; i < favoritePods.size(); i++) {
             float coverSize = (i == 0) ? (0.4f * innerBoxSize) : (0.2f * innerBoxSize);

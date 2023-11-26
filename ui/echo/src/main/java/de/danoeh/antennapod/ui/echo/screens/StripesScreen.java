@@ -10,7 +10,7 @@ public class StripesScreen extends BaseScreen {
     public StripesScreen(Context context) {
         super(context);
         for (int i = 0; i < NUM_PARTICLES; i++) {
-            particles.add(new Particle(2f * i / NUM_PARTICLES - 1f, 0, 0));
+            particles.add(new Particle(2f * i / NUM_PARTICLES - 1f, 0, 0, 0));
         }
     }
 
@@ -21,11 +21,9 @@ public class StripesScreen extends BaseScreen {
     }
 
     @Override
-    protected void drawParticle(@NonNull Canvas canvas, Particle p,
+    protected void drawParticle(@NonNull Canvas canvas, Particle p, float width, float height,
                                 float innerBoxX, float innerBoxY, float innerBoxSize) {
-        float width = getBounds().width();
-        float height = getBounds().height();
-        float strokeWidth = 0.05f * getBounds().width();
+        float strokeWidth = 0.05f * width;
         float x = (float) (width * p.positionX);
         canvas.drawLine(x, -strokeWidth, x + width, height + strokeWidth, paintParticles);
     }

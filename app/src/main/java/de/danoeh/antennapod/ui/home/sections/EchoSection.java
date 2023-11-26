@@ -70,10 +70,8 @@ public class EchoSection extends Fragment {
             })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(totalTime -> {
-                if (totalTime < 3600 * 10) {
-                    viewBinding.getRoot().setVisibility(View.GONE);
-                }
-            }, Throwable::printStackTrace);
+            .subscribe(totalTime -> viewBinding.getRoot()
+                            .setVisibility((totalTime >= 3600 * 10) ? View.VISIBLE : View.GONE),
+                    Throwable::printStackTrace);
     }
 }

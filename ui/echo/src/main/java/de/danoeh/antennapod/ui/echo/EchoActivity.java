@@ -55,6 +55,7 @@ import java.util.concurrent.TimeUnit;
 public class EchoActivity extends AppCompatActivity {
     private static final String TAG = "EchoActivity";
     private static final int NUM_SCREENS = 7;
+    private static final int SHARE_SIZE = 1000;
 
     private EchoActivityBinding viewBinding;
     private int currentScreen = -1;
@@ -64,7 +65,7 @@ public class EchoActivity extends AppCompatActivity {
     private EchoProgress echoProgress;
     private Disposable redrawTimer;
     private long timeTouchDown;
-    private long lastFrame;
+    private long timeLastFrame;
     private Disposable disposable;
 
     private long totalTime = 0;
@@ -97,11 +98,9 @@ public class EchoActivity extends AppCompatActivity {
                     if (event.getX() < 0.5f * viewBinding.echoImage.getMeasuredWidth()) {
                         newScreen = Math.max(currentScreen - 1, 0);
                     } else {
+                        newScreen = Math.min(currentScreen + 1, NUM_SCREENS - 1);
                         if (currentScreen == NUM_SCREENS - 1) {
-                            newScreen = currentScreen;
                             finish();
-                        } else {
-                            newScreen = (currentScreen + 1) % NUM_SCREENS;
                         }
                     }
                     progress = newScreen;
@@ -120,7 +119,7 @@ public class EchoActivity extends AppCompatActivity {
 
     private void share() {
         try {
-            Bitmap bitmap = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888);
+            Bitmap bitmap = Bitmap.createBitmap(SHARE_SIZE, SHARE_SIZE, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);
             currentDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             currentDrawable.draw(canvas);
@@ -147,7 +146,7 @@ public class EchoActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        redrawTimer = Flowable.timer(10, TimeUnit.MILLISECONDS)
+        redrawTimer = Flowable.timer(20, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.io())
                 .repeat()
                 .subscribe(i -> {
@@ -158,8 +157,8 @@ public class EchoActivity extends AppCompatActivity {
                     if (progress >= NUM_SCREENS - 0.001f) {
                         return;
                     }
-                    long timePassed = System.currentTimeMillis() - lastFrame;
-                    lastFrame = System.currentTimeMillis();
+                    long timePassed = System.currentTimeMillis() - timeLastFrame;
+                    timeLastFrame = System.currentTimeMillis();
                     if (timePassed > 500) {
                         timePassed = 0;
                     }
@@ -174,11 +173,6 @@ public class EchoActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         redrawTimer.dispose();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
         if (disposable != null) {
             disposable.dispose();
         }
@@ -302,7 +296,7 @@ public class EchoActivity extends AppCompatActivity {
     }
 
     @NonNull
-    Resources getLocalizedResources(Context context, Locale desiredLocale) {
+    private Resources getLocalizedResources(Context context, Locale desiredLocale) {
         Configuration conf = context.getResources().getConfiguration();
         conf = new Configuration(conf);
         conf.setLocale(desiredLocale);
@@ -339,7 +333,7 @@ public class EchoActivity extends AppCompatActivity {
                     for (int i = 0; i < 5 && i < statisticsData.feedTime.size(); i++) {
                         BitmapDrawable cover = new BitmapDrawable(getResources(), (Bitmap) null);
                         try {
-                            final int size = 500;
+                            final int size = SHARE_SIZE / 3;
                             final int radius = (i == 0) ? (size / 16) : (size / 8);
                             cover = new BitmapDrawable(getResources(), Glide.with(this)
                                     .asBitmap()
@@ -375,8 +369,7 @@ public class EchoActivity extends AppCompatActivity {
                         }
                     }
                     if (!unplayedActive.isEmpty()) {
-                        randomUnplayedActivePodcast = unplayedActive.get(
-                                (int) Math.floor(Math.random() * unplayedActive.size()));
+                        randomUnplayedActivePodcast = unplayedActive.get((int) (Math.random() * unplayedActive.size()));
                     }
 
                     List<FeedItem> queue = DBReader.getQueue();

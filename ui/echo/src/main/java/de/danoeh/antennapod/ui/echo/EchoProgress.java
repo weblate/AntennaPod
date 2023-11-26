@@ -14,7 +14,6 @@ public class EchoProgress extends Drawable {
 
     public EchoProgress(int numScreens) {
         this.numScreens = numScreens;
-
         paint = new Paint();
         paint.setFlags(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.STROKE);

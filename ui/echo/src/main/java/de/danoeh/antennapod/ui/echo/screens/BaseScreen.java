@@ -52,7 +52,7 @@ public abstract class BaseScreen extends Drawable {
         final float innerBoxY = (height - innerBoxSize) / 2;
 
         for (Particle p : particles) {
-            drawParticle(canvas, p, innerBoxX, innerBoxY, innerBoxSize);
+            drawParticle(canvas, p, width, height, innerBoxX, innerBoxY, innerBoxSize);
             particleTick(p, timeSinceLastFrame);
         }
 
@@ -64,7 +64,7 @@ public abstract class BaseScreen extends Drawable {
 
     protected abstract void particleTick(Particle p, long timeSinceLastFrame);
 
-    protected abstract void drawParticle(@NonNull Canvas canvas, Particle p,
+    protected abstract void drawParticle(@NonNull Canvas canvas, Particle p, float width, float height,
                                          float innerBoxX, float innerBoxY, float innerBoxSize);
 
     @Override
@@ -91,10 +91,6 @@ public abstract class BaseScreen extends Drawable {
             this.positionY = positionY;
             this.positionZ = positionZ;
             this.speed = speed;
-        }
-
-        public Particle(double positionX, double positionY, double speed) {
-            this(positionX, positionY, 0, speed);
         }
     }
 }

@@ -10,15 +10,13 @@ public class WaveformScreen extends BaseScreen {
     public WaveformScreen(Context context) {
         super(context);
         for (int i = 0; i < NUM_PARTICLES; i++) {
-            particles.add(new Particle(1.1f + 1.1f * i / NUM_PARTICLES - 0.05f, 0, 0));
+            particles.add(new Particle(1.1f + 1.1f * i / NUM_PARTICLES - 0.05f, 0, 0, 0));
         }
     }
 
     @Override
-    protected void drawParticle(@NonNull Canvas canvas, Particle p,
+    protected void drawParticle(@NonNull Canvas canvas, Particle p, float width, float height,
                                 float innerBoxX, float innerBoxY, float innerBoxSize) {
-        float width = getBounds().width();
-        float height = getBounds().height();
         float x = (float) (width * p.positionX);
         canvas.drawRect(x, height, x + (1.1f * width) / NUM_PARTICLES,
                 (float) (0.95f * height - 0.3f * p.positionY * height), paintParticles);
