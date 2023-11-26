@@ -104,7 +104,8 @@ public class HomeFragment extends Fragment implements Toolbar.OnMenuItemClickLis
             }
         }
         //if (Calendar.getInstance().get(Calendar.MONTH) == Calendar.DECEMBER
-        //        && Calendar.getInstance().get(Calendar.DAY_OF_MONTH) >= 6
+        //        && Calendar.getInstance().get(Calendar.YEAR) == 2023
+        //        && Calendar.getInstance().get(Calendar.DAY_OF_MONTH) >= 10
         //        && prefs.getInt(PREF_HIDE_ECHO, 0) != 2023) {
             addSection(new EchoSection());
         //}
